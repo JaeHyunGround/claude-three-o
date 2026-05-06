@@ -1,2 +1,6 @@
 reports/
 .omc/
+**/.omc/
+__pycache__/
+*.pyc
+.env
