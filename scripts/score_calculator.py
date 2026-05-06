@@ -75,6 +75,48 @@ def compute_geo_score(mf: float, cq: float, vr: float, ep: float, ta: float) -> 
     }
 
 
+PLATFORMS = ["chatgpt", "perplexity", "gemini", "claude"]
+
+
+def compute_platform_geo_scores(platform_data: dict) -> dict:
+    """Compute GEO score per AI platform.
+
+    platform_data: {
+        "chatgpt": {"mf": 60, "cq": 70, "vr": 50, "ep": 40, "ta": 80},
+        "perplexity": {...}, ...
+    }
+    Returns per-platform GEO scores + overall breakdown.
+    """
+    platform_scores = {}
+    for platform in PLATFORMS:
+        dims = platform_data.get(platform, {})
+        mf = dims.get("mf", 0)
+        cq = dims.get("cq", 0)
+        vr = dims.get("vr", 0)
+        ep = dims.get("ep", 0)
+        ta = dims.get("ta", 0)
+
+        result = compute_geo_score(mf, cq, vr, ep, ta)
+        platform_scores[platform] = {
+            "geo_score": result["geo_score"],
+            "grade": result["grade"],
+            "dimensions": {"mf": mf, "cq": cq, "vr": vr, "ep": ep, "ta": ta},
+        }
+
+    scores = [ps["geo_score"] for ps in platform_scores.values() if ps["geo_score"] > 0]
+    overall = round(sum(scores) / max(len(scores), 1), 1)
+    best = max(platform_scores, key=lambda p: platform_scores[p]["geo_score"]) if scores else None
+    worst = min(platform_scores, key=lambda p: platform_scores[p]["geo_score"]) if scores else None
+
+    return {
+        "overall_geo_score": overall,
+        "overall_grade": get_grade(overall),
+        "platforms": platform_scores,
+        "best_platform": best,
+        "worst_platform": worst,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="Three-O score calculator")
     sub = parser.add_subparsers(dest="command")

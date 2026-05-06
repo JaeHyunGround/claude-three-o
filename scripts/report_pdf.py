@@ -189,6 +189,18 @@ class ThreeOPDF(FPDF):
                 label = dim_name.replace("_", " ").title()
                 self._draw_score_bar(label, float(score_val))
 
+        if pillar == "geo":
+            platform_breakdown = pillar_data.get("platform_breakdown", {})
+            if platform_breakdown:
+                self.ln(5)
+                self._set_font("B", 10)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 8, "Platform GEO Scores", 0, 1)
+                self.ln(3)
+                for p_name, p_data in platform_breakdown.items():
+                    p_score = p_data.get("geo_score", 0) if isinstance(p_data, dict) else p_data
+                    self._draw_score_bar(p_name.capitalize(), float(p_score))
+
         self.ln(8)
         issues = pillar_data.get("issues", [])
         if issues:

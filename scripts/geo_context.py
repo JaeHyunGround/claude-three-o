@@ -113,7 +113,7 @@ def analyze_multiple_contexts(mentions: list, brand: str) -> dict:
             analyses.append(analysis)
 
     if not analyses:
-        return {"success": True, "brand": brand, "total_mentions": 0, "avg_score": 0}
+        return {"success": True, "brand": brand, "total_mentions": 0, "avg_score": 0, "per_platform": {}}
 
     avg_score = round(sum(a["score"] for a in analyses) / len(analyses), 1)
     sentiments = {"positive": 0, "negative": 0, "neutral": 0}
@@ -122,6 +122,22 @@ def analyze_multiple_contexts(mentions: list, brand: str) -> dict:
 
     dominant_sentiment = max(sentiments, key=sentiments.get)
 
+    per_platform = {}
+    for a in analyses:
+        p = a.get("platform", "unknown")
+        if p not in per_platform:
+            per_platform[p] = {"scores": [], "sentiments": {"positive": 0, "negative": 0, "neutral": 0}}
+        per_platform[p]["scores"].append(a["score"])
+        per_platform[p]["sentiments"][a["sentiment"]] += 1
+
+    platform_cq = {}
+    for p, data in per_platform.items():
+        platform_cq[p] = {
+            "score": round(sum(data["scores"]) / len(data["scores"]), 1),
+            "dominant_sentiment": max(data["sentiments"], key=data["sentiments"].get),
+            "mentions": len(data["scores"]),
+        }
+
     return {
         "success": True,
         "brand": brand,
@@ -129,6 +145,7 @@ def analyze_multiple_contexts(mentions: list, brand: str) -> dict:
         "avg_score": avg_score,
         "dominant_sentiment": dominant_sentiment,
         "sentiment_distribution": sentiments,
+        "per_platform": platform_cq,
         "analyses": analyses,
     }
 

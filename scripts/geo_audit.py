@@ -6,7 +6,7 @@ import sys
 from typing import Optional
 
 from validate_url import validate_url
-from score_calculator import compute_geo_score
+from score_calculator import compute_geo_score, compute_platform_geo_scores, PLATFORMS
 
 
 def run_geo_audit(brand: str, url: Optional[str] = None,
@@ -88,10 +88,23 @@ def run_geo_audit(brand: str, url: Optional[str] = None,
     ep_score = dimension_results.get("entity", {}).get("score", 0)
     ta_score = dimension_results.get("technical", {}).get("score", 0)
 
+    platform_scores_raw = dimension_results.get("platforms", {}).get("scores", {})
     if dimension_results.get("platforms", {}).get("avg_score"):
         cq_score = round((cq_score + dimension_results["platforms"]["avg_score"]) / 2, 1)
 
     geo_result = compute_geo_score(mf_score, cq_score, vr_score, ep_score, ta_score)
+
+    platform_data = {}
+    for p in PLATFORMS:
+        p_platform_score = platform_scores_raw.get(p, 0)
+        platform_data[p] = {
+            "mf": mf_score,
+            "cq": p_platform_score if p_platform_score else cq_score,
+            "vr": vr_score,
+            "ep": ep_score,
+            "ta": ta_score,
+        }
+    platform_geo = compute_platform_geo_scores(platform_data)
 
     all_issues = []
     for dim_name, dim_data in dimension_results.items():
@@ -119,7 +132,7 @@ def run_geo_audit(brand: str, url: Optional[str] = None,
         "brand": brand,
         "url": url,
         "industry": industry,
-        "geo_score": geo_result["score"],
+        "geo_score": geo_result["geo_score"],
         "geo_grade": geo_result["grade"],
         "dimensions": {
             "mf": {"score": mf_score, "name": "Mention Frequency", "status": "requires_api"},
@@ -128,9 +141,12 @@ def run_geo_audit(brand: str, url: Optional[str] = None,
             "ep": {"score": ep_score, "name": "Entity Presence"},
             "ta": {"score": ta_score, "name": "Technical Accessibility"},
         },
+        "platform_breakdown": platform_geo["platforms"],
+        "best_platform": platform_geo["best_platform"],
+        "worst_platform": platform_geo["worst_platform"],
         "detail": dimension_results,
         "issues": all_issues,
-        "recommendations": generate_recommendations(dimension_results, geo_result["score"]),
+        "recommendations": generate_recommendations(dimension_results, geo_result["geo_score"]),
     }
 
 
@@ -201,6 +217,15 @@ def main():
                 status = f" [{dim['status']}]" if dim.get("status") else ""
                 bar = "█" * int(dim["score"] / 10) + "░" * (10 - int(dim["score"] / 10))
                 print(f"  {dim['name']:25s} {bar} {dim['score']:5.1f}{status}")
+            pb = result.get("platform_breakdown", {})
+            if pb:
+                print(f"\nPlatform GEO Breakdown:")
+                for p, pdata in pb.items():
+                    s = pdata["geo_score"]
+                    bar = "█" * int(s / 10) + "░" * (10 - int(s / 10))
+                    print(f"  {p:15s} {bar} {s:5.1f} ({pdata['grade']})")
+                if result.get("best_platform"):
+                    print(f"  Best:  {result['best_platform']}  |  Worst: {result['worst_platform']}")
             if result["issues"]:
                 print(f"\nIssues ({len(result['issues'])}):")
                 for issue in result["issues"][:10]:

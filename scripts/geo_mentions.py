@@ -115,24 +115,30 @@ def probe_platform(platform: str, queries: list, brand: str, config: dict) -> di
     }
 
 
-def calculate_mention_frequency(platform_results: list) -> float:
-    """Calculate overall mention frequency score (0-100)."""
+def calculate_mention_frequency(platform_results: list) -> dict:
+    """Calculate mention frequency score per platform and overall."""
     if not platform_results:
-        return 0.0
+        return {"overall": 0.0, "per_platform": {}}
 
+    per_platform = {}
     total_queries = 0
     total_mentions = 0
 
     for pr in platform_results:
+        platform = pr.get("platform", "unknown")
+        p_queries = 0
+        p_mentions = 0
         for r in pr.get("results", []):
             if r.get("status") == "probed":
+                p_queries += 1
                 total_queries += 1
                 if r.get("mentioned"):
+                    p_mentions += 1
                     total_mentions += 1
+        per_platform[platform] = round((p_mentions / max(p_queries, 1)) * 100, 1)
 
-    if total_queries == 0:
-        return 0.0
-    return round((total_mentions / total_queries) * 100, 1)
+    overall = round((total_mentions / max(total_queries, 1)) * 100, 1)
+    return {"overall": overall, "per_platform": per_platform}
 
 
 def run_mention_tracking(brand: str, industry: Optional[str] = None,
@@ -155,7 +161,7 @@ def run_mention_tracking(brand: str, industry: Optional[str] = None,
     configured_platforms = [p for p in platform_results if p["status"] == "configured"]
     unconfigured_platforms = [p for p in platform_results if p["status"] == "no_api_key"]
 
-    mf_score = calculate_mention_frequency(platform_results)
+    mf_data = calculate_mention_frequency(platform_results)
 
     return {
         "success": True,
@@ -168,7 +174,8 @@ def run_mention_tracking(brand: str, industry: Optional[str] = None,
             "configured": len(configured_platforms),
             "unconfigured": len(unconfigured_platforms),
         },
-        "mention_frequency_score": mf_score,
+        "mention_frequency_score": mf_data["overall"],
+        "mention_frequency_per_platform": mf_data["per_platform"],
         "platform_results": platform_results,
         "queries": queries,
     }
