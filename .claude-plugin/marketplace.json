@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "skyventures-three-o",
+  "owner": {
+    "name": "SKYVENTURES"
+  },
+  "metadata": {
+    "description": "SEO + GEO + AAO unified optimization for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "claude-three-o",
+      "source": "./",
+      "description": "Three-O: Search + AI Visibility + Agent Optimization. 32 skills for SEO (Google/Naver), GEO (AI brand tracking), and AAO (agent selectability, conversion)."
+    }
+  ]
+}

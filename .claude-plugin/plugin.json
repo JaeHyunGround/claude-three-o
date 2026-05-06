@@ -1,0 +1,42 @@
+{
+  "name": "claude-three-o",
+  "version": "1.0.0",
+  "description": "Three-O (SEO + GEO + AAO) unified search and AI visibility optimization platform. 32 skills covering search engine optimization (Google + Naver), generative engine optimization (AI brand mention tracking, GEO scoring), and assistive agent optimization (agent selectability, conversion funnels, structured data push). Korean market native with global expansion support.",
+  "author": {
+    "name": "Jaehyun Ahn",
+    "url": "https://skyventures.co.kr"
+  },
+  "license": "proprietary",
+  "homepage": "https://three-o.io",
+  "repository": "https://github.com/skyventures/claude-three-o",
+  "keywords": [
+    "seo",
+    "geo",
+    "aao",
+    "three-o",
+    "naver-seo",
+    "korean-seo",
+    "google-seo",
+    "ai-visibility",
+    "brand-mentions",
+    "geo-score",
+    "agent-optimization",
+    "agent-selectability",
+    "conversion-funnel",
+    "structured-data",
+    "indexnow",
+    "schema-markup",
+    "llms-txt",
+    "chatgpt-tracking",
+    "perplexity-tracking",
+    "gemini-tracking",
+    "claude-tracking",
+    "sentiment-analysis",
+    "entity-optimization",
+    "ssr-rendering",
+    "product-feed",
+    "korean-market",
+    "naver",
+    "naver-search-advisor"
+  ]
+}

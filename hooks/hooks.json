@@ -1,0 +1,34 @@
+{
+  "description": "Three-O quality gate hooks — validates outputs against SEO/GEO/AAO quality rules",
+  "hooks": [
+    {
+      "event": "PostToolUse",
+      "description": "Validate Three-O agent outputs against quality gates",
+      "matcher": {
+        "tool_names": ["Write", "Edit"]
+      },
+      "command": "python3 \"$(dirname \"$0\")/validate_quality.py\" --file \"$FILE_PATH\" 2>/dev/null || true",
+      "timeout_ms": 5000
+    },
+    {
+      "event": "PostToolUse",
+      "description": "Check CWV terminology (INP not FID)",
+      "matcher": {
+        "tool_names": ["Write", "Edit"],
+        "file_patterns": ["**/scripts/seo_*.py", "**/scripts/geo_*.py", "**/agents/seo-*.md", "**/skills/seo-*/SKILL.md"]
+      },
+      "command": "python3 \"$(dirname \"$0\")/check_cwv.py\" --file \"$FILE_PATH\" 2>/dev/null || true",
+      "timeout_ms": 3000
+    },
+    {
+      "event": "PostToolUse",
+      "description": "Validate schema recommendations (no HowTo, FAQ restrictions)",
+      "matcher": {
+        "tool_names": ["Write", "Edit"],
+        "file_patterns": ["**/scripts/seo_schema*.py", "**/scripts/aao_data*.py", "**/agents/seo-schema*.md", "**/skills/seo-schema*/SKILL.md"]
+      },
+      "command": "python3 \"$(dirname \"$0\")/check_schema.py\" --file \"$FILE_PATH\" 2>/dev/null || true",
+      "timeout_ms": 3000
+    }
+  ]
+}

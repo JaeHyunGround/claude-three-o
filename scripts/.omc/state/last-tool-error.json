@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"python3 seo_technical.py --url https://www.skyventures.co.kr/ --json 2>/dev/null\",\"timeout\":30000,\"description\":\"Run SEO technical audit on skyventures.co.kr\"}",
+  "error": "Exit code 2",
+  "timestamp": "2026-05-06T02:13:47.711Z",
+  "retry_count": 1
+}

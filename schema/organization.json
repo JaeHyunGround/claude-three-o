@@ -1,0 +1,30 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{brand_name}}",
+  "url": "{{website_url}}",
+  "logo": "{{logo_url}}",
+  "description": "{{brand_description}}",
+  "foundingDate": "{{founding_date}}",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "{{phone}}",
+    "contactType": "customer service",
+    "availableLanguage": ["Korean", "English"]
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{street}}",
+    "addressLocality": "{{city}}",
+    "addressRegion": "{{region}}",
+    "postalCode": "{{postal_code}}",
+    "addressCountry": "KR"
+  },
+  "sameAs": [
+    "{{naver_url}}",
+    "{{instagram_url}}",
+    "{{youtube_url}}",
+    "{{linkedin_url}}",
+    "{{wikidata_url}}"
+  ]
+}
