@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "skyventures-three-o",
+  "name": "JaeHyunGround-three-o",
   "owner": {
-    "name": "SKYVENTURES"
+    "name": "JaeHyunGround"
   },
   "metadata": {
     "description": "SEO + GEO + AAO unified optimization for Claude Code"

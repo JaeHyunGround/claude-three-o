@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repository contains **Claude Three-O**, a Claude Code plugin for unified search and AI visibility optimization by SKYVENTURES. It integrates three optimization pillars into a single platform:
+This repository contains **Claude Three-O**, a Claude Code plugin for unified search and AI visibility optimization by JaeHyunGround. It integrates three optimization pillars into a single platform:
 
 - **SEO** (Search Engine Optimization): Google + Naver dual-engine keyword tracking, technical SEO, content quality
 - **GEO** (Generative Engine Optimization): AI brand mention tracking across ChatGPT, Perplexity, Gemini, Claude

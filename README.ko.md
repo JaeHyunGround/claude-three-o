@@ -8,7 +8,7 @@
 
 > **Three-O** = **SEO** (검색엔진 최적화) + **GEO** (생성형 엔진 최적화) + **AAO** (에이전트 최적화)
 >
-> [SKYVENTURES](https://www.skyventures.co.kr/) 제작 | 한국 시장 특화
+> [JaeHyunGround](https://github.com/JaeHyunGround) 제작 | 한국 시장 특화
 
 [English README](README.md)
 
@@ -33,7 +33,7 @@
 ### 수동 설치
 
 ```bash
-git clone https://github.com/skyventures/claude-three-o.git
+git clone https://github.com/JaeHyunGround/claude-three-o.git
 cd claude-three-o && bash install.sh
 ```
 
@@ -194,7 +194,7 @@ claude-three-o/
 - 컬러 코딩 점수 시각화 (녹/황/적)
 - 6페이지 구성: 타이틀, Executive Summary, SEO, GEO, AAO, 액션 플랜
 - 우선순위 액션 테이블 (P0/P1/P2)
-- SKYVENTURES 브랜딩
+- JaeHyunGround 브랜딩
 
 ## 요구사항
 
@@ -210,4 +210,4 @@ MIT License
 
 ---
 
-[SKYVENTURES](https://www.skyventures.co.kr/) 제작 | Powered by Claude Code
+[JaeHyunGround](https://github.com/JaeHyunGround) 제작 | Powered by Claude Code

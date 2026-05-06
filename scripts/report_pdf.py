@@ -110,7 +110,7 @@ class ThreeOPDF(FPDF):
         self._set_font("", 11)
         self.set_text_color(*COLORS["secondary"])
         self.cell(0, 8, f"Report Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}", 0, 1, "C")
-        self.cell(0, 8, "Powered by SKYVENTURES Three-O Platform", 0, 1, "C")
+        self.cell(0, 8, "Powered by JaeHyunGround Three-O Platform", 0, 1, "C")
 
     def _draw_score_circle(self, score: float, grade: str):
         """Draw the main score display."""

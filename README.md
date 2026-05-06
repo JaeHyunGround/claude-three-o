@@ -8,7 +8,7 @@ Unified search and AI visibility optimization plugin for Claude Code. Three pill
 
 > **Three-O** = **SEO** (Search Engine) + **GEO** (Generative Engine) + **AAO** (Assistive Agent)
 >
-> Built for the Korean market by [SKYVENTURES](https://www.skyventures.co.kr/)
+> Built for the Korean market by [JaeHyunGround](https://github.com/JaeHyunGround)
 
 [한국어 README](README.ko.md)
 
@@ -33,7 +33,7 @@ Unified search and AI visibility optimization plugin for Claude Code. Three pill
 ### Manual Install
 
 ```bash
-git clone https://github.com/skyventures/claude-three-o.git
+git clone https://github.com/JaeHyunGround/claude-three-o.git
 cd claude-three-o && bash install.sh
 ```
 
@@ -194,7 +194,7 @@ claude-three-o/
 - Color-coded score visualizations
 - 6-page structure: Title, Executive Summary, SEO, GEO, AAO, Action Plan
 - Priority-ordered action table (P0/P1/P2)
-- SKYVENTURES branding
+- JaeHyunGround branding
 
 ## Requirements
 
@@ -210,4 +210,4 @@ MIT License
 
 ---
 
-Built by [SKYVENTURES](https://www.skyventures.co.kr/) | Powered by Claude Code
+Built by [JaeHyunGround](https://github.com/JaeHyunGround) | Powered by Claude Code
