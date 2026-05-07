@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import re
 import sys
 from typing import Optional
 
@@ -38,6 +39,145 @@ def analyze_meta_tags(html: str) -> dict:
     parser = MetaParser()
     parser.feed(html)
     return tags
+
+
+def evaluate_meta_quality(meta: dict, url: str) -> dict:
+    """Evaluate the quality of meta tags, not just their existence."""
+    quality = {"score": 0, "checks": [], "issues": []}
+    total_weight = 0
+    weighted_score = 0
+
+    title = meta.get("title", "")
+    title_weight = 20
+    total_weight += title_weight
+    if title:
+        title_len = len(title)
+        if 30 <= title_len <= 60:
+            weighted_score += title_weight
+            quality["checks"].append({"tag": "title", "status": "optimal", "value": title_len, "detail": f"{title_len} chars (ideal: 30-60)"})
+        elif 20 <= title_len < 30 or 60 < title_len <= 70:
+            weighted_score += title_weight * 0.7
+            quality["checks"].append({"tag": "title", "status": "acceptable", "value": title_len, "detail": f"{title_len} chars (slightly off)"})
+        else:
+            weighted_score += title_weight * 0.3
+            quality["issues"].append({"severity": "medium", "message": f"Title length {title_len} chars (ideal: 30-60)"})
+    else:
+        quality["issues"].append({"severity": "critical", "message": "Missing title tag"})
+
+    desc = meta.get("description", "")
+    desc_weight = 15
+    total_weight += desc_weight
+    if desc:
+        desc_len = len(desc)
+        if 120 <= desc_len <= 160:
+            weighted_score += desc_weight
+            quality["checks"].append({"tag": "description", "status": "optimal", "value": desc_len, "detail": f"{desc_len} chars (ideal: 120-160)"})
+        elif 80 <= desc_len < 120 or 160 < desc_len <= 200:
+            weighted_score += desc_weight * 0.7
+            quality["checks"].append({"tag": "description", "status": "acceptable", "value": desc_len, "detail": f"{desc_len} chars"})
+        else:
+            weighted_score += desc_weight * 0.3
+            quality["issues"].append({"severity": "low", "message": f"Description length {desc_len} chars (ideal: 120-160)"})
+        if title and desc == title:
+            weighted_score -= desc_weight * 0.3
+            quality["issues"].append({"severity": "medium", "message": "Description duplicates title"})
+    else:
+        quality["issues"].append({"severity": "high", "message": "Missing meta description"})
+
+    canonical = meta.get("canonical", "")
+    canon_weight = 10
+    total_weight += canon_weight
+    if canonical:
+        if canonical.startswith("http"):
+            weighted_score += canon_weight
+            if canonical.startswith("http://") and url.startswith("https://"):
+                weighted_score -= canon_weight * 0.4
+                quality["issues"].append({"severity": "medium", "message": "Canonical uses HTTP but page is HTTPS"})
+        else:
+            weighted_score += canon_weight * 0.5
+            quality["issues"].append({"severity": "low", "message": "Canonical is relative URL (absolute recommended)"})
+    else:
+        quality["issues"].append({"severity": "medium", "message": "Missing canonical tag"})
+
+    og_tags = ["og:title", "og:description", "og:image", "og:url"]
+    og_weight = 10
+    total_weight += og_weight
+    og_present = sum(1 for t in og_tags if meta.get(t))
+    og_ratio = og_present / len(og_tags)
+    weighted_score += og_weight * og_ratio
+    if og_ratio < 1.0:
+        missing = [t for t in og_tags if not meta.get(t)]
+        quality["issues"].append({"severity": "low", "message": f"Missing OG tags: {', '.join(missing)}"})
+
+    twitter_tags = ["twitter:card", "twitter:title", "twitter:description"]
+    tw_weight = 5
+    total_weight += tw_weight
+    tw_present = sum(1 for t in twitter_tags if meta.get(t))
+    weighted_score += tw_weight * (tw_present / len(twitter_tags))
+
+    quality["score"] = round((weighted_score / max(total_weight, 1)) * 100, 1)
+    return quality
+
+
+def analyze_heading_structure(html: str) -> dict:
+    """Analyze heading hierarchy and H1 usage."""
+    h1s = re.findall(r'<h1[^>]*>(.*?)</h1>', html, re.DOTALL | re.IGNORECASE)
+    h2s = re.findall(r'<h2[^>]*>(.*?)</h2>', html, re.DOTALL | re.IGNORECASE)
+    h3s = re.findall(r'<h3[^>]*>(.*?)</h3>', html, re.DOTALL | re.IGNORECASE)
+
+    h1_clean = [re.sub(r'<[^>]+>', '', h).strip() for h in h1s]
+    issues = []
+
+    if len(h1s) == 0:
+        issues.append({"severity": "high", "category": "structure", "message": "Missing H1 tag"})
+    elif len(h1s) > 1:
+        issues.append({"severity": "medium", "category": "structure", "message": f"Multiple H1 tags ({len(h1s)}) — use only one"})
+
+    if len(h2s) == 0 and len(h3s) > 0:
+        issues.append({"severity": "medium", "category": "structure", "message": "H3 used without H2 — broken heading hierarchy"})
+
+    return {
+        "h1_count": len(h1s),
+        "h2_count": len(h2s),
+        "h3_count": len(h3s),
+        "h1_text": h1_clean[:3],
+        "hierarchy_valid": len(h1s) == 1 and (len(h2s) > 0 or len(h3s) == 0),
+        "issues": issues,
+    }
+
+
+def analyze_images(html: str) -> dict:
+    """Analyze image alt text coverage."""
+    images = re.findall(r'<img[^>]*>', html, re.IGNORECASE)
+    total = len(images)
+    with_alt = sum(1 for img in images if re.search(r'alt="[^"]+"|alt=\'[^\']+\'', img, re.IGNORECASE))
+    empty_alt = sum(1 for img in images if re.search(r'alt=""|alt=\'\'', img, re.IGNORECASE))
+    missing_alt = total - with_alt - empty_alt
+
+    issues = []
+    if total > 0 and missing_alt > 0:
+        issues.append({"severity": "medium", "category": "accessibility", "message": f"{missing_alt}/{total} images missing alt text"})
+
+    coverage = round((with_alt / max(total, 1)) * 100, 1)
+    return {"total": total, "with_alt": with_alt, "missing_alt": missing_alt, "coverage": coverage, "issues": issues}
+
+
+def analyze_links(html: str, url: str) -> dict:
+    """Analyze internal vs external link distribution."""
+    domain = url.split('/')[2] if len(url.split('/')) > 2 else ""
+    all_links = re.findall(r'<a[^>]+href="([^"]*)"', html, re.IGNORECASE)
+
+    internal = 0
+    external = 0
+    for link in all_links:
+        if link.startswith('#') or link.startswith('javascript'):
+            continue
+        if link.startswith('/') or domain in link:
+            internal += 1
+        elif link.startswith('http'):
+            external += 1
+
+    return {"internal": internal, "external": external, "total": internal + external}
 
 
 def check_https(url: str) -> dict:
@@ -78,35 +218,67 @@ def analyze_technical(url: str) -> dict:
 
     html = result["html"]
     meta = analyze_meta_tags(html)
+    meta_quality = evaluate_meta_quality(meta, url)
     security = check_https(url)
     mobile = check_mobile(html)
+    headings = analyze_heading_structure(html)
+    images = analyze_images(html)
+    links = analyze_links(html, url)
 
     issues = []
-    if not meta.get("title"):
-        issues.append({"severity": "critical", "category": "indexability", "message": "Missing title tag"})
-    if not meta.get("description"):
-        issues.append({"severity": "high", "category": "indexability", "message": "Missing meta description"})
-    if not meta.get("canonical"):
-        issues.append({"severity": "medium", "category": "indexability", "message": "Missing canonical tag"})
+    issues.extend(meta_quality["issues"])
+    issues.extend(headings["issues"])
+    issues.extend(images["issues"])
+
     if not security.get("https"):
         issues.append({"severity": "critical", "category": "security", "message": "Not using HTTPS"})
     if not security.get("hsts"):
         issues.append({"severity": "medium", "category": "security", "message": "Missing HSTS header"})
+    if not security.get("x_content_type"):
+        issues.append({"severity": "low", "category": "security", "message": "Missing X-Content-Type-Options header"})
+    if not security.get("x_frame"):
+        issues.append({"severity": "low", "category": "security", "message": "Missing X-Frame-Options header"})
     if not mobile.get("viewport_meta"):
         issues.append({"severity": "critical", "category": "mobile", "message": "Missing viewport meta tag"})
 
-    score = 100 - (sum(25 if i["severity"] == "critical" else 10 if i["severity"] == "high" else 5 for i in issues))
-    score = max(0, min(100, score))
+    elapsed = result.get("elapsed_seconds", 0)
+    if elapsed and elapsed > 3.0:
+        issues.append({"severity": "high", "category": "performance", "message": f"Slow response time: {elapsed:.1f}s (target: <1s)"})
+    elif elapsed and elapsed > 1.0:
+        issues.append({"severity": "medium", "category": "performance", "message": f"Response time {elapsed:.1f}s (target: <1s)"})
+
+    has_lang = bool(re.search(r'<html[^>]+lang=', html, re.IGNORECASE))
+    if not has_lang:
+        issues.append({"severity": "low", "category": "indexability", "message": "Missing lang attribute on <html>"})
+
+    section_scores = {
+        "meta_quality": meta_quality["score"],
+        "security": round((sum([security.get("https", False), security.get("hsts", False),
+                                security.get("x_content_type", False), security.get("x_frame", False),
+                                security.get("csp", False)]) / 5) * 100, 1),
+        "mobile": round((sum([mobile.get("viewport_meta", False), mobile.get("responsive_signals", False)]) / 2) * 100, 1),
+        "headings": 100.0 if headings["hierarchy_valid"] else 50.0,
+        "images": images["coverage"],
+        "performance": 100.0 if (elapsed or 0) < 0.5 else 80.0 if (elapsed or 0) < 1.0 else 50.0 if (elapsed or 0) < 3.0 else 20.0,
+    }
+
+    weights = {"meta_quality": 0.30, "security": 0.15, "mobile": 0.15, "headings": 0.15, "images": 0.10, "performance": 0.15}
+    score = round(sum(section_scores[k] * weights[k] for k in weights), 1)
 
     return {
         "success": True,
         "url": url,
         "score": score,
+        "section_scores": section_scores,
         "meta_tags": meta,
+        "meta_quality": meta_quality["checks"],
         "security": security,
         "mobile": mobile,
+        "headings": headings,
+        "images": {"total": images["total"], "with_alt": images["with_alt"], "coverage": images["coverage"]},
+        "links": links,
         "issues": issues,
-        "response_time": result.get("elapsed_seconds"),
+        "response_time": elapsed,
     }
 
 
