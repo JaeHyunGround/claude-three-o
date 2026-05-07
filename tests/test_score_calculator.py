@@ -65,7 +65,9 @@ class TestGeoScore(unittest.TestCase):
 
     def test_all_zero(self):
         result = compute_geo_score(0, 0, 0, 0, 0)
-        self.assertAlmostEqual(result["geo_score"], 1.0, places=0)
+        self.assertEqual(result["geo_score"], 0.0)
+        self.assertTrue(result.get("partial", False))
+        self.assertEqual(result.get("confidence"), 0.0)
 
     def test_all_perfect(self):
         result = compute_geo_score(100, 100, 100, 100, 100)

@@ -112,8 +112,10 @@ cd claude-three-o && bash install.sh
 ### Three-O Score (0-100)
 
 ```
-Three-O Score = SEO (35%) + GEO (35%) + AAO (30%)
+Three-O Score = (SEO × 35% + GEO × 35% + AAO × 30%) × balance_penalty
 ```
+
+The balance penalty (0.85–1.0) penalizes imbalanced profiles — a site with SEO 90 but GEO 10 scores lower than pure weighted average. Confidence score (0–1.0) indicates data availability.
 
 | Grade | Score | Meaning |
 |-------|-------|---------|
@@ -144,6 +146,8 @@ GEO = geometric_mean(MF^0.30 x CQ^0.25 x VR^0.20 x EP^0.15 x TA^0.10)
 - **VR** (20%): Visibility Ranking position
 - **EP** (15%): Entity Presence in knowledge graphs
 - **TA** (10%): Technical Accessibility for AI crawlers
+
+**Partial scoring**: Dimensions requiring API keys (MF, VR) are excluded when unavailable — remaining dimensions' weights are redistributed. Confidence score tracks data completeness.
 
 **Platform-specific GEO**: Each AI platform (ChatGPT, Perplexity, Gemini, Claude) gets an individual GEO score based on its citation preferences:
 - **ChatGPT**: definition sentences, concise paragraphs (80-300 chars), FAQ, freshness
@@ -231,6 +235,9 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 | AAO Selectability | Industry auto-detection + weight adjustment | Restaurant ≠ SaaS ≠ Clinic scoring |
 | AAO Selectability | Signal correlation bonuses/penalties | Schema + reviews = synergy bonus |
 | AAO Selectability | Cross-validation | Schema claims verified against page content |
+| Three-O Score | Balance penalty | Imbalanced pillar profiles penalized (0.85-1.0) |
+| GEO Score | Partial dimension support | Unavailable dimensions excluded, weights redistributed |
+| All Scores | Confidence tracking | Data availability (0-1.0) per computation |
 
 ## Requirements
 
