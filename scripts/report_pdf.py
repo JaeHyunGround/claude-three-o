@@ -201,6 +201,35 @@ class ThreeOPDF(FPDF):
                     p_score = p_data.get("geo_score", 0) if isinstance(p_data, dict) else p_data
                     self._draw_score_bar(p_name.capitalize(), float(p_score))
 
+        if pillar == "aao":
+            industry = pillar_data.get("industry_detected", "")
+            if industry and industry != "general":
+                self.ln(5)
+                self._set_font("B", 10)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 8, f"Industry Detected: {industry.title()}", 0, 1)
+                self.ln(2)
+                weights = pillar_data.get("weights_applied", {})
+                if weights:
+                    self._set_font("", 8)
+                    self.set_text_color(*COLORS["secondary"])
+                    w_str = ", ".join(f"{k.replace('_', ' ')}: {v:.0%}" for k, v in weights.items())
+                    self.cell(0, 6, f"Adjusted weights: {w_str}", 0, 1)
+
+            correlation = pillar_data.get("correlation", {})
+            if correlation and correlation.get("applied"):
+                self.ln(3)
+                self._set_font("B", 9)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 7, "Signal Correlations:", 0, 1)
+                for c in correlation["applied"][:5]:
+                    prefix = "+" if c["value"] > 0 else ""
+                    color = COLORS["success"] if c["value"] > 0 else COLORS["danger"]
+                    self._set_font("", 8)
+                    self.set_text_color(*color)
+                    self.cell(5, 5, "", 0, 0)
+                    self.cell(0, 5, f"{prefix}{c['value']:.0f} {c['reason']}", 0, 1)
+
         self.ln(8)
         issues = pillar_data.get("issues", [])
         if issues:
@@ -219,6 +248,62 @@ class ThreeOPDF(FPDF):
                 self.cell(16, 6, severity.upper(), 0, 0, "C", fill=True)
                 self.set_text_color(*COLORS["text"])
                 self.cell(0, 6, f"  {issue.get('message', '')}", 0, 1)
+
+    def add_recommendations(self, data: dict):
+        """Add recommendations page with quick wins and strategic items."""
+        from recommendations import generate_recommendations
+        rec_data = generate_recommendations(data)
+
+        if not rec_data.get("recommendations"):
+            return
+
+        self.add_page()
+        self._section_title("Recommendations")
+
+        industry = rec_data.get("industry", "general")
+        if industry != "general":
+            self._set_font("", 10)
+            self.set_text_color(*COLORS["secondary"])
+            self.cell(0, 7, f"Industry: {industry.title()} | {rec_data['total']} recommendations generated", 0, 1)
+            self.ln(5)
+
+        if rec_data.get("quick_wins"):
+            self._set_font("B", 11)
+            self.set_text_color(*COLORS["success"])
+            self.cell(0, 8, "Quick Wins (High impact, Low effort)", 0, 1)
+            self.ln(2)
+
+            for i, r in enumerate(rec_data["quick_wins"][:4], 1):
+                self._set_font("B", 9)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 6, f"{i}. {r['title']}", 0, 1)
+                self._set_font("", 8)
+                self.set_text_color(*COLORS["secondary"])
+                detail = r["detail"][:100] + ("..." if len(r["detail"]) > 100 else "")
+                self.cell(5, 5, "", 0, 0)
+                self.cell(0, 5, detail, 0, 1)
+                self.cell(5, 5, "", 0, 0)
+                self.set_text_color(59, 130, 246)
+                self.cell(0, 5, f"Effort: {r['effort_estimate']} | Impact: {r['impact_estimate']}", 0, 1)
+                self.ln(2)
+
+        if rec_data.get("strategic"):
+            self.ln(3)
+            self._set_font("B", 11)
+            self.set_text_color(*COLORS["primary"])
+            self.cell(0, 8, "Strategic Investments", 0, 1)
+            self.ln(2)
+
+            for i, r in enumerate(rec_data["strategic"][:3], 1):
+                self._set_font("B", 9)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 6, f"{i}. {r['title']}", 0, 1)
+                self._set_font("", 8)
+                self.set_text_color(*COLORS["secondary"])
+                detail = r["detail"][:100] + ("..." if len(r["detail"]) > 100 else "")
+                self.cell(5, 5, "", 0, 0)
+                self.cell(0, 5, detail, 0, 1)
+                self.ln(2)
 
     def add_action_plan(self, data: dict):
         """Add action plan page."""
@@ -310,6 +395,7 @@ def generate_pdf_report(data: dict, output_path: Optional[str] = None) -> str:
         if data.get(pillar):
             pdf.add_pillar_section(pillar, data)
 
+    pdf.add_recommendations(data)
     pdf.add_action_plan(data)
 
     if not output_path:
