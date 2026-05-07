@@ -20,6 +20,7 @@ Unified search and AI visibility optimization plugin for Claude Code. Three pill
 - [Scoring System](#scoring-system)
 - [Architecture](#architecture)
 - [Output Formats](#output-formats)
+- [Analysis Accuracy](#analysis-accuracy)
 - [Requirements](#requirements)
 
 ## Installation
@@ -126,7 +127,13 @@ Three-O Score = SEO (35%) + GEO (35%) + AAO (30%)
 | F | 0-19 | Minimal presence |
 
 ### SEO Score
-Technical + Content + On-Page + Schema + Performance + AI Readiness + Images
+Technical (meta quality + security + mobile + headings + images + performance) + Content + On-Page + Schema + AI Readiness
+
+Key features:
+- **Meta quality evaluation**: not just presence but optimal length (title 30-60, desc 120-160), protocol consistency, duplication detection
+- **Heading hierarchy validation**: single H1, proper H2→H3 nesting
+- **Image alt coverage**: percentage-based scoring
+- **Weighted section scoring**: meta_quality 30%, security 15%, mobile 15%, headings 15%, images 10%, performance 15%
 
 ### GEO Score (Geometric Mean)
 ```
@@ -138,8 +145,22 @@ GEO = geometric_mean(MF^0.30 x CQ^0.25 x VR^0.20 x EP^0.15 x TA^0.10)
 - **EP** (15%): Entity Presence in knowledge graphs
 - **TA** (10%): Technical Accessibility for AI crawlers
 
+**Platform-specific GEO**: Each AI platform (ChatGPT, Perplexity, Gemini, Claude) gets an individual GEO score based on its citation preferences:
+- **ChatGPT**: definition sentences, concise paragraphs (80-300 chars), FAQ, freshness
+- **Perplexity**: source attribution, data density, recency, outbound references
+- **Gemini**: E-E-A-T signals, tables, comparison content, knowledge graph connectivity
+- **Claude**: content depth, data-backed claims, nuance, research references
+
 ### AAO Score
-Selectability + Conversion Readiness + Structured Data + Rendering + Entity Consistency
+Selectability (industry-weighted) + Conversion Readiness + Structured Data + Rendering + Entity Consistency
+
+**Selectability dimensions**: structured_data (25%) + reviews_ratings (20%) + info_completeness (20%) + api_booking (15%) + trust_signals (10%) + freshness (10%)
+
+Key features:
+- **Industry auto-detection**: restaurant, ecommerce, clinic, hotel, education, saas → weight adjustment
+- **Signal correlation**: cross-dimension bonuses (e.g., schema + reviews = +8) and penalties
+- **Cross-validation**: schema claims verified against actual page content
+- **Quality scoring**: not just presence/absence, but quality assessment per field
 
 ### Industry-Specific Adjustments (Korean Market)
 
@@ -195,6 +216,21 @@ claude-three-o/
 - 6-page structure: Title, Executive Summary, SEO, GEO, AAO, Action Plan
 - Priority-ordered action table (P0/P1/P2)
 - JaeHyunGround branding
+
+## Analysis Accuracy
+
+Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechanisms:
+
+| Module | Mechanism | Effect |
+|--------|-----------|--------|
+| GEO Citability | AI citation pattern detection (definition, comparison, step, causal) | Identifies passages most likely to be cited |
+| GEO Citability | Self-containment scoring | Penalizes context-dependent passages |
+| GEO Platforms | Differentiated per-platform criteria | Each AI platform scored by its actual preferences |
+| SEO Technical | Meta quality evaluation (not binary) | Title length, desc length, canonical protocol check |
+| SEO Technical | Weighted multi-section scoring | 6 sub-dimensions with configurable weights |
+| AAO Selectability | Industry auto-detection + weight adjustment | Restaurant ≠ SaaS ≠ Clinic scoring |
+| AAO Selectability | Signal correlation bonuses/penalties | Schema + reviews = synergy bonus |
+| AAO Selectability | Cross-validation | Schema claims verified against page content |
 
 ## Requirements
 
