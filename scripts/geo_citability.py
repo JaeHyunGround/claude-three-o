@@ -10,12 +10,128 @@ from fetch_page import fetch_page
 
 
 CITABILITY_WEIGHTS = {
-    "passage_clarity": 0.25,
-    "factual_density": 0.25,
-    "structural_format": 0.20,
-    "authority_signals": 0.15,
-    "uniqueness": 0.15,
+    "passage_clarity": 0.20,
+    "factual_density": 0.20,
+    "citation_pattern": 0.25,
+    "structural_format": 0.15,
+    "authority_signals": 0.10,
+    "uniqueness": 0.10,
 }
+
+DEFINITION_PATTERNS = [
+    r'(?:는|은|란|이란)\s+.{10,}(?:이다|입니다|합니다|됩니다)',
+    r'(?:is|are|refers to|means|defined as)\s+.{10,}',
+    r'^[A-Z가-힣].{5,}(?:is a|is the|refers to)',
+]
+
+COMPARISON_PATTERNS = [
+    r'(?:에 비해|보다|대비|반면|차이점|vs\.?|versus)',
+    r'(?:compared to|unlike|whereas|in contrast|difference between)',
+    r'(?:장점|단점|pros|cons|advantages|disadvantages)',
+]
+
+STEP_PATTERNS = [
+    r'(?:첫째|둘째|셋째|먼저|다음|마지막으로)',
+    r'(?:first|second|third|step \d|finally|next)',
+    r'^\d+[\.\)]\s+',
+]
+
+CAUSAL_PATTERNS = [
+    r'(?:때문에|으로 인해|결과적으로|따라서|그러므로)',
+    r'(?:because|therefore|as a result|consequently|due to|leads to)',
+]
+
+PLATFORM_CITATION_PREFS = {
+    "chatgpt": {"definition": 1.3, "comparison": 1.1, "step": 1.2, "data": 1.0},
+    "perplexity": {"definition": 1.0, "comparison": 1.0, "step": 1.0, "data": 1.4},
+    "gemini": {"definition": 1.2, "comparison": 1.2, "step": 1.0, "data": 1.1},
+    "claude": {"definition": 1.1, "comparison": 1.0, "step": 1.1, "data": 1.3},
+}
+
+
+def score_citation_pattern(passage: str) -> dict:
+    """Score how well a passage matches known AI citation patterns."""
+    score = 20.0
+    patterns_found = []
+
+    for pattern in DEFINITION_PATTERNS:
+        if re.search(pattern, passage, re.IGNORECASE):
+            score += 25
+            patterns_found.append("definition")
+            break
+
+    for pattern in COMPARISON_PATTERNS:
+        if re.search(pattern, passage, re.IGNORECASE):
+            score += 20
+            patterns_found.append("comparison")
+            break
+
+    for pattern in STEP_PATTERNS:
+        if re.search(pattern, passage, re.IGNORECASE | re.MULTILINE):
+            score += 15
+            patterns_found.append("step")
+            break
+
+    for pattern in CAUSAL_PATTERNS:
+        if re.search(pattern, passage, re.IGNORECASE):
+            score += 15
+            patterns_found.append("causal")
+            break
+
+    numbers = re.findall(r'\d+[\d,.%]*\s*(?:km|m|kg|원|달러|%|명|개|건|억|만|배|배수)?', passage)
+    if len(numbers) >= 2:
+        score += 15
+        patterns_found.append("data")
+    elif len(numbers) == 1:
+        score += 8
+
+    return {"score": min(100.0, score), "patterns": patterns_found}
+
+
+def score_self_containment(passage: str) -> float:
+    """Score how independently understandable a passage is without surrounding context."""
+    score = 60.0
+
+    context_dependent = ["이것", "그것", "저것", "이런", "그런", "위의", "아래의",
+                         "this", "that", "these", "those", "above", "below",
+                         "the former", "the latter", "as mentioned"]
+    dep_count = sum(1 for word in context_dependent if word in passage.lower())
+    score -= dep_count * 12
+
+    sentences = re.split(r'[.!?。]', passage)
+    sentences = [s.strip() for s in sentences if len(s.strip()) > 5]
+    if sentences:
+        first = sentences[0]
+        has_subject = bool(re.match(r'^[A-Z가-힣]', first))
+        if has_subject:
+            score += 15
+
+    if len(passage) >= 80 and len(passage) <= 400:
+        score += 15
+    elif len(passage) > 400:
+        score += 5
+
+    question_words = ["무엇", "어떻게", "왜", "what", "how", "why", "when"]
+    if any(qw in passage.lower()[:30] for qw in question_words):
+        score += 10
+
+    return max(0.0, min(100.0, score))
+
+
+def score_platform_citability(passage: str, pattern_result: dict) -> dict:
+    """Score citability per AI platform based on their citation preferences."""
+    base_score = pattern_result["score"]
+    patterns = pattern_result["patterns"]
+
+    platform_scores = {}
+    for platform, prefs in PLATFORM_CITATION_PREFS.items():
+        multiplier = 1.0
+        for pat in patterns:
+            if pat in prefs:
+                multiplier = max(multiplier, prefs[pat])
+        platform_scores[platform] = round(min(100.0, base_score * multiplier), 1)
+
+    return platform_scores
 
 
 def extract_passages(html: str) -> list:
@@ -160,28 +276,52 @@ def analyze_citability(url: str, depth: int = 1) -> dict:
     passages = extract_passages(html)
 
     passage_scores = []
+    platform_totals = {"chatgpt": [], "perplexity": [], "gemini": [], "claude": []}
+
     for passage in passages[:20]:
         clarity = score_passage_clarity(passage)
         factual = score_factual_density(passage)
-        p_score = round(clarity * 0.6 + factual * 0.4, 1)
+        pattern_result = score_citation_pattern(passage)
+        containment = score_self_containment(passage)
+        platform_cit = score_platform_citability(passage, pattern_result)
+
+        p_score = round(
+            clarity * 0.25 +
+            factual * 0.20 +
+            pattern_result["score"] * 0.30 +
+            containment * 0.25,
+            1
+        )
         passage_scores.append({
             "text": passage[:150] + ("..." if len(passage) > 150 else ""),
             "score": p_score,
             "clarity": round(clarity, 1),
             "factual_density": round(factual, 1),
+            "citation_pattern": round(pattern_result["score"], 1),
+            "self_containment": round(containment, 1),
+            "patterns_found": pattern_result["patterns"],
+            "platform_scores": platform_cit,
         })
+        for plat, plat_score in platform_cit.items():
+            platform_totals[plat].append(plat_score)
 
     passage_scores.sort(key=lambda x: x["score"], reverse=True)
 
+    sample = passages[:10]
     dim_scores = {
-        "passage_clarity": round(sum(score_passage_clarity(p) for p in passages[:10]) / max(len(passages[:10]), 1), 1),
-        "factual_density": round(sum(score_factual_density(p) for p in passages[:10]) / max(len(passages[:10]), 1), 1),
+        "passage_clarity": round(sum(score_passage_clarity(p) for p in sample) / max(len(sample), 1), 1),
+        "factual_density": round(sum(score_factual_density(p) for p in sample) / max(len(sample), 1), 1),
+        "citation_pattern": round(sum(score_citation_pattern(p)["score"] for p in sample) / max(len(sample), 1), 1),
         "structural_format": round(score_structural_format(html), 1),
         "authority_signals": round(score_authority_signals(html), 1),
         "uniqueness": round(score_uniqueness(passages), 1),
     }
 
     overall = round(sum(dim_scores[k] * CITABILITY_WEIGHTS[k] for k in CITABILITY_WEIGHTS), 1)
+
+    platform_avg = {}
+    for plat, scores in platform_totals.items():
+        platform_avg[plat] = round(sum(scores) / max(len(scores), 1), 1) if scores else 0.0
 
     issues = []
     if dim_scores["passage_clarity"] < 50:
@@ -200,6 +340,7 @@ def analyze_citability(url: str, depth: int = 1) -> dict:
         "url": url,
         "score": overall,
         "dimensions": dim_scores,
+        "platform_citability": platform_avg,
         "total_passages": len(passages),
         "top_passages": passage_scores[:5],
         "issues": issues,
