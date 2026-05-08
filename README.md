@@ -193,9 +193,9 @@ claude-three-o/
     three-o-*/               # Cross-cutting (4 skills)
   agents/                    # 24 subagents
   hooks/                     # Quality gate hooks (3)
-  scripts/                   # 44 Python scripts
+  scripts/                   # 45 Python scripts
   schema/                    # Schema.org JSON-LD templates (8 industry types)
-  tests/                     # Test suite (340 tests)
+  tests/                     # Test suite (393 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
@@ -239,6 +239,9 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 | AAO Selectability | Cross-validation | Schema claims verified against page content |
 | Three-O Score | Balance penalty | Imbalanced pillar profiles penalized (0.85-1.0) |
 | GEO Score | Partial dimension support | Unavailable dimensions excluded, weights redistributed |
+| Drift Detection | SEO dimension-level tracking | Meta, headings, images, schema, performance changes with severity |
+| Drift Detection | Velocity + acceleration | Score change rate per snapshot with trend classification |
+| Drift Detection | Cross-pillar correlation alerts | Multi-pillar decline, single-pillar isolation, divergence detection |
 | Competitor Benchmark | Multi-dimensional gap analysis | Per-dimension scoring across 16 dimensions (SEO 5 + GEO 5 + AAO 6) |
 | Competitor Benchmark | Prioritized action plan | P0/P1/maintain based on gap severity with Korean recommendations |
 | Competitor Benchmark | Competitive positioning | Radar chart data with market averages per dimension |

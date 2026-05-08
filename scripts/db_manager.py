@@ -113,6 +113,26 @@ def save_baseline(brand: str, pillar: str, score: float, data: dict, locked: boo
     conn.close()
 
 
+def get_baseline_history(brand: str, pillar: str, limit: int = 10) -> list:
+    """Get recent baselines for a brand/pillar ordered by timestamp desc."""
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM baselines WHERE brand = ? AND pillar = ? ORDER BY timestamp DESC LIMIT ?",
+        (brand, pillar, limit),
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_all_pillar_baselines(brand: str, limit: int = 10) -> dict:
+    """Get recent baselines for all pillars."""
+    return {
+        "seo": get_baseline_history(brand, "seo", limit),
+        "geo": get_baseline_history(brand, "geo", limit),
+        "aao": get_baseline_history(brand, "aao", limit),
+    }
+
+
 def list_brands() -> list:
     """List all brands with stored data."""
     conn = get_connection()
