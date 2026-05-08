@@ -94,6 +94,7 @@ cd claude-three-o && bash install.sh
 | `/three-o geo llms-txt <url>` | llms.txt validation and generation |
 | `/three-o geo platforms <brand>` | Platform-specific analysis (ChatGPT, Perplexity, Gemini, Claude) |
 | `/three-o geo drift <brand>` | GEO drift detection over time |
+| `/three-o geo rewrite <url>` | Content rewrite suggestions for AI citability |
 
 ### AAO Module
 
@@ -192,9 +193,9 @@ claude-three-o/
     three-o-*/               # Cross-cutting (4 skills)
   agents/                    # 24 subagents
   hooks/                     # Quality gate hooks (3)
-  scripts/                   # 43 Python scripts
+  scripts/                   # 44 Python scripts
   schema/                    # Schema.org JSON-LD templates (8 industry types)
-  tests/                     # Test suite (254 tests)
+  tests/                     # Test suite (301 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
@@ -238,6 +239,9 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 | AAO Selectability | Cross-validation | Schema claims verified against page content |
 | Three-O Score | Balance penalty | Imbalanced pillar profiles penalized (0.85-1.0) |
 | GEO Score | Partial dimension support | Unavailable dimensions excluded, weights redistributed |
+| Content Rewrite | Weakness analysis per passage | Detects vague language, filler, weak openers, low factual density |
+| Content Rewrite | Strategy-based rewrite suggestions | Definition, comparison, data, causal patterns with templates |
+| Content Rewrite | Platform-specific tips | Per-platform (ChatGPT, Perplexity, Gemini, Claude) optimization tips |
 | Schema Generator | Industry auto-detection + template selection | Restaurant, clinic, hotel, ecommerce, education, SaaS templates |
 | Schema Generator | HTML content extraction | Extracts name, phone, address, hours, prices, ratings, social links |
 | Schema Generator | Coverage scoring + suggestions | Identifies missing fields with impact-based improvement tips |

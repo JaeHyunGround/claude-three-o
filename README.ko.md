@@ -94,6 +94,7 @@ cd claude-three-o && bash install.sh
 | `/three-o geo llms-txt <url>` | llms.txt 검증 및 생성 |
 | `/three-o geo platforms <brand>` | 플랫폼별 분석 (ChatGPT, Perplexity, Gemini, Claude) |
 | `/three-o geo drift <brand>` | GEO 변화 추이 감지 |
+| `/three-o geo rewrite <url>` | AI 인용 최적화 콘텐츠 리라이트 제안 |
 
 ### AAO 모듈
 
@@ -192,9 +193,9 @@ claude-three-o/
     three-o-*/               # 크로스 커팅 (4개)
   agents/                    # 24개 서브에이전트
   hooks/                     # 품질 게이트 훅 (3개)
-  scripts/                   # 43개 Python 스크립트
+  scripts/                   # 44개 Python 스크립트
   schema/                    # Schema.org JSON-LD 템플릿 (8개 업종)
-  tests/                     # 테스트 스위트 (254개)
+  tests/                     # 테스트 스위트 (301개)
   reports/                   # 생성된 리포트 (gitignore)
 ```
 
@@ -238,6 +239,9 @@ Three-O는 부풀린 점수보다 현실적인 스코어링을 지향합니다. 
 | AAO 선택성 | 교차 검증 | 스키마 주장을 페이지 콘텐츠와 대조 |
 | Three-O 스코어 | 밸런스 페널티 | 불균형 pillar 프로필 감점 (0.85~1.0) |
 | GEO 스코어 | 부분 차원 지원 | 미가용 차원 제외, 가중치 재분배 |
+| 콘텐츠 리라이트 | 패시지별 약점 분석 | 모호한 표현, 마케팅 문구, 약한 문두, 낮은 팩트 밀도 감지 |
+| 콘텐츠 리라이트 | 전략 기반 리라이트 제안 | 정의문, 비교문, 수치 삽입, 인과관계 패턴 템플릿 |
+| 콘텐츠 리라이트 | 플랫폼별 최적화 팁 | ChatGPT, Perplexity, Gemini, Claude 플랫폼별 제안 |
 | 스키마 생성기 | 업종 자동 감지 + 템플릿 선택 | 음식점, 병원, 호텔, 이커머스, 교육, SaaS 템플릿 |
 | 스키마 생성기 | HTML 콘텐츠 추출 | 이름, 전화, 주소, 영업시간, 가격, 평점, SNS 링크 추출 |
 | 스키마 생성기 | 커버리지 점수 + 제안 | 누락 필드 식별 및 영향도별 개선 팁 |
