@@ -75,6 +75,7 @@ cd claude-three-o && bash install.sh
 | `/three-o seo naver <url>` | Naver-specific SEO (Smart Store, Place) |
 | `/three-o seo content <url>` | Content quality and E-E-A-T signals |
 | `/three-o seo schema <url>` | Schema.org structured data audit |
+| `/three-o seo schema generate <url>` | Auto-generate JSON-LD from page content |
 | `/three-o seo images <url>` | Image optimization analysis |
 | `/three-o seo drift baseline <url>` | Capture SEO baseline for monitoring |
 | `/three-o seo drift compare <url>` | Detect changes from baseline |
@@ -191,9 +192,9 @@ claude-three-o/
     three-o-*/               # Cross-cutting (4 skills)
   agents/                    # 24 subagents
   hooks/                     # Quality gate hooks (3)
-  scripts/                   # 42 Python scripts
-  schema/                    # Schema.org JSON-LD templates
-  tests/                     # Test suite (41 tests)
+  scripts/                   # 43 Python scripts
+  schema/                    # Schema.org JSON-LD templates (8 industry types)
+  tests/                     # Test suite (254 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
@@ -237,6 +238,9 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 | AAO Selectability | Cross-validation | Schema claims verified against page content |
 | Three-O Score | Balance penalty | Imbalanced pillar profiles penalized (0.85-1.0) |
 | GEO Score | Partial dimension support | Unavailable dimensions excluded, weights redistributed |
+| Schema Generator | Industry auto-detection + template selection | Restaurant, clinic, hotel, ecommerce, education, SaaS templates |
+| Schema Generator | HTML content extraction | Extracts name, phone, address, hours, prices, ratings, social links |
+| Schema Generator | Coverage scoring + suggestions | Identifies missing fields with impact-based improvement tips |
 | All Scores | Confidence tracking | Data availability (0-1.0) per computation |
 
 ## Requirements

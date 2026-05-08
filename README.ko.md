@@ -75,6 +75,7 @@ cd claude-three-o && bash install.sh
 | `/three-o seo naver <url>` | 네이버 특화 SEO (스마트스토어, 플레이스) |
 | `/three-o seo content <url>` | 콘텐츠 품질 및 E-E-A-T 신호 |
 | `/three-o seo schema <url>` | Schema.org 구조화 데이터 점검 |
+| `/three-o seo schema generate <url>` | 페이지 콘텐츠 기반 JSON-LD 자동 생성 |
 | `/three-o seo images <url>` | 이미지 최적화 분석 |
 | `/three-o seo drift baseline <url>` | SEO 베이스라인 캡처 |
 | `/three-o seo drift compare <url>` | 베이스라인 대비 변화 감지 |
@@ -191,9 +192,9 @@ claude-three-o/
     three-o-*/               # 크로스 커팅 (4개)
   agents/                    # 24개 서브에이전트
   hooks/                     # 품질 게이트 훅 (3개)
-  scripts/                   # 42개 Python 스크립트
-  schema/                    # Schema.org JSON-LD 템플릿
-  tests/                     # 테스트 스위트 (41개)
+  scripts/                   # 43개 Python 스크립트
+  schema/                    # Schema.org JSON-LD 템플릿 (8개 업종)
+  tests/                     # 테스트 스위트 (254개)
   reports/                   # 생성된 리포트 (gitignore)
 ```
 
@@ -237,6 +238,9 @@ Three-O는 부풀린 점수보다 현실적인 스코어링을 지향합니다. 
 | AAO 선택성 | 교차 검증 | 스키마 주장을 페이지 콘텐츠와 대조 |
 | Three-O 스코어 | 밸런스 페널티 | 불균형 pillar 프로필 감점 (0.85~1.0) |
 | GEO 스코어 | 부분 차원 지원 | 미가용 차원 제외, 가중치 재분배 |
+| 스키마 생성기 | 업종 자동 감지 + 템플릿 선택 | 음식점, 병원, 호텔, 이커머스, 교육, SaaS 템플릿 |
+| 스키마 생성기 | HTML 콘텐츠 추출 | 이름, 전화, 주소, 영업시간, 가격, 평점, SNS 링크 추출 |
+| 스키마 생성기 | 커버리지 점수 + 제안 | 누락 필드 식별 및 영향도별 개선 팁 |
 | 전체 스코어 | 신뢰도 추적 | 데이터 가용성 (0~1.0) 산출별 추적 |
 
 ## 요구사항

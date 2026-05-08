@@ -1,0 +1,44 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Hotel",
+  "name": "{{hotel_name}}",
+  "url": "{{website_url}}",
+  "image": "{{image_url}}",
+  "description": "{{description}}",
+  "telephone": "{{phone}}",
+  "priceRange": "{{price_range}}",
+  "starRating": {
+    "@type": "Rating",
+    "ratingValue": "{{star_rating}}"
+  },
+  "checkinTime": "{{checkin_time}}",
+  "checkoutTime": "{{checkout_time}}",
+  "amenityFeature": [],
+  "numberOfRooms": "{{room_count}}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{street}}",
+    "addressLocality": "{{city}}",
+    "addressRegion": "{{region}}",
+    "postalCode": "{{postal_code}}",
+    "addressCountry": "KR"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "{{latitude}}",
+    "longitude": "{{longitude}}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{rating}}",
+    "reviewCount": "{{review_count}}"
+  },
+  "potentialAction": {
+    "@type": "ReserveAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{booking_url}}"
+    }
+  },
+  "sameAs": []
+}

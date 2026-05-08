@@ -1,0 +1,34 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "{{app_name}}",
+  "url": "{{website_url}}",
+  "description": "{{description}}",
+  "applicationCategory": "{{category}}",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "KRW",
+    "lowPrice": "{{low_price}}",
+    "highPrice": "{{high_price}}",
+    "offerCount": "{{plan_count}}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{rating}}",
+    "reviewCount": "{{review_count}}"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "{{company_name}}",
+    "url": "{{company_url}}"
+  },
+  "potentialAction": {
+    "@type": "ViewAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{trial_url}}"
+    }
+  },
+  "sameAs": []
+}
