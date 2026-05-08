@@ -195,7 +195,7 @@ claude-three-o/
   hooks/                     # Quality gate hooks (3)
   scripts/                   # 45 Python scripts
   schema/                    # Schema.org JSON-LD templates (8 industry types)
-  tests/                     # Test suite (577 tests)
+  tests/                     # Test suite (674 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
@@ -241,6 +241,11 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 | SEO Content | Weighted content score | depth_score × 0.4 + eeat_score × 0.6 with axis-level diagnostics |
 | SEO Technical | Meta quality evaluation (not binary) | Title length, desc length, canonical protocol check |
 | SEO Technical | Weighted multi-section scoring | 6 sub-dimensions with configurable weights |
+| AAO Conversion | 6-dimension funnel scoring | CTA quality, form accessibility, flow completeness, mobile, deep link, confirmation |
+| AAO Conversion | CTA quality assessment | Specific vs generic CTA detection, schema action, urgency, ARIA roles |
+| AAO Conversion | Mobile conversion optimization | Viewport, click-to-call/map, touch targets, SNS login, sticky CTA |
+| AAO Conversion | Deep link & app integration | iOS universal links, Android intents, custom schemes, API endpoints |
+| AAO Conversion | Payment path depth analysis | Price visibility, payment methods, secure checkout, refund policy |
 | AAO Selectability | Industry auto-detection + weight adjustment | Restaurant ≠ SaaS ≠ Clinic scoring |
 | AAO Selectability | Signal correlation bonuses/penalties | Schema + reviews = synergy bonus |
 | AAO Selectability | Cross-validation | Schema claims verified against page content |
