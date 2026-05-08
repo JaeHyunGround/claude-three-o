@@ -195,7 +195,7 @@ claude-three-o/
   hooks/                     # Quality gate hooks (3)
   scripts/                   # 45 Python scripts
   schema/                    # Schema.org JSON-LD templates (8 industry types)
-  tests/                     # Test suite (500 tests)
+  tests/                     # Test suite (577 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
@@ -231,6 +231,10 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 |--------|-----------|--------|
 | GEO Citability | AI citation pattern detection (definition, comparison, step, causal) | Identifies passages most likely to be cited |
 | GEO Citability | Self-containment scoring | Penalizes context-dependent passages |
+| GEO Entity | 4-dimension entity scoring | Schema presence, connection strength, attribute completeness, disambiguation |
+| GEO Entity | Tiered sameAs verification | Knowledge (Wikidata/Wikipedia) > Authority (LinkedIn/Naver) > Social platforms |
+| GEO Entity | Type-aware attribute completeness | Per-entity-type required fields (Restaurant ≠ Organization ≠ Hotel) |
+| GEO Entity | Disambiguation signal detection | Business registration, founding year, CEO, location qualifier, generic name penalty |
 | GEO Platforms | Differentiated per-platform criteria | Each AI platform scored by its actual preferences |
 | SEO Content | 4-axis E-E-A-T quality scoring | Experience, Expertise, Authoritativeness, Trust scored independently (0-100) |
 | SEO Content | Korean + English signal detection | Bilingual regex patterns per axis (5+6+7+8 signal categories) |
