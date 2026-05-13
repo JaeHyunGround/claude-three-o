@@ -81,20 +81,9 @@ def detect_flow_type(html: str) -> str:
 
 
 def detect_industry(html: str) -> str:
-    """Detect industry from page content for weight adjustment."""
-    text = extract_text_content(html).lower()
-    patterns = [
-        ("restaurant", r'(?:메뉴|음식|맛집|레스토랑|카페|배달|menu|restaurant|cafe)'),
-        ("ecommerce", r'(?:상품|배송|장바구니|주문|카트|product|shipping|cart)'),
-        ("clinic", r'(?:진료|병원|클리닉|의원|치과|의사|clinic|hospital|doctor)'),
-        ("hotel", r'(?:객실|숙박|체크인|호텔|리조트|room|hotel|resort|check-in)'),
-        ("education", r'(?:수강|강좌|학원|교육|수업|course|class|academy|lesson)'),
-        ("saas", r'(?:요금제|플랜|구독|trial|pricing|plan|subscribe|SaaS)'),
-    ]
-    for industry, pattern in patterns:
-        if re.search(pattern, text):
-            return industry
-    return "general"
+    """Detect industry from page content with agency disambiguation."""
+    from aao_selectability import detect_industry as _detect
+    return _detect(html)
 
 
 def score_cta_quality(html: str) -> dict:

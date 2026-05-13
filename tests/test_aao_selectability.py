@@ -60,6 +60,35 @@ class TestIndustryDetection(unittest.TestCase):
         html = "<html><body><p>pricing plan</p><p>API dashboard</p><p>free trial subscription</p></body></html>"
         self.assertEqual(detect_industry(html), "saas")
 
+    def test_detect_agency(self):
+        html = """<html><body>
+        <p>종합대행사 브랜딩 캠페인</p>
+        <p>포트폴리오: 다양한 클라이언트 사례</p>
+        <p>크리에이티브, 디지털마케팅, 미디어 플래닝</p>
+        <p>Our Works</p><p>Our Team</p>
+        </body></html>"""
+        self.assertEqual(detect_industry(html), "agency")
+
+    def test_detect_agency_with_food_clients(self):
+        html = """<html><body>
+        <h2>통합 커뮤니케이션 기업</h2>
+        <p>종합대행사 브랜딩 캠페인 솔루션</p>
+        <p>클라이언트: BBQ, 귀한족발, Lotte GRS</p>
+        <p>menu innovation, food marketing, 맛집 캠페인</p>
+        <p>포트폴리오 — Our Works</p>
+        <p>광고주 맞춤 크리에이티브 대행</p>
+        <p>IMC, media planning, 퍼포먼스 마케팅</p>
+        </body></html>"""
+        self.assertEqual(detect_industry(html), "agency")
+
+    def test_detect_realestate(self):
+        html = "<html><body><p>매물 안내</p><p>아파트 분양</p><p>전세 월세 시세</p></body></html>"
+        self.assertEqual(detect_industry(html), "realestate")
+
+    def test_detect_franchise(self):
+        html = "<html><body><p>가맹점 모집</p><p>프랜차이즈 창업</p><p>매장 안내 본사</p></body></html>"
+        self.assertEqual(detect_industry(html), "franchise")
+
 
 class TestIndustryWeights(unittest.TestCase):
 
@@ -78,7 +107,7 @@ class TestIndustryWeights(unittest.TestCase):
         self.assertGreater(weights["api_booking"], base)
 
     def test_weights_sum_to_one(self):
-        for industry in ["restaurant", "ecommerce", "clinic", "hotel", "education", "saas"]:
+        for industry in ["restaurant", "ecommerce", "clinic", "hotel", "education", "saas", "agency", "realestate", "franchise"]:
             weights = get_industry_weights(industry)
             self.assertAlmostEqual(sum(weights.values()), 1.0, places=2)
 

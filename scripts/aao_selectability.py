@@ -31,6 +31,9 @@ INDUSTRY_WEIGHT_ADJUSTMENTS = {
     "hotel": {"api_booking": +0.12, "reviews_ratings": +0.05, "trust_signals": -0.07, "freshness": -0.10},
     "education": {"info_completeness": +0.08, "trust_signals": +0.07, "api_booking": -0.10, "freshness": -0.05},
     "saas": {"api_booking": +0.10, "structured_data": +0.05, "reviews_ratings": -0.10, "freshness": -0.05},
+    "agency": {"trust_signals": +0.08, "info_completeness": +0.07, "reviews_ratings": -0.10, "freshness": -0.05},
+    "realestate": {"info_completeness": +0.08, "structured_data": +0.05, "api_booking": -0.08, "freshness": -0.05},
+    "franchise": {"structured_data": +0.08, "info_completeness": +0.05, "api_booking": -0.08, "freshness": -0.05},
 }
 
 CORRELATION_BONUSES = [
@@ -53,19 +56,48 @@ INDUSTRY_SIGNALS = {
     "hotel": [r"(hotel|호텔|숙소|accommodation|room|객실|check-?in|체크인|booking|예약)", r"(숙박|리조트|resort|펜션)"],
     "education": [r"(학원|academy|course|수업|강의|lecture|수강|enrollment|등록)", r"(교육|학습|learning|강사|instructor)"],
     "saas": [r"(pricing|plan|subscribe|subscription|api|dashboard|trial|무료체험)", r"(enterprise|team|integration|연동)"],
+    "agency": [
+        r"(대행사|에이전시|광고대행|마케팅대행|종합광고|종합대행|홍보대행)",
+        r"(포트폴리오|portfolio|case[\s-]?study|사례|캠페인|campaign|크리에이티브|creative)",
+        r"(media\s*planning|미디어\s*플래닝|branding|브랜딩|IMC|PR|퍼포먼스\s*마케팅)",
+        r"(클라이언트|client|광고주|our\s*work|our\s*team)",
+    ],
+    "realestate": [r"(매물|부동산|분양|아파트|오피스텔|real\s*estate|property|listing)", r"(평형|평수|시세|임대|전세|월세|매매)"],
+    "franchise": [r"(가맹|프랜차이즈|franchise|체인|지점|branch|매장\s*안내|store\s*locator)", r"(가맹점|창업|본사|headquarters)"],
 }
+
+AGENCY_CONTEXT_PATTERNS = [
+    r"(클라이언트|client|광고주)",
+    r"(포트폴리오|portfolio|our\s*works?)",
+    r"(대행|agency|에이전시)",
+    r"(캠페인\s*사례|project|프로젝트)",
+    r"(솔루션|solution|서비스\s*소개|service)",
+]
 
 
 def detect_industry(html: str) -> str:
-    """Detect business industry from page content."""
+    """Detect business industry from page content with disambiguation."""
     text_lower = html.lower()
     scores = {}
     for industry, patterns in INDUSTRY_SIGNALS.items():
         match_count = sum(len(re.findall(p, text_lower)) for p in patterns)
         if match_count > 0:
             scores[industry] = match_count
+
     if not scores:
         return "general"
+
+    agency_score = scores.get("agency", 0)
+    non_agency = {k: v for k, v in scores.items() if k != "agency"}
+    industries_detected = sum(1 for v in non_agency.values() if v >= 2)
+
+    if agency_score > 0:
+        context_hits = sum(len(re.findall(p, text_lower)) for p in AGENCY_CONTEXT_PATTERNS)
+        if context_hits >= 3:
+            scores["agency"] = agency_score + context_hits * 2
+        if industries_detected >= 3:
+            scores["agency"] = scores.get("agency", 0) + industries_detected * 5
+
     return max(scores, key=scores.get)
 
 

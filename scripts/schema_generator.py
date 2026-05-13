@@ -23,6 +23,9 @@ INDUSTRY_TEMPLATE_MAP = {
     "hotel": "hotel.json",
     "education": "course.json",
     "saas": "software.json",
+    "agency": "local-business.json",
+    "realestate": "local-business.json",
+    "franchise": "local-business.json",
     "general": "local-business.json",
 }
 
