@@ -13,12 +13,16 @@ from report_pdf import (
     generate_pdf_report,
     _score_to_grade,
     _translate_issue,
+    _translate_rec,
     _dim_label,
     DIMENSION_LABELS_BIZ,
     PILLAR_LABELS_BIZ,
     PILLAR_DESCRIPTIONS_BIZ,
     SEVERITY_LABELS_BIZ,
     ISSUE_IMPACT_MAP,
+    REC_TRANSLATIONS_BIZ,
+    EFFORT_LABELS_BIZ,
+    IMPACT_LABELS_BIZ,
 )
 
 
@@ -214,6 +218,52 @@ class TestBusinessLabels(unittest.TestCase):
         self.assertGreater(len(ISSUE_IMPACT_MAP), 10)
         for pattern, translation in ISSUE_IMPACT_MAP.items():
             self.assertGreater(len(translation), 5)
+
+
+class TestTranslateRec(unittest.TestCase):
+
+    def test_known_rec_translated(self):
+        rec = {"title": "Add meta description (120-160 chars)", "detail": "Write something"}
+        result = _translate_rec(rec)
+        self.assertIn("메타", result["title"])
+        self.assertIn("검색", result["detail"])
+
+    def test_unknown_rec_passes_through(self):
+        rec = {"title": "Some future recommendation XYZ", "detail": "Details here"}
+        result = _translate_rec(rec)
+        self.assertEqual(result["title"], rec["title"])
+        self.assertEqual(result["detail"], rec["detail"])
+
+    def test_effort_translated(self):
+        rec = {"title": "unknown", "detail": "x", "effort_estimate": "1-4 hours"}
+        result = _translate_rec(rec)
+        self.assertEqual(result["effort_estimate"], "1~4시간")
+
+    def test_impact_translated(self):
+        rec = {"title": "unknown", "detail": "x", "impact_estimate": "+10-20 pts"}
+        result = _translate_rec(rec)
+        self.assertEqual(result["impact_estimate"], "+10~20점")
+
+    def test_all_effort_levels_have_translations(self):
+        for eng in ["< 1 hour", "1-4 hours", "1-2 days", "1+ week"]:
+            self.assertIn(eng, EFFORT_LABELS_BIZ)
+
+    def test_all_impact_levels_have_translations(self):
+        for eng in ["+2-5 pts", "+5-10 pts", "+10-20 pts", "+15-30 pts"]:
+            self.assertIn(eng, IMPACT_LABELS_BIZ)
+
+    def test_all_catalog_recs_have_translations(self):
+        self.assertGreater(len(REC_TRANSLATIONS_BIZ), 15)
+        for title, kr in REC_TRANSLATIONS_BIZ.items():
+            self.assertIn("title", kr)
+            self.assertIn("detail", kr)
+            self.assertGreater(len(kr["title"]), 3)
+            self.assertGreater(len(kr["detail"]), 10)
+
+    def test_original_rec_not_mutated(self):
+        rec = {"title": "Add JSON-LD structured data with business entity", "detail": "Add Schema.org"}
+        _translate_rec(rec)
+        self.assertIn("JSON-LD", rec["title"])
 
 
 class TestGeneratePDFDeveloper(unittest.TestCase):

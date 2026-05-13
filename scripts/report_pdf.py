@@ -142,6 +142,85 @@ ISSUE_IMPACT_MAP = {
     "async": "페이지 로딩 성능이 부족하여 사용자 이탈이 발생할 수 있습니다",
 }
 
+REC_TRANSLATIONS_BIZ = {
+    "Add meta description (120-160 chars)": {
+        "title": "메타 설명 추가 (120~160자)",
+        "detail": "페이지 내용을 요약하는 매력적인 설명을 작성하세요. 검색 결과에서 클릭률을 크게 높일 수 있습니다.",
+    },
+    "Optimize title tag length to 30-60 characters": {
+        "title": "페이지 제목 최적화 (30~60자)",
+        "detail": "검색 결과에 표시되는 제목을 적정 길이로 조정하세요. 핵심 키워드를 앞부분에 배치하면 효과적입니다.",
+    },
+    "Add canonical URL tag": {
+        "title": "대표 URL 태그 추가",
+        "detail": "중복 페이지 문제를 방지하기 위해 대표 URL을 지정하세요.",
+    },
+    "Fix heading hierarchy (single H1, proper H2-H3 nesting)": {
+        "title": "제목 구조 정리 (H1 하나, H2~H3 순서 맞추기)",
+        "detail": "페이지 주제를 명확히 하는 대제목(H1)을 하나만 두고, 소제목을 계층적으로 구성하세요.",
+    },
+    "Enable HSTS header": {
+        "title": "보안 헤더(HSTS) 활성화",
+        "detail": "HTTPS 연결을 강제하는 보안 설정을 추가하여 방문자 신뢰를 높이세요.",
+    },
+    "Add viewport meta tag for mobile": {
+        "title": "모바일 화면 최적화 태그 추가",
+        "detail": "모바일 기기에서 페이지가 올바르게 표시되도록 설정하세요. 모바일 검색 순위에 직접 영향을 줍니다.",
+    },
+    "Add alt text to all images": {
+        "title": "모든 이미지에 설명 텍스트 추가",
+        "detail": "이미지에 설명을 추가하면 이미지 검색 노출이 증가하고, 접근성이 향상됩니다.",
+    },
+    "Add definition-style sentences for AI citation": {
+        "title": "AI 인용을 위한 정의형 문장 추가",
+        "detail": "\"[브랜드]는 ~입니다\" 형태의 명확한 문장을 작성하세요. AI가 가장 많이 인용하는 형식입니다.",
+    },
+    "Increase factual density with specific numbers and data": {
+        "title": "구체적 수치/데이터로 콘텐츠 보강",
+        "detail": "통계, 날짜, 구체적 숫자를 추가하세요. Perplexity와 Claude는 데이터 기반 콘텐츠를 선호합니다.",
+    },
+    "Add source attributions and references": {
+        "title": "출처 및 참고문헌 표시",
+        "detail": "공신력 있는 연구, 보고서, 공식 출처를 인용하세요. AI의 신뢰도 평가에 큰 영향을 줍니다.",
+    },
+    "Improve content structure with headings and lists": {
+        "title": "제목과 목록으로 콘텐츠 구조화",
+        "detail": "소제목(H2/H3), 글머리 기호, 표 등으로 정보를 체계적으로 정리하세요. AI가 구조화된 콘텐츠를 더 잘 이해합니다.",
+    },
+    "Strengthen E-E-A-T signals for Gemini": {
+        "title": "전문성·권위·신뢰 신호 강화",
+        "detail": "저자 정보, 발행일, 전문가 인용, 인증 정보를 추가하세요. Google AI와 Gemini가 중요하게 평가합니다.",
+    },
+    "Create and publish llms.txt file": {
+        "title": "AI용 브랜드 정보 파일(llms.txt) 게시",
+        "detail": "AI가 귀사 정보를 정확히 파악하도록 핵심 정보를 정리한 텍스트 파일을 웹사이트에 게시하세요.",
+    },
+    "Add JSON-LD structured data with business entity": {
+        "title": "비즈니스 구조화 데이터(JSON-LD) 추가",
+        "detail": "업종에 맞는 스키마 마크업을 추가하면 AI 에이전트가 귀사 정보를 정확히 파악할 수 있습니다.",
+    },
+    "Add Schema.org potentialAction for agent execution": {
+        "title": "AI 에이전트용 액션 스키마 추가",
+        "detail": "예약, 주문, 검색 등의 액션을 스키마로 정의하면 AI 에이전트가 자동으로 작업을 수행할 수 있습니다.",
+    },
+    "Implement review collection and schema markup": {
+        "title": "리뷰 수집 및 평점 마크업 구현",
+        "detail": "고객 리뷰를 체계적으로 수집하고 평점 데이터를 구조화하세요. AI 추천 시 리뷰가 핵심 선택 기준입니다.",
+    },
+    "Complete all business information fields": {
+        "title": "비즈니스 기본 정보 완성",
+        "detail": "이름, 설명, 주소, 전화번호, 운영시간, 가격 등 필수 정보를 빠짐없이 기재하세요.",
+    },
+    "Add trust signals (certifications, business registration, le": {
+        "title": "신뢰 지표 추가 (인증, 사업자등록, 법적 정보)",
+        "detail": "사업자등록번호, 인증 마크, 개인정보처리방침 등을 표시하여 신뢰도를 높이세요.",
+    },
+    "Improve freshness indicators (dates, last-modified, dynamic cont": {
+        "title": "최신성 지표 개선 (날짜, 업데이트 정보)",
+        "detail": "최근 날짜, 수정일, 실시간 정보를 표시하세요. AI는 최신 정보를 가진 사이트를 더 높이 평가합니다.",
+    },
+}
+
 SEVERITY_LABELS_BIZ = {
     "critical": "즉시 조치 필요",
     "high": "1주 이내 조치",
@@ -173,6 +252,37 @@ def _translate_issue(message: str) -> str:
         if pattern in msg_lower:
             return translation
     return message
+
+
+EFFORT_LABELS_BIZ = {
+    "< 1 hour": "1시간 미만",
+    "1-4 hours": "1~4시간",
+    "1-2 days": "1~2일",
+    "1+ week": "1주 이상",
+}
+IMPACT_LABELS_BIZ = {
+    "+2-5 pts": "+2~5점",
+    "+5-10 pts": "+5~10점",
+    "+10-20 pts": "+10~20점",
+    "+15-30 pts": "+15~30점",
+}
+
+
+def _translate_rec(rec: dict) -> dict:
+    translated = dict(rec)
+    title = rec.get("title", "")
+    for eng_title, kr in REC_TRANSLATIONS_BIZ.items():
+        if title.startswith(eng_title[:40]):
+            translated["title"] = kr["title"]
+            translated["detail"] = kr["detail"]
+            break
+    effort = translated.get("effort_estimate", "")
+    if effort in EFFORT_LABELS_BIZ:
+        translated["effort_estimate"] = EFFORT_LABELS_BIZ[effort]
+    impact = translated.get("impact_estimate", "")
+    if impact in IMPACT_LABELS_BIZ:
+        translated["impact_estimate"] = IMPACT_LABELS_BIZ[impact]
+    return translated
 
 
 def _dim_label(key: str) -> str:
@@ -717,6 +827,7 @@ class ThreeOPDF(FPDF):
             self.ln(3)
 
             for i, r in enumerate(rec_data["quick_wins"][:5], 1):
+                r = _translate_rec(r)
                 self._set_font("B", 9)
                 self.set_text_color(*COLORS["text"])
                 self.cell(0, 6, f"{i}. {r['title']}", 0, 1)
@@ -741,6 +852,7 @@ class ThreeOPDF(FPDF):
             self.ln(3)
 
             for i, r in enumerate(rec_data["strategic"][:4], 1):
+                r = _translate_rec(r)
                 self._set_font("B", 9)
                 self.set_text_color(*COLORS["text"])
                 self.cell(0, 6, f"{i}. {r['title']}", 0, 1)
@@ -759,6 +871,7 @@ class ThreeOPDF(FPDF):
             self.ln(3)
 
             for i, r in enumerate(rec_data["maintenance"][:4], 1):
+                r = _translate_rec(r)
                 self._set_font("", 9)
                 self.set_text_color(*COLORS["text"])
                 effort = r.get("effort_estimate", "")
