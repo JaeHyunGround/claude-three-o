@@ -48,6 +48,13 @@ DIMENSION_LABELS_BIZ = {
     "performance": "페이지 속도",
     "structured_data": "구조화 데이터",
     "crawlability": "검색엔진 접근성",
+    "heading_structure": "제목 구조(H1~H6)",
+    "image_optimization": "이미지 최적화",
+    "link_health": "링크 건전성",
+    "mobile_readiness": "모바일 호환성",
+    "indexability": "색인 가능성",
+    "security_signals": "보안 신호",
+    "performance_signals": "성능 신호",
     "experience": "실제 경험 근거",
     "expertise": "전문성",
     "authoritativeness": "권위성",
@@ -125,6 +132,14 @@ ISSUE_IMPACT_MAP = {
     "citation": "AI가 인용하기 어려운 콘텐츠 구조입니다",
     "mention": "AI 서비스에서 브랜드 언급 빈도가 낮습니다",
     "sentiment": "AI 서비스에서 브랜드에 대한 부정적 언급이 감지되었습니다",
+    "factual density": "사실 정보(수치, 날짜, 통계)가 부족하여 AI가 인용하기 어렵습니다",
+    "login required": "로그인 필수로 AI 에이전트가 전환을 완료할 수 없습니다",
+    "cta quality": "행동유도 버튼(CTA)이 불명확하여 전환율이 낮을 수 있습니다",
+    "performance signal": "페이지 로딩 성능이 부족하여 사용자 이탈이 발생할 수 있습니다",
+    "flow completeness": "전환 흐름이 불완전하여 사용자가 이탈할 수 있습니다",
+    "guest": "비회원 이용이 불가하여 신규 고객 전환에 장벽이 됩니다",
+    "preload": "페이지 로딩 성능이 부족하여 사용자 이탈이 발생할 수 있습니다",
+    "async": "페이지 로딩 성능이 부족하여 사용자 이탈이 발생할 수 있습니다",
 }
 
 SEVERITY_LABELS_BIZ = {
