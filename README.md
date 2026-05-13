@@ -194,8 +194,8 @@ claude-three-o/
   agents/                    # 24 subagents
   hooks/                     # Quality gate hooks (3)
   scripts/                   # 45 Python scripts
-  schema/                    # Schema.org JSON-LD templates (8 industry types)
-  tests/                     # Test suite (1082 tests)
+  schema/                    # Schema.org JSON-LD templates (10 industry types)
+  tests/                     # Test suite (1111 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
@@ -283,8 +283,8 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 | Content Rewrite | Weakness analysis per passage | Detects vague language, filler, weak openers, low factual density |
 | Content Rewrite | Strategy-based rewrite suggestions | Definition, comparison, data, causal patterns with templates |
 | Content Rewrite | Platform-specific tips | Per-platform (ChatGPT, Perplexity, Gemini, Claude) optimization tips |
-| Schema Generator | Industry auto-detection + template selection | Restaurant, clinic, hotel, ecommerce, education, SaaS templates |
-| Schema Generator | HTML content extraction | Extracts name, phone, address, hours, prices, ratings, social links |
+| Schema Generator | Industry auto-detection + template selection | Restaurant, clinic, hotel, ecommerce, education, SaaS, agency, realestate templates |
+| Schema Generator | HTML content extraction | Extracts name, phone, address, hours, prices, ratings, social links, services, email, logo, parent org |
 | Schema Generator | Coverage scoring + suggestions | Identifies missing fields with impact-based improvement tips |
 | All Scores | Confidence tracking | Data availability (0-1.0) per computation |
 

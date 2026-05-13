@@ -10,6 +10,8 @@ from schema_generator import (
     extract_title, extract_description, extract_image, extract_phone,
     extract_prices, extract_address, extract_hours, extract_rating,
     extract_social_links, extract_cuisine, extract_specialty,
+    extract_services, extract_founding_year, extract_email, extract_logo,
+    extract_parent_org, extract_employee_count, extract_area_served,
     extract_page_data, load_template, fill_template, generate_schema,
     format_jsonld_output, _count_template_fields, _count_filled_fields,
     _generate_suggestions, _clean_unfilled, _price_range_label,
@@ -103,10 +105,162 @@ SAAS_HTML = """
 </body></html>
 """
 
+AGENCY_HTML = """
+<html lang="ko">
+<head>
+<title>스카이벤처스 - 종합 마케팅 대행사</title>
+<meta name="description" content="브랜딩과 퍼포먼스 캠페인의 조합으로 최적의 솔루션을 찾는 종합대행사입니다.">
+<meta property="og:image" content="https://www.skyventures.co.kr/img/og.jpg">
+<link rel="icon" href="/favicon.png">
+</head>
+<body>
+<img class="logo" src="/img/logo.png" alt="스카이벤처스">
+<h1>스카이벤처스</h1>
+<p>함파트너스 그룹 계열사</p>
+<p>설립: 2015년</p>
+<p>직원: 약 50명</p>
+<p>서울특별시 성동구 성수이로7길 7, 8층</p>
+<p>전화: 02-2088-7892</p>
+<p>이메일: svc@skyventures.co.kr</p>
+<h2>서비스</h2>
+<p>디지털 마케팅, 브랜딩, 크리에이티브 제작</p>
+<p>퍼포먼스 마케팅, PR, IMC 캠페인</p>
+<p>웹 개발, 영상 제작</p>
+<h2>포트폴리오</h2>
+<p>클라이언트: BBQ, Lotte GRS, 귀한족발</p>
+<a href="https://www.instagram.com/skyventures_official/">Instagram</a>
+<a href="https://www.youtube.com/channel/UCtest">YouTube</a>
+</body></html>
+"""
+
+REALESTATE_HTML = """
+<html lang="ko">
+<head><title>강남부동산 - 강남 아파트 전문</title></head>
+<body>
+<h1>강남부동산</h1>
+<p>서울특별시 강남구 역삼동 123</p>
+<p>전화: 02-555-9876</p>
+<p>매물 안내: 아파트 분양, 전세, 월세</p>
+<p>서비스 지역: 서울 강남, 서초, 송파</p>
+</body></html>
+"""
+
 MINIMAL_HTML = """
 <html><head><title>Test Page</title></head>
 <body><p>Very little content here</p></body></html>
 """
+
+
+class TestExtractServices(unittest.TestCase):
+
+    def test_detect_services(self):
+        services = extract_services(AGENCY_HTML)
+        self.assertTrue(len(services) >= 3)
+
+    def test_digital_marketing(self):
+        services = extract_services("<p>디지털 마케팅 전문</p>")
+        self.assertTrue(any("마케팅" in s for s in services))
+
+    def test_branding(self):
+        services = extract_services("<p>브랜딩 전략 수립</p>")
+        self.assertTrue(any("브랜딩" in s for s in services))
+
+    def test_no_services(self):
+        self.assertEqual(extract_services("<p>hello</p>"), [])
+
+    def test_max_8(self):
+        html = "<p>디지털 마케팅 브랜딩 크리에이티브 퍼포먼스 마케팅 PR IMC 웹 개발 영상 제작 SEO UX BTL 데이터 분석</p>"
+        self.assertLessEqual(len(extract_services(html)), 8)
+
+
+class TestExtractFoundingYear(unittest.TestCase):
+
+    def test_korean_format(self):
+        self.assertEqual(extract_founding_year("<p>2015년 설립</p>"), "2015")
+
+    def test_since_format(self):
+        self.assertEqual(extract_founding_year("<p>Since 2010</p>"), "2010")
+
+    def test_established_format(self):
+        self.assertEqual(extract_founding_year("<p>Established: 2008</p>"), "2008")
+
+    def test_no_year(self):
+        self.assertEqual(extract_founding_year("<p>hello</p>"), "")
+
+    def test_invalid_year_rejected(self):
+        self.assertEqual(extract_founding_year("<p>설립 1800</p>"), "")
+
+
+class TestExtractEmail(unittest.TestCase):
+
+    def test_korean_domain(self):
+        self.assertEqual(extract_email("<p>svc@skyventures.co.kr</p>"), "svc@skyventures.co.kr")
+
+    def test_com_domain(self):
+        self.assertEqual(extract_email("<p>info@example.com</p>"), "info@example.com")
+
+    def test_css_gradient_ignored(self):
+        html = "<style>background: linear-gradient(GRAD@20..48deg)</style><p>real@test.com</p>"
+        self.assertEqual(extract_email(html), "real@test.com")
+
+    def test_no_email(self):
+        self.assertEqual(extract_email("<p>no email</p>"), "")
+
+
+class TestExtractLogo(unittest.TestCase):
+
+    def test_from_class(self):
+        html = '<img class="logo" src="/img/logo.png">'
+        self.assertEqual(extract_logo(html), "/img/logo.png")
+
+    def test_from_src_name(self):
+        html = '<img src="/assets/company-logo.svg">'
+        self.assertEqual(extract_logo(html), "/assets/company-logo.svg")
+
+    def test_favicon(self):
+        html = '<link rel="icon" href="/favicon.ico">'
+        self.assertEqual(extract_logo(html), "/favicon.ico")
+
+    def test_no_logo(self):
+        self.assertEqual(extract_logo("<p>no images</p>"), "")
+
+
+class TestExtractParentOrg(unittest.TestCase):
+
+    def test_korean_group(self):
+        self.assertEqual(extract_parent_org("<p>함파트너스 그룹 계열사</p>"), "함파트너스 그룹")
+
+    def test_english_group(self):
+        self.assertEqual(extract_parent_org("<p>Hahm Partners Group</p>"), "Hahm Partners Group")
+
+    def test_no_parent(self):
+        self.assertEqual(extract_parent_org("<p>independent company</p>"), "")
+
+
+class TestExtractEmployeeCount(unittest.TestCase):
+
+    def test_korean_format(self):
+        self.assertEqual(extract_employee_count("<p>직원: 약 50명</p>"), "50")
+
+    def test_team_format(self):
+        self.assertEqual(extract_employee_count("<p>30명의 전문가</p>"), "30")
+
+    def test_no_count(self):
+        self.assertEqual(extract_employee_count("<p>hello</p>"), "")
+
+
+class TestExtractAreaServed(unittest.TestCase):
+
+    def test_seoul(self):
+        result = extract_area_served("<p>서비스 지역: 서울 강남</p>")
+        self.assertIn("서울", result)
+
+    def test_region(self):
+        result = extract_area_served("<p>부산 해운대 전문</p>")
+        self.assertIn("부산", result)
+
+    def test_no_area(self):
+        self.assertEqual(extract_area_served("<p>hello</p>"), "")
 
 
 class TestExtractTitle(unittest.TestCase):
@@ -399,6 +553,20 @@ class TestGenerateSchema(unittest.TestCase):
     def test_schema_has_context(self):
         result = generate_schema(RESTAURANT_HTML, "https://example.com")
         self.assertEqual(result["schema"]["@context"], "https://schema.org")
+
+    def test_agency_generation(self):
+        result = generate_schema(AGENCY_HTML, "https://www.skyventures.co.kr")
+        self.assertTrue(result["success"])
+        self.assertEqual(result["industry"], "agency")
+        self.assertEqual(result["schema"]["@type"], "ProfessionalService")
+        self.assertIn("knowsAbout", result["schema"])
+        self.assertIsInstance(result["schema"]["knowsAbout"], list)
+
+    def test_realestate_generation(self):
+        result = generate_schema(REALESTATE_HTML, "https://example.com")
+        self.assertTrue(result["success"])
+        self.assertEqual(result["industry"], "realestate")
+        self.assertEqual(result["schema"]["@type"], "RealEstateAgent")
 
     def test_minimal_page(self):
         result = generate_schema(MINIMAL_HTML, "https://example.com")

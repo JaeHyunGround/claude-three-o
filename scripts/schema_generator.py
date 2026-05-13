@@ -23,8 +23,8 @@ INDUSTRY_TEMPLATE_MAP = {
     "hotel": "hotel.json",
     "education": "course.json",
     "saas": "software.json",
-    "agency": "local-business.json",
-    "realestate": "local-business.json",
+    "agency": "agency.json",
+    "realestate": "realestate.json",
     "franchise": "local-business.json",
     "general": "local-business.json",
 }
@@ -260,6 +260,114 @@ def extract_specialty(html: str) -> str:
     return ""
 
 
+def extract_services(html: str) -> list:
+    """Extract service offerings from agency/professional service pages."""
+    services = []
+    service_patterns = [
+        r"(디지털\s*마케팅|digital\s*marketing)",
+        r"(브랜딩|branding|brand\s*strategy)",
+        r"(크리에이티브|creative|광고\s*제작)",
+        r"(미디어\s*플래닝|media\s*planning|미디어\s*바잉)",
+        r"(SNS\s*마케팅|소셜\s*미디어|social\s*media)",
+        r"(콘텐츠\s*마케팅|content\s*marketing|콘텐츠\s*제작)",
+        r"(퍼포먼스\s*마케팅|performance\s*marketing)",
+        r"(영상\s*제작|video\s*production|CF|TV\s*광고)",
+        r"(웹\s*개발|web\s*development|앱\s*개발|app\s*development)",
+        r"(PR|홍보|public\s*relations)",
+        r"(IMC|통합\s*마케팅|integrated\s*marketing)",
+        r"(인플루언서|influencer|MCN)",
+        r"(SEO|검색엔진\s*최적화)",
+        r"(UX|UI|UX/UI|사용자\s*경험)",
+        r"(BTL|이벤트|event\s*marketing)",
+        r"(데이터\s*분석|data\s*analytics|AI\s*솔루션)",
+    ]
+    text_lower = html.lower()
+    for pattern in service_patterns:
+        m = re.search(pattern, text_lower, re.IGNORECASE)
+        if m:
+            services.append(m.group(1).strip())
+    return services[:8]
+
+
+def extract_founding_year(html: str) -> str:
+    """Extract founding/establishment year."""
+    patterns = [
+        r"(?:설립|창립|since|established|founded)[\s:]*(\d{4})",
+        r"(\d{4})년\s*(?:설립|창립|개업)",
+        r"since\s*(\d{4})",
+    ]
+    for p in patterns:
+        m = re.search(p, html, re.IGNORECASE)
+        if m:
+            year = int(m.group(1))
+            if 1900 <= year <= 2030:
+                return str(year)
+    return ""
+
+
+def extract_email(html: str) -> str:
+    """Extract email address from page."""
+    text = re.sub(r'<style[^>]*>.*?</style>', '', html, flags=re.DOTALL)
+    text = re.sub(r'<script[^>]*>.*?</script>', '', text, flags=re.DOTALL)
+    m = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
+    return m.group(0) if m else ""
+
+
+def extract_logo(html: str) -> str:
+    """Extract logo URL from page."""
+    patterns = [
+        r'<link[^>]*rel="icon"[^>]*href="([^"]+)"',
+        r'<img[^>]*(?:class|id)="[^"]*logo[^"]*"[^>]*src="([^"]+)"',
+        r'<img[^>]*src="([^"]*logo[^"]*)"',
+    ]
+    for p in patterns:
+        m = re.search(p, html, re.IGNORECASE)
+        if m:
+            return m.group(1)
+    return ""
+
+
+def extract_parent_org(html: str) -> str:
+    """Extract parent organization name."""
+    text = re.sub(r'<[^>]+>', ' ', html)
+    patterns = [
+        r"([가-힣A-Za-z][가-힣A-Za-z\s]{1,20}\s*(?:그룹|Group))",
+        r"(?:계열사|소속|산하)\s*[:：]?\s*([가-힣A-Za-z\s]{2,20})",
+    ]
+    for p in patterns:
+        m = re.search(p, text, re.IGNORECASE)
+        if m:
+            return m.group(1).strip()
+    return ""
+
+
+def extract_employee_count(html: str) -> str:
+    """Extract number of employees."""
+    patterns = [
+        r"(?:직원|인원|팀원|임직원)\s*[:：]?\s*(?:약\s*)?(\d+)\s*명",
+        r"(\d+)\s*(?:명의?\s*(?:직원|팀원|전문가))",
+        r"(?:employees?|team\s*members?)\s*[:：]?\s*(\d+)",
+    ]
+    for p in patterns:
+        m = re.search(p, html, re.IGNORECASE)
+        if m:
+            return m.group(1)
+    return ""
+
+
+def extract_area_served(html: str) -> str:
+    """Extract area served for real estate agents."""
+    patterns = [
+        r"(?:서비스\s*지역|담당\s*지역|영업\s*지역)\s*[:：]?\s*([가-힣\s,]+)",
+        r"(서울|경기|인천|부산|대구|광주|대전|울산|세종|강원|충북|충남|전북|전남|경북|경남|제주)",
+    ]
+    for p in patterns:
+        m = re.search(p, html, re.IGNORECASE)
+        if m:
+            return m.group(1).strip()
+    return ""
+
+
 def _price_range_label(prices: list) -> str:
     """Convert price list to price range label."""
     if not prices:
@@ -297,6 +405,13 @@ def extract_page_data(html: str, url: str) -> dict:
         "social_links": extract_social_links(html),
         "cuisine": extract_cuisine(html),
         "specialty": extract_specialty(html),
+        "services": extract_services(html),
+        "founding_year": extract_founding_year(html),
+        "email": extract_email(html),
+        "logo": extract_logo(html),
+        "parent_org": extract_parent_org(html),
+        "employee_count": extract_employee_count(html),
+        "area_served": extract_area_served(html),
     }
 
 
@@ -308,11 +423,13 @@ def fill_template(template: dict, data: dict, industry: str) -> dict:
     field_mapping = _build_field_mapping(data, industry)
 
     for placeholder, value in field_mapping.items():
-        raw = raw.replace("{{" + placeholder + "}}", str(value))
+        escaped = json.dumps(str(value))[1:-1]
+        raw = raw.replace("{{" + placeholder + "}}", escaped)
 
     result = json.loads(raw)
     _clean_unfilled(result)
     _fill_same_as(result, data.get("social_links", []))
+    _fill_knows_about(result, data.get("services", []))
 
     return result
 
@@ -389,6 +506,24 @@ def _build_field_mapping(data: dict, industry: str) -> dict:
             "company_name": "",
             "company_url": data.get("url", ""),
         },
+        "agency": {
+            "agency_name": data.get("name", ""),
+            "logo_url": data.get("logo", ""),
+            "founding_year": data.get("founding_year", ""),
+            "employee_count": data.get("employee_count", ""),
+            "email": data.get("email", ""),
+            "parent_org": data.get("parent_org", ""),
+            "contact_url": data.get("url", "").rstrip("/") + "/sub/contact.php" if data.get("url") else "",
+        },
+        "realestate": {
+            "business_name": data.get("name", ""),
+            "area_served": data.get("area_served", ""),
+            "contact_url": data.get("url", ""),
+        },
+        "franchise": {
+            "business_name": data.get("name", ""),
+            "booking_url": data.get("url", ""),
+        },
         "general": {
             "business_name": data.get("name", ""),
             "booking_url": data.get("url", ""),
@@ -434,6 +569,15 @@ def _fill_same_as(obj: dict, social_links: list):
             obj["sameAs"] = social_links
         else:
             del obj["sameAs"]
+
+
+def _fill_knows_about(obj: dict, services: list):
+    """Fill knowsAbout with extracted services."""
+    if "knowsAbout" in obj:
+        if services:
+            obj["knowsAbout"] = services
+        else:
+            del obj["knowsAbout"]
 
 
 def generate_schema(html: str, url: str, industry_override: str = "") -> dict:

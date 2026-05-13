@@ -1,0 +1,43 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "{{agency_name}}",
+  "url": "{{website_url}}",
+  "image": "{{image_url}}",
+  "logo": "{{logo_url}}",
+  "description": "{{description}}",
+  "telephone": "{{phone}}",
+  "foundingDate": "{{founding_year}}",
+  "numberOfEmployees": {
+    "@type": "QuantitativeValue",
+    "value": "{{employee_count}}"
+  },
+  "knowsAbout": [],
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{street}}",
+    "addressLocality": "{{city}}",
+    "addressRegion": "{{region}}",
+    "postalCode": "{{postal_code}}",
+    "addressCountry": "KR"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "{{phone}}",
+    "contactType": "customer service",
+    "email": "{{email}}",
+    "availableLanguage": ["Korean", "English"]
+  },
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "{{parent_org}}"
+  },
+  "potentialAction": {
+    "@type": "CommunicateAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{contact_url}}"
+    }
+  },
+  "sameAs": []
+}
