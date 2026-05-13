@@ -195,7 +195,7 @@ claude-three-o/
   hooks/                     # Quality gate hooks (3)
   scripts/                   # 45 Python scripts
   schema/                    # Schema.org JSON-LD templates (10 industry types)
-  tests/                     # Test suite (1706 tests)
+  tests/                     # Test suite (1804 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
