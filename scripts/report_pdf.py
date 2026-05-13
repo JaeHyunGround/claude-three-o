@@ -26,6 +26,8 @@ COLORS = {
     "text": (30, 41, 59),
     "light_bg": (248, 250, 252),
     "border": (226, 232, 240),
+    "info_bg": (239, 246, 255),
+    "info_border": (147, 197, 253),
 }
 
 SEVERITY_COLORS = {
@@ -36,6 +38,130 @@ SEVERITY_COLORS = {
     "low": COLORS["secondary"],
     "info": (59, 130, 246),
 }
+
+DIMENSION_LABELS_BIZ = {
+    "meta_quality": "검색결과 노출 품질",
+    "security": "보안 상태",
+    "mobile": "모바일 호환성",
+    "headings": "콘텐츠 구조",
+    "images": "이미지 최적화",
+    "performance": "페이지 속도",
+    "structured_data": "구조화 데이터",
+    "crawlability": "검색엔진 접근성",
+    "experience": "실제 경험 근거",
+    "expertise": "전문성",
+    "authoritativeness": "권위성",
+    "trust": "신뢰성",
+    "passage_clarity": "문장 명확성",
+    "factual_density": "사실 정보 밀도",
+    "citation_pattern": "인용 패턴",
+    "self_containment": "독립 이해 가능성",
+    "quote_readiness": "인용 준비도",
+    "structural_format": "구조적 형식",
+    "authority_signals": "권위 신호",
+    "polarity_strength": "브랜드 인식 강도",
+    "consistency": "언급 일관성",
+    "coverage": "AI 노출 범위",
+    "platform_alignment": "플랫폼간 정합성",
+    "signal_diversity": "신호 다양성",
+    "mention_frequency": "AI 언급 빈도",
+    "context_quality": "맥락 품질",
+    "visibility_ranking": "가시성 순위",
+    "entity_presence": "엔티티 존재감",
+    "technical_accessibility": "기술적 접근성",
+    "reviews_ratings": "리뷰 및 평점",
+    "info_completeness": "정보 완성도",
+    "api_booking": "예약/주문 연동",
+    "trust_signals": "신뢰 지표",
+    "freshness": "정보 최신성",
+    "cta_quality": "행동유도 버튼(CTA)",
+    "form_accessibility": "양식 접근성",
+    "flow_clarity": "전환 흐름",
+    "mobile_readiness": "모바일 전환",
+    "deep_linking": "딥링크 지원",
+    "confirmation": "확인 체계",
+    "attribute_completeness": "속성 완성도",
+    "image_quality": "이미지 품질",
+    "pricing_accuracy": "가격 정확성",
+    "category_mapping": "카테고리 매핑",
+    "data_quality": "데이터 품질",
+    "feed_freshness": "피드 최신성",
+}
+
+PILLAR_LABELS_BIZ = {
+    "seo": "검색 노출 현황",
+    "geo": "AI 검색 노출 현황",
+    "aao": "AI 에이전트 대응 현황",
+}
+
+PILLAR_DESCRIPTIONS_BIZ = {
+    "seo": "구글, 네이버 등 검색엔진에서 고객이 귀사를 쉽게 찾을 수 있는지를 나타냅니다. 점수가 높을수록 검색 결과 상위에 노출될 가능성이 큽니다.",
+    "geo": "ChatGPT, Perplexity, Gemini 등 AI 서비스가 귀사 브랜드를 어떻게 언급하고 추천하는지를 나타냅니다. AI 검색 시대에 브랜드 가시성의 핵심 지표입니다.",
+    "aao": "AI 비서(에이전트)가 귀사를 고객에게 추천하고, 예약이나 구매까지 연결할 수 있는 준비 상태를 나타냅니다. 향후 AI 커머스 전환의 핵심입니다.",
+}
+
+ISSUE_IMPACT_MAP = {
+    "meta description": "검색 결과에 사이트 설명이 표시되지 않아 클릭률이 낮아질 수 있습니다",
+    "canonical": "중복 페이지로 인해 검색 순위가 분산될 수 있습니다",
+    "hsts": "보안 인증이 부족하여 방문자 신뢰가 떨어질 수 있습니다",
+    "viewport": "모바일에서 페이지가 제대로 표시되지 않을 수 있습니다",
+    "h1": "페이지 주제가 불명확하여 검색 순위에 영향을 줄 수 있습니다",
+    "alt": "이미지 검색에서 노출 기회를 놓치고 있습니다",
+    "title length": "검색 결과에서 제목이 잘리거나 불완전하게 표시됩니다",
+    "schema": "AI와 검색엔진이 사업 정보를 자동으로 이해하기 어렵습니다",
+    "structured data": "AI 비서가 귀사 정보를 정확히 파악하기 어렵습니다",
+    "robots": "검색엔진이 사이트를 제대로 탐색할 수 없습니다",
+    "ssl": "보안 연결 미설정으로 검색 순위 불이익을 받습니다",
+    "sitemap": "검색엔진이 모든 페이지를 발견하지 못할 수 있습니다",
+    "noindex": "이 페이지가 검색 결과에 표시되지 않도록 설정되어 있습니다",
+    "open graph": "SNS 공유 시 미리보기가 표시되지 않아 공유 효과가 떨어집니다",
+    "speed": "페이지 로딩이 느려 방문자 이탈률이 높아질 수 있습니다",
+    "mobile": "모바일 사용자 경험이 좋지 않아 이탈이 발생할 수 있습니다",
+    "review": "리뷰/평점이 부족하여 AI 추천 우선순위가 낮아질 수 있습니다",
+    "booking": "온라인 예약/주문이 불가하여 AI 에이전트가 전환을 완료할 수 없습니다",
+    "freshness": "정보가 오래되어 검색엔진과 AI가 신뢰도를 낮게 평가할 수 있습니다",
+    "crawl": "검색엔진 봇이 사이트에 접근하기 어려운 상태입니다",
+    "entity": "브랜드 정보가 일관되지 않아 AI가 혼동할 수 있습니다",
+    "citation": "AI가 인용하기 어려운 콘텐츠 구조입니다",
+    "mention": "AI 서비스에서 브랜드 언급 빈도가 낮습니다",
+    "sentiment": "AI 서비스에서 브랜드에 대한 부정적 언급이 감지되었습니다",
+}
+
+SEVERITY_LABELS_BIZ = {
+    "critical": "즉시 조치 필요",
+    "high": "1주 이내 조치",
+    "medium": "1개월 이내 개선",
+    "warning": "개선 권장",
+    "low": "참고 사항",
+}
+
+
+def _score_to_grade(score: float) -> tuple:
+    if score >= 90:
+        return "A+", "매우 우수"
+    if score >= 80:
+        return "A", "우수"
+    if score >= 70:
+        return "B+", "양호"
+    if score >= 60:
+        return "B", "보통"
+    if score >= 50:
+        return "C", "개선 필요"
+    if score >= 40:
+        return "D", "미흡"
+    return "F", "심각한 개선 필요"
+
+
+def _translate_issue(message: str) -> str:
+    msg_lower = message.lower()
+    for pattern, translation in ISSUE_IMPACT_MAP.items():
+        if pattern in msg_lower:
+            return translation
+    return message
+
+
+def _dim_label(key: str) -> str:
+    return DIMENSION_LABELS_BIZ.get(key, key.replace("_", " ").title())
 
 
 class ThreeOPDF(FPDF):
@@ -69,7 +195,7 @@ class ThreeOPDF(FPDF):
     def header(self):
         self._set_font("B", 9)
         self.set_text_color(*COLORS["secondary"])
-        self.cell(0, 8, f"Three-O Audit Report | {self.brand}", 0, 0, "L")
+        self.cell(0, 8, f"Three-O Report | {self.brand}", 0, 0, "L")
         self.cell(0, 8, datetime.now().strftime("%Y-%m-%d"), 0, 1, "R")
         self.set_draw_color(*COLORS["border"])
         self.line(10, self.get_y(), 200, self.get_y())
@@ -81,8 +207,73 @@ class ThreeOPDF(FPDF):
         self.set_text_color(*COLORS["secondary"])
         self.cell(0, 10, f"Generated by Three-O v1.0.0 | Page {self.page_no()}/{{nb}}", 0, 0, "C")
 
+    # ─── Shared helpers ───
+
+    def _section_title(self, title: str):
+        self._set_font("B", 16)
+        self.set_text_color(*COLORS["primary"])
+        self.cell(0, 12, title, 0, 1)
+        self.set_draw_color(*COLORS["primary"])
+        self.line(10, self.get_y(), 80, self.get_y())
+        self.ln(8)
+
+    def _draw_score_bar(self, label: str, score: float, label_width: int = 50):
+        self._set_font("", 9)
+        self.set_text_color(*COLORS["text"])
+        self.cell(label_width, 7, label, 0, 0)
+
+        bar_x = self.get_x()
+        bar_y = self.get_y() + 1.5
+        bar_width = 80
+        bar_height = 4
+
+        self.set_fill_color(*COLORS["border"])
+        self.rect(bar_x, bar_y, bar_width, bar_height, "F")
+
+        if score >= 70:
+            fill_color = COLORS["success"]
+        elif score >= 50:
+            fill_color = COLORS["warning"]
+        else:
+            fill_color = COLORS["danger"]
+
+        fill_width = bar_width * (score / 100)
+        self.set_fill_color(*fill_color)
+        self.rect(bar_x, bar_y, fill_width, bar_height, "F")
+
+        self.set_x(bar_x + bar_width + 3)
+        self._set_font("B", 9)
+        self.cell(20, 7, f"{score:.0f}", 0, 1)
+
+    def _draw_score_circle(self, score: float, grade: str):
+        self._set_font("B", 48)
+        if score >= 70:
+            self.set_text_color(*COLORS["success"])
+        elif score >= 50:
+            self.set_text_color(*COLORS["warning"])
+        else:
+            self.set_text_color(*COLORS["danger"])
+        self.cell(0, 25, f"{score:.1f}", 0, 1, "C")
+        self._set_font("B", 18)
+        self.cell(0, 10, f"/ 100  ({grade})", 0, 1, "C")
+
+    def _info_box(self, text: str):
+        self.set_fill_color(*COLORS["info_bg"])
+        self.set_draw_color(*COLORS["info_border"])
+        x = self.get_x()
+        y = self.get_y()
+        self._set_font("", 8)
+        self.set_text_color(*COLORS["text"])
+        self.rect(x, y, 190, 14, "DF")
+        self.set_xy(x + 3, y + 2)
+        self.multi_cell(184, 5, text, 0, "L")
+        self.set_y(y + 16)
+
+    # ═══════════════════════════════════════════════
+    #  TITLE PAGE (shared)
+    # ═══════════════════════════════════════════════
+
     def add_title_page(self, data: dict):
-        """Add branded title page."""
         self.add_page()
         self.ln(40)
 
@@ -103,7 +294,6 @@ class ThreeOPDF(FPDF):
         score = data.get("three_o_score", {})
         score_val = score.get("score", 0)
         grade = score.get("grade", "N/A")
-
         self._draw_score_circle(score_val, grade)
 
         self.ln(20)
@@ -112,22 +302,11 @@ class ThreeOPDF(FPDF):
         self.cell(0, 8, f"Report Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}", 0, 1, "C")
         self.cell(0, 8, "Powered by JaeHyunGround Three-O Platform", 0, 1, "C")
 
-    def _draw_score_circle(self, score: float, grade: str):
-        """Draw the main score display."""
-        self._set_font("B", 48)
-        if score >= 70:
-            self.set_text_color(*COLORS["success"])
-        elif score >= 50:
-            self.set_text_color(*COLORS["warning"])
-        else:
-            self.set_text_color(*COLORS["danger"])
-        self.cell(0, 25, f"{score:.1f}", 0, 1, "C")
-
-        self._set_font("B", 18)
-        self.cell(0, 10, f"/ 100  ({grade})", 0, 1, "C")
+    # ═══════════════════════════════════════════════
+    #  DEVELOPER MODE (original)
+    # ═══════════════════════════════════════════════
 
     def add_executive_summary(self, data: dict):
-        """Add executive summary page."""
         self.add_page()
         self._section_title("Executive Summary")
 
@@ -163,7 +342,6 @@ class ThreeOPDF(FPDF):
                 self.cell(0, 7, f"  {issue.get('message', '')}", 0, 1)
 
     def add_pillar_section(self, pillar: str, data: dict):
-        """Add a pillar analysis section."""
         pillar_data = data.get(pillar, {})
         if not pillar_data:
             return
@@ -183,7 +361,6 @@ class ThreeOPDF(FPDF):
             self._set_font("B", 10)
             self.cell(0, 8, "Dimension Breakdown", 0, 1)
             self.ln(3)
-
             for dim_name, dim_val in dimensions.items():
                 score_val = dim_val if isinstance(dim_val, (int, float)) else dim_val.get("score", 0)
                 label = dim_name.replace("_", " ").title()
@@ -237,7 +414,6 @@ class ThreeOPDF(FPDF):
             self.set_text_color(*COLORS["text"])
             self.cell(0, 8, f"Issues ({len(issues)})", 0, 1)
             self.ln(2)
-
             for issue in issues[:10]:
                 severity = issue.get("severity", "info")
                 color = SEVERITY_COLORS.get(severity, COLORS["secondary"])
@@ -250,7 +426,6 @@ class ThreeOPDF(FPDF):
                 self.cell(0, 6, f"  {issue.get('message', '')}", 0, 1)
 
     def add_recommendations(self, data: dict):
-        """Add recommendations page with quick wins and strategic items."""
         from recommendations import generate_recommendations
         rec_data = generate_recommendations(data)
 
@@ -272,7 +447,6 @@ class ThreeOPDF(FPDF):
             self.set_text_color(*COLORS["success"])
             self.cell(0, 8, "Quick Wins (High impact, Low effort)", 0, 1)
             self.ln(2)
-
             for i, r in enumerate(rec_data["quick_wins"][:4], 1):
                 self._set_font("B", 9)
                 self.set_text_color(*COLORS["text"])
@@ -293,7 +467,6 @@ class ThreeOPDF(FPDF):
             self.set_text_color(*COLORS["primary"])
             self.cell(0, 8, "Strategic Investments", 0, 1)
             self.ln(2)
-
             for i, r in enumerate(rec_data["strategic"][:3], 1):
                 self._set_font("B", 9)
                 self.set_text_color(*COLORS["text"])
@@ -306,7 +479,6 @@ class ThreeOPDF(FPDF):
                 self.ln(2)
 
     def add_action_plan(self, data: dict):
-        """Add action plan page."""
         self.add_page()
         self._section_title("Action Plan")
 
@@ -322,15 +494,14 @@ class ThreeOPDF(FPDF):
         headers = ["#", "Priority", "Area", "Action"]
         self._set_font("B", 9)
         self.set_fill_color(*COLORS["light_bg"])
-        for i, (header, w) in enumerate(zip(headers, col_widths)):
-            self.cell(w, 7, header, 1, 0, "C", fill=True)
+        for i, (h, w) in enumerate(zip(headers, col_widths)):
+            self.cell(w, 7, h, 1, 0, "C", fill=True)
         self.ln()
 
         self._set_font("", 8)
         for i, issue in enumerate(all_issues[:20], 1):
             severity = issue.get("severity", "low")
             priority = "P0" if severity == "critical" else "P1" if severity == "high" else "P2"
-
             self.set_text_color(*COLORS["text"])
             self.cell(col_widths[0], 6, str(i), 1, 0, "C")
             color = SEVERITY_COLORS.get(severity, COLORS["secondary"])
@@ -342,67 +513,316 @@ class ThreeOPDF(FPDF):
             self.cell(col_widths[3], 6, msg, 1, 0, "L")
             self.ln()
 
-    def _section_title(self, title: str):
-        """Draw section title."""
-        self._set_font("B", 16)
-        self.set_text_color(*COLORS["primary"])
-        self.cell(0, 12, title, 0, 1)
-        self.set_draw_color(*COLORS["primary"])
-        self.line(10, self.get_y(), 80, self.get_y())
-        self.ln(8)
+    # ═══════════════════════════════════════════════
+    #  BUSINESS MODE
+    # ═══════════════════════════════════════════════
 
-    def _draw_score_bar(self, label: str, score: float):
-        """Draw a horizontal score bar."""
-        self._set_font("", 9)
+    def add_overview_business(self, data: dict):
+        self.add_page()
+        self._section_title("한눈에 보기")
+
+        score = data.get("three_o_score", {})
+        overall = score.get("score", 0)
+        grade, grade_text = _score_to_grade(overall)
+
+        self._set_font("B", 12)
         self.set_text_color(*COLORS["text"])
-        self.cell(50, 7, label, 0, 0)
+        self.cell(0, 8, f"종합 점수: {overall:.1f}/100 ({grade} - {grade_text})", 0, 1)
+        self.ln(5)
 
-        bar_x = self.get_x()
-        bar_y = self.get_y() + 1.5
-        bar_width = 80
-        bar_height = 4
+        self._info_box(
+            "Three-O 점수는 검색 노출(SEO), AI 검색 노출(GEO), AI 에이전트 대응(AAO) "
+            "세 가지 영역을 종합 평가한 점수입니다. 70점 이상이면 양호, 50점 미만이면 개선이 필요합니다."
+        )
+        self.ln(3)
 
-        self.set_fill_color(*COLORS["border"])
-        self.rect(bar_x, bar_y, bar_width, bar_height, "F")
+        pillars = score.get("pillars", {})
+        for pillar_key in ["seo", "geo", "aao"]:
+            pillar_data = pillars.get(pillar_key, {})
+            p_score = pillar_data.get("score", 0) if isinstance(pillar_data, dict) else pillar_data
+            p_score = float(p_score)
+            p_grade, p_grade_text = _score_to_grade(p_score)
+            label = PILLAR_LABELS_BIZ.get(pillar_key, pillar_key.upper())
 
-        if score >= 70:
-            fill_color = COLORS["success"]
-        elif score >= 50:
-            fill_color = COLORS["warning"]
+            self._draw_score_bar(f"{label} ({p_grade})", p_score, 65)
+
+        self.ln(8)
+        self._set_font("B", 11)
+        self.set_text_color(*COLORS["text"])
+        self.cell(0, 8, "각 영역이 의미하는 것", 0, 1)
+        self.ln(2)
+
+        for pillar_key in ["seo", "geo", "aao"]:
+            label = PILLAR_LABELS_BIZ[pillar_key]
+            desc = PILLAR_DESCRIPTIONS_BIZ[pillar_key]
+            self._set_font("B", 9)
+            self.set_text_color(*COLORS["primary"])
+            self.cell(0, 6, label, 0, 1)
+            self._set_font("", 8)
+            self.set_text_color(*COLORS["secondary"])
+            self.multi_cell(0, 5, desc)
+            self.ln(3)
+
+        top_issues = data.get("top_issues", [])
+        if top_issues:
+            self.ln(3)
+            self._set_font("B", 11)
+            self.set_text_color(*COLORS["danger"])
+            self.cell(0, 8, "가장 시급한 개선 사항", 0, 1)
+            self.ln(2)
+
+            for i, issue in enumerate(top_issues[:5], 1):
+                severity = issue.get("severity", "medium")
+                sev_label = SEVERITY_LABELS_BIZ.get(severity, severity)
+                color = SEVERITY_COLORS.get(severity, COLORS["secondary"])
+                msg = _translate_issue(issue.get("message", ""))
+
+                self._set_font("B", 9)
+                self.set_text_color(*color)
+                self.cell(8, 7, f"{i}.", 0, 0)
+                self.set_fill_color(*color)
+                self.set_text_color(255, 255, 255)
+                self.cell(30, 7, sev_label, 0, 0, "C", fill=True)
+                self.set_text_color(*COLORS["text"])
+                self._set_font("", 9)
+                self.cell(0, 7, f"  {msg[:80]}", 0, 1)
+
+    def add_pillar_business(self, pillar: str, data: dict):
+        pillar_data = data.get(pillar, {})
+        if not pillar_data:
+            return
+
+        self.add_page()
+        title = PILLAR_LABELS_BIZ.get(pillar, pillar.upper())
+        self._section_title(title)
+
+        p_score = pillar_data.get("score", 0)
+        grade, grade_text = _score_to_grade(float(p_score))
+
+        self._set_font("B", 14)
+        if p_score >= 70:
+            self.set_text_color(*COLORS["success"])
+        elif p_score >= 50:
+            self.set_text_color(*COLORS["warning"])
         else:
-            fill_color = COLORS["danger"]
+            self.set_text_color(*COLORS["danger"])
+        self.cell(0, 10, f"{grade} ({grade_text}) - {p_score}/100", 0, 1)
+        self.ln(3)
 
-        fill_width = bar_width * (score / 100)
-        self.set_fill_color(*fill_color)
-        self.rect(bar_x, bar_y, fill_width, bar_height, "F")
+        self._info_box(PILLAR_DESCRIPTIONS_BIZ.get(pillar, ""))
+        self.ln(3)
 
-        self.set_x(bar_x + bar_width + 3)
+        dimensions = pillar_data.get("dimensions", {})
+        if dimensions:
+            self._set_font("B", 10)
+            self.set_text_color(*COLORS["text"])
+            self.cell(0, 8, "세부 평가 항목", 0, 1)
+            self.ln(3)
+
+            for dim_name, dim_val in dimensions.items():
+                score_val = dim_val if isinstance(dim_val, (int, float)) else dim_val.get("score", 0)
+                label = _dim_label(dim_name)
+                self._draw_score_bar(label, float(score_val), 55)
+
+        if pillar == "geo":
+            platform_breakdown = pillar_data.get("platform_breakdown", {})
+            if platform_breakdown:
+                self.ln(5)
+                self._set_font("B", 10)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 8, "AI 플랫폼별 노출 점수", 0, 1)
+                self.ln(3)
+                for p_name, p_data in platform_breakdown.items():
+                    ps = p_data.get("geo_score", 0) if isinstance(p_data, dict) else p_data
+                    self._draw_score_bar(p_name.capitalize(), float(ps), 55)
+
+        if pillar == "aao":
+            industry = pillar_data.get("industry_detected", "")
+            if industry and industry != "general":
+                industry_labels = {
+                    "restaurant": "음식점/요식업", "ecommerce": "이커머스/쇼핑몰",
+                    "clinic": "병원/의원", "hotel": "호텔/숙박", "education": "학원/교육",
+                    "saas": "소프트웨어(SaaS)", "agency": "에이전시/대행사",
+                    "realestate": "부동산", "franchise": "프랜차이즈",
+                }
+                label = industry_labels.get(industry, industry.title())
+                self.ln(5)
+                self._set_font("B", 10)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 8, f"감지된 업종: {label}", 0, 1)
+
+        self.ln(5)
+        issues = pillar_data.get("issues", [])
+        if issues:
+            self._set_font("B", 10)
+            self.set_text_color(*COLORS["text"])
+            self.cell(0, 8, f"발견된 문제 ({len(issues)}건)", 0, 1)
+            self.ln(2)
+
+            for issue in issues[:10]:
+                severity = issue.get("severity", "info")
+                sev_label = SEVERITY_LABELS_BIZ.get(severity, severity)
+                color = SEVERITY_COLORS.get(severity, COLORS["secondary"])
+                msg = _translate_issue(issue.get("message", ""))
+
+                self._set_font("", 9)
+                self.set_text_color(*color)
+                self.cell(5, 6, "", 0, 0)
+                self.set_fill_color(*color)
+                self.set_text_color(255, 255, 255)
+                self.cell(28, 6, sev_label, 0, 0, "C", fill=True)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 6, f"  {msg[:70]}", 0, 1)
+
+    def add_roadmap_business(self, data: dict):
+        from recommendations import generate_recommendations
+        rec_data = generate_recommendations(data)
+
+        self.add_page()
+        self._section_title("개선 로드맵")
+
+        industry = rec_data.get("industry", "general")
+        if industry != "general":
+            industry_labels = {
+                "restaurant": "음식점/요식업", "ecommerce": "이커머스/쇼핑몰",
+                "clinic": "병원/의원", "hotel": "호텔/숙박", "education": "학원/교육",
+                "saas": "소프트웨어(SaaS)", "agency": "에이전시/대행사",
+                "realestate": "부동산", "franchise": "프랜차이즈",
+            }
+            label = industry_labels.get(industry, industry.title())
+            self._set_font("", 10)
+            self.set_text_color(*COLORS["secondary"])
+            self.cell(0, 7, f"업종: {label} | 총 {rec_data['total']}개 개선 항목 도출", 0, 1)
+            self.ln(5)
+
+        if rec_data.get("quick_wins"):
+            self._set_font("B", 12)
+            self.set_text_color(*COLORS["success"])
+            self.cell(0, 8, "바로 실행 가능 (효과 높음, 노력 적음)", 0, 1)
+            self.ln(3)
+
+            for i, r in enumerate(rec_data["quick_wins"][:5], 1):
+                self._set_font("B", 9)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 6, f"{i}. {r['title']}", 0, 1)
+                self._set_font("", 8)
+                self.set_text_color(*COLORS["secondary"])
+                detail = r["detail"][:120] + ("..." if len(r["detail"]) > 120 else "")
+                self.cell(5, 5, "", 0, 0)
+                self.multi_cell(180, 5, detail)
+                self._set_font("", 8)
+                self.set_text_color(59, 130, 246)
+                self.cell(5, 5, "", 0, 0)
+                effort = r.get("effort_estimate", "")
+                impact = r.get("impact_estimate", "")
+                self.cell(0, 5, f"소요 시간: {effort} | 기대 효과: {impact}", 0, 1)
+                self.ln(2)
+
+        if rec_data.get("strategic"):
+            self.ln(5)
+            self._set_font("B", 12)
+            self.set_text_color(*COLORS["primary"])
+            self.cell(0, 8, "중장기 투자 (효과 높음, 노력 큼)", 0, 1)
+            self.ln(3)
+
+            for i, r in enumerate(rec_data["strategic"][:4], 1):
+                self._set_font("B", 9)
+                self.set_text_color(*COLORS["text"])
+                self.cell(0, 6, f"{i}. {r['title']}", 0, 1)
+                self._set_font("", 8)
+                self.set_text_color(*COLORS["secondary"])
+                detail = r["detail"][:120] + ("..." if len(r["detail"]) > 120 else "")
+                self.cell(5, 5, "", 0, 0)
+                self.multi_cell(180, 5, detail)
+                self.ln(2)
+
+        if rec_data.get("maintenance"):
+            self.ln(5)
+            self._set_font("B", 12)
+            self.set_text_color(*COLORS["secondary"])
+            self.cell(0, 8, "유지보수 및 기타 개선", 0, 1)
+            self.ln(3)
+
+            for i, r in enumerate(rec_data["maintenance"][:4], 1):
+                self._set_font("", 9)
+                self.set_text_color(*COLORS["text"])
+                effort = r.get("effort_estimate", "")
+                self.cell(0, 6, f"{i}. {r['title']} ({effort})", 0, 1)
+
+    def add_action_plan_business(self, data: dict):
+        self.add_page()
+        self._section_title("실행 계획")
+
+        all_issues = []
+        for pillar in ["seo", "geo", "aao"]:
+            pillar_label = PILLAR_LABELS_BIZ.get(pillar, pillar.upper())
+            for issue in data.get(pillar, {}).get("issues", []):
+                all_issues.append({"pillar": pillar_label, "pillar_key": pillar, **issue})
+
+        severity_order = {"critical": 0, "high": 1, "medium": 2, "warning": 3, "low": 4}
+        all_issues.sort(key=lambda x: severity_order.get(x.get("severity", "low"), 5))
+
+        col_widths = [12, 32, 38, 100]
+        headers = ["#", "긴급도", "영역", "조치 사항"]
         self._set_font("B", 9)
-        self.cell(20, 7, f"{score:.0f}", 0, 1)
+        self.set_fill_color(*COLORS["light_bg"])
+        self.set_text_color(*COLORS["text"])
+        for h, w in zip(headers, col_widths):
+            self.cell(w, 7, h, 1, 0, "C", fill=True)
+        self.ln()
+
+        self._set_font("", 8)
+        for i, issue in enumerate(all_issues[:20], 1):
+            severity = issue.get("severity", "low")
+            sev_label = SEVERITY_LABELS_BIZ.get(severity, severity)
+            msg = _translate_issue(issue.get("message", ""))
+
+            self.set_text_color(*COLORS["text"])
+            self.cell(col_widths[0], 6, str(i), 1, 0, "C")
+            color = SEVERITY_COLORS.get(severity, COLORS["secondary"])
+            self.set_text_color(*color)
+            self.cell(col_widths[1], 6, sev_label, 1, 0, "C")
+            self.set_text_color(*COLORS["text"])
+            self.cell(col_widths[2], 6, issue.get("pillar", ""), 1, 0, "C")
+            self.cell(col_widths[3], 6, msg[:55], 1, 0, "L")
+            self.ln()
 
 
-def generate_pdf_report(data: dict, output_path: Optional[str] = None) -> str:
-    """Generate PDF report from audit data."""
+def generate_pdf_report(data: dict, output_path: Optional[str] = None, audience: str = "developer") -> str:
+    """Generate PDF report from audit data.
+
+    Args:
+        data: Audit result data dict
+        output_path: Custom output file path
+        audience: "developer" for technical report, "business" for plain-language report
+    """
     brand = data.get("brand", "Unknown")
 
     pdf = ThreeOPDF(brand)
     pdf.alias_nb_pages()
-
     pdf.add_title_page(data)
-    pdf.add_executive_summary(data)
 
-    for pillar in ["seo", "geo", "aao"]:
-        if data.get(pillar):
-            pdf.add_pillar_section(pillar, data)
-
-    pdf.add_recommendations(data)
-    pdf.add_action_plan(data)
+    if audience == "business":
+        pdf.add_overview_business(data)
+        for pillar in ["seo", "geo", "aao"]:
+            if data.get(pillar):
+                pdf.add_pillar_business(pillar, data)
+        pdf.add_roadmap_business(data)
+        pdf.add_action_plan_business(data)
+    else:
+        pdf.add_executive_summary(data)
+        for pillar in ["seo", "geo", "aao"]:
+            if data.get(pillar):
+                pdf.add_pillar_section(pillar, data)
+        pdf.add_recommendations(data)
+        pdf.add_action_plan(data)
 
     if not output_path:
         reports_dir = os.path.join(os.getcwd(), "reports")
         os.makedirs(reports_dir, exist_ok=True)
         date_str = datetime.now().strftime("%Y%m%d")
-        output_path = os.path.join(reports_dir, f"{brand}-{date_str}-full.pdf")
+        suffix = "business" if audience == "business" else "full"
+        output_path = os.path.join(reports_dir, f"{brand}-{date_str}-{suffix}.pdf")
 
     pdf.output(output_path)
     return output_path
@@ -413,6 +833,8 @@ def main():
     parser.add_argument("--input", required=True, help="Audit data JSON file")
     parser.add_argument("--output", help="Output PDF path")
     parser.add_argument("--brand", help="Brand name override")
+    parser.add_argument("--audience", choices=["developer", "business"], default="developer",
+                        help="Report audience: developer (technical) or business (plain language)")
     args = parser.parse_args()
 
     from pathlib import Path
@@ -421,7 +843,7 @@ def main():
     if args.brand:
         data["brand"] = args.brand
 
-    output_path = generate_pdf_report(data, args.output)
+    output_path = generate_pdf_report(data, args.output, args.audience)
     print(f"PDF report saved: {output_path}")
 
 

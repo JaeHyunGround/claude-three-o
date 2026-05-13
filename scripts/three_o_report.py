@@ -295,6 +295,8 @@ def main():
     parser.add_argument("--brand", default="unknown", help="Brand name")
     parser.add_argument("--format", choices=["md", "json", "pdf"], default="md", help="Output format")
     parser.add_argument("--output", help="Output file path (for PDF)")
+    parser.add_argument("--audience", choices=["developer", "business"], default="developer",
+                        help="Report audience: developer (technical) or business (plain language)")
     parser.add_argument("--save", action="store_true", help="Save to file")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
@@ -309,7 +311,7 @@ def main():
 
     if output_format == "pdf":
         from report_pdf import generate_pdf_report
-        output_path = generate_pdf_report(data, args.output if hasattr(args, "output") else None)
+        output_path = generate_pdf_report(data, args.output if hasattr(args, "output") else None, args.audience)
         print(f"PDF report saved: {output_path}")
         return
 
