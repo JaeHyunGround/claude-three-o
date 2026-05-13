@@ -195,7 +195,7 @@ claude-three-o/
   hooks/                     # 품질 게이트 훅 (3개)
   scripts/                   # 45개 Python 스크립트
   schema/                    # Schema.org JSON-LD 템플릿 (10개 업종)
-  tests/                     # 테스트 스위트 (1111개)
+  tests/                     # 테스트 스위트 (1157개)
   reports/                   # 생성된 리포트 (gitignore)
 ```
 
@@ -238,6 +238,10 @@ Three-O는 부풀린 점수보다 현실적인 스코어링을 지향합니다. 
 | GEO 엔티티 | 계층형 sameAs 검증 | 지식(Wikidata/Wikipedia) > 권위(LinkedIn/Naver) > 소셜 플랫폼 |
 | GEO 엔티티 | 타입별 속성 완성도 | 엔티티 타입별 필수 필드 (음식점 ≠ 조직 ≠ 호텔) |
 | GEO 엔티티 | 구별 신호 감지 | 사업자번호, 설립연도, 대표자, 지역 한정자, 일반명 감점 |
+| GEO 센티먼트 | 5차원 감성 스코어링 | 극성 강도, 일관성, 커버리지, 플랫폼 정합성, 신호 다양성 |
+| GEO 센티먼트 | 이중 언어 렉시콘 분석 | 한국어 (23개) + 영어 (31개) 감성 사전, 강도 가중치 적용 |
+| GEO 센티먼트 | 크로스 플랫폼 추적 | 플랫폼별 점수 집계 및 정합성 측정 |
+| GEO 센티먼트 | 신뢰도 스코어링 | 데이터 볼륨 + 플랫폼 다양성 가중 신뢰도 (0~1.0) |
 | GEO 플랫폼 | 플랫폼별 5차원 스코어링 | 추출성, 팩트 밀도, E-E-A-T, 깊이, 접근성 등 플랫폼별 차원 평가 |
 | GEO 플랫폼 | 플랫폼별 인용 모델링 | ChatGPT(정의, Q&A), Perplexity(팩트, 출처), Gemini(E-E-A-T, 스키마), Claude(뉘앙스, 근거) |
 | GEO 플랫폼 | 크롤러 접근성 분석 | GPTBot, PerplexityBot, Google-Extended, ClaudeBot 차단 감지 |

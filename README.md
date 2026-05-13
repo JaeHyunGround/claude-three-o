@@ -195,7 +195,7 @@ claude-three-o/
   hooks/                     # Quality gate hooks (3)
   scripts/                   # 45 Python scripts
   schema/                    # Schema.org JSON-LD templates (10 industry types)
-  tests/                     # Test suite (1111 tests)
+  tests/                     # Test suite (1157 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
@@ -238,6 +238,10 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 | GEO Entity | Tiered sameAs verification | Knowledge (Wikidata/Wikipedia) > Authority (LinkedIn/Naver) > Social platforms |
 | GEO Entity | Type-aware attribute completeness | Per-entity-type required fields (Restaurant ≠ Organization ≠ Hotel) |
 | GEO Entity | Disambiguation signal detection | Business registration, founding year, CEO, location qualifier, generic name penalty |
+| GEO Sentiment | 5-dimension sentiment scoring | Polarity strength, consistency, coverage, platform alignment, signal diversity |
+| GEO Sentiment | Bilingual lexicon analysis | Korean (23 terms) + English (31 terms) sentiment lexicons with intensity weights |
+| GEO Sentiment | Cross-platform sentiment tracking | Per-platform score aggregation with alignment measurement |
+| GEO Sentiment | Confidence scoring | Data volume + platform diversity weighted confidence (0-1.0) |
 | GEO Platforms | 5-dimension per-platform scoring | Each platform scored across extractability, data density, E-E-A-T, depth, access |
 | GEO Platforms | Platform-specific citation modeling | ChatGPT (definitions, Q&A), Perplexity (facts, sources), Gemini (E-E-A-T, schema), Claude (nuance, evidence) |
 | GEO Platforms | Crawler access analysis | GPTBot, PerplexityBot, Google-Extended, ClaudeBot blocking detection |
