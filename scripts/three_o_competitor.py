@@ -128,13 +128,14 @@ def score_geo_dimensions(html: str) -> dict:
             "dimensions": {k: 0.0 for k in GEO_WEIGHTS},
         }
 
-    clarity_avg = round(sum(score_passage_clarity(p) for p in sample) / len(sample), 1)
-    factual_avg = round(sum(score_factual_density(p) for p in sample) / len(sample), 1)
+    texts = [p["text"] if isinstance(p, dict) else p for p in sample]
+    clarity_avg = round(sum(score_passage_clarity(t)["score"] for t in texts) / len(texts), 1)
+    factual_avg = round(sum(score_factual_density(t)["score"] for t in texts) / len(texts), 1)
     pattern_avg = round(
-        sum(score_citation_pattern(p)["score"] for p in sample) / len(sample), 1
+        sum(score_citation_pattern(t)["score"] for t in texts) / len(texts), 1
     )
-    structural = round(score_structural_format(html), 1)
-    authority = round(score_authority_signals(html), 1)
+    structural = round(score_structural_format(html)["score"], 1)
+    authority = round(score_authority_signals(html)["score"], 1)
 
     dimensions = {
         "passage_clarity": clarity_avg,

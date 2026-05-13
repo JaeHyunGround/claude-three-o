@@ -124,7 +124,8 @@ def analyze_weakness(passage: str) -> list:
             "detail": "인용 패턴 미탐지 (정의문, 비교문, 단계, 인과 없음)",
         })
 
-    containment = score_self_containment(passage)
+    containment_result = score_self_containment(passage)
+    containment = containment_result["score"] if isinstance(containment_result, dict) else containment_result
     if containment < 50:
         weaknesses.append({
             "type": "low_self_containment",
@@ -132,7 +133,8 @@ def analyze_weakness(passage: str) -> list:
             "detail": "맥락 의존적 — 독립적으로 이해 불가능",
         })
 
-    clarity = score_passage_clarity(passage)
+    clarity_result = score_passage_clarity(passage)
+    clarity = clarity_result["score"] if isinstance(clarity_result, dict) else clarity_result
     if clarity < 50:
         weaknesses.append({
             "type": "low_clarity",
@@ -140,7 +142,8 @@ def analyze_weakness(passage: str) -> list:
             "detail": "문장 구조 불명확 — 주어/서술어 관계 약함",
         })
 
-    factual = score_factual_density(passage)
+    factual_result = score_factual_density(passage)
+    factual = factual_result["score"] if isinstance(factual_result, dict) else factual_result
     if factual < 40:
         weaknesses.append({
             "type": "low_factual_density",
@@ -238,9 +241,12 @@ def suggest_strategies(weaknesses: list) -> list:
 def compute_passage_score(passage: str) -> dict:
     """Compute full citability breakdown for a passage."""
     pattern_result = score_citation_pattern(passage)
-    containment = score_self_containment(passage)
-    clarity = score_passage_clarity(passage)
-    factual = score_factual_density(passage)
+    containment_r = score_self_containment(passage)
+    clarity_r = score_passage_clarity(passage)
+    factual_r = score_factual_density(passage)
+    containment = containment_r["score"] if isinstance(containment_r, dict) else containment_r
+    clarity = clarity_r["score"] if isinstance(clarity_r, dict) else clarity_r
+    factual = factual_r["score"] if isinstance(factual_r, dict) else factual_r
 
     overall = round(
         clarity * 0.25 +
@@ -323,19 +329,20 @@ def analyze_rewrite(html: str, url: str, max_suggestions: int = 10) -> dict:
     all_scores = []
     candidates = []
 
-    for passage in passages[:30]:
-        score = compute_passage_score(passage)
+    for raw_passage in passages[:30]:
+        passage_text = raw_passage["text"] if isinstance(raw_passage, dict) else raw_passage
+        score = compute_passage_score(passage_text)
         all_scores.append(score["overall"])
 
         if score["overall"] < 65:
-            weaknesses = analyze_weakness(passage)
+            weaknesses = analyze_weakness(passage_text)
             strategies = suggest_strategies(weaknesses)
             improvement = estimate_improvement(score, strategies)
             tips = platform_tips(strategies)
 
             candidates.append({
-                "text": passage[:200] + ("..." if len(passage) > 200 else ""),
-                "full_length": len(passage),
+                "text": passage_text[:200] + ("..." if len(passage_text) > 200 else ""),
+                "full_length": len(passage_text),
                 "score": score,
                 "weaknesses": weaknesses,
                 "strategies": strategies,

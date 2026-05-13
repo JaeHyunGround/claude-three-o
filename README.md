@@ -195,7 +195,7 @@ claude-three-o/
   hooks/                     # Quality gate hooks (3)
   scripts/                   # 45 Python scripts
   schema/                    # Schema.org JSON-LD templates (8 industry types)
-  tests/                     # Test suite (674 tests)
+  tests/                     # Test suite (1078 tests)
   reports/                   # Generated reports (gitignored)
 ```
 
@@ -229,23 +229,46 @@ Three-O prioritizes realistic scoring over inflated numbers. Key accuracy mechan
 
 | Module | Mechanism | Effect |
 |--------|-----------|--------|
-| GEO Citability | AI citation pattern detection (definition, comparison, step, causal) | Identifies passages most likely to be cited |
-| GEO Citability | Self-containment scoring | Penalizes context-dependent passages |
+| GEO Citability | 7-dimension citability scoring | Passage clarity, factual density, citation pattern, self-containment, quote readiness, structural format, authority signals |
+| GEO Citability | Sentence structure analysis | Subject-predicate detection, weak opener penalty, clear subject bonus |
+| GEO Citability | Weighted factual density | Numbers, proper nouns, technical terms, units scored by type and frequency |
+| GEO Citability | Quote readiness scoring | Quotable length, definitional pattern, standalone clarity, specificity |
+| GEO Citability | Platform-specific citation modeling | ChatGPT, Perplexity, Gemini, Claude preference weights and citation styles |
 | GEO Entity | 4-dimension entity scoring | Schema presence, connection strength, attribute completeness, disambiguation |
 | GEO Entity | Tiered sameAs verification | Knowledge (Wikidata/Wikipedia) > Authority (LinkedIn/Naver) > Social platforms |
 | GEO Entity | Type-aware attribute completeness | Per-entity-type required fields (Restaurant ≠ Organization ≠ Hotel) |
 | GEO Entity | Disambiguation signal detection | Business registration, founding year, CEO, location qualifier, generic name penalty |
-| GEO Platforms | Differentiated per-platform criteria | Each AI platform scored by its actual preferences |
+| GEO Platforms | 5-dimension per-platform scoring | Each platform scored across extractability, data density, E-E-A-T, depth, access |
+| GEO Platforms | Platform-specific citation modeling | ChatGPT (definitions, Q&A), Perplexity (facts, sources), Gemini (E-E-A-T, schema), Claude (nuance, evidence) |
+| GEO Platforms | Crawler access analysis | GPTBot, PerplexityBot, Google-Extended, ClaudeBot blocking detection |
+| GEO Platforms | Cross-platform gap analysis | Optimization imbalance detection with severity and priority actions |
+| GEO Platforms | Dynamic recency detection | Current year awareness, date metadata, schema dates, freshness language |
 | SEO Content | 4-axis E-E-A-T quality scoring | Experience, Expertise, Authoritativeness, Trust scored independently (0-100) |
 | SEO Content | Korean + English signal detection | Bilingual regex patterns per axis (5+6+7+8 signal categories) |
 | SEO Content | Weighted content score | depth_score × 0.4 + eeat_score × 0.6 with axis-level diagnostics |
-| SEO Technical | Meta quality evaluation (not binary) | Title length, desc length, canonical protocol check |
-| SEO Technical | Weighted multi-section scoring | 6 sub-dimensions with configurable weights |
+| SEO Technical | 8-dimension technical scoring | Meta quality, heading structure, image optimization, link health, mobile readiness, indexability, security, performance |
+| SEO Technical | Mobile readiness scoring | Viewport quality, responsive breakpoints, touch targets, click-to-call, flex/grid layout |
+| SEO Technical | Indexability analysis | Robots directives, canonical validation, hreflang, lang attribute, JSON-LD presence |
+| SEO Technical | Security signal detection | HTTPS, CSP meta, mixed content, SRI, inline event handler penalty, form action validation |
+| SEO Technical | Performance signal analysis | Resource hints, async/defer optimization, critical CSS, font-display, lazy loading |
+| SEO Technical | Image optimization scoring | Alt coverage, lazy/eager loading, srcset, modern formats (WebP/AVIF), explicit sizing |
+| SEO Technical | Link health assessment | Anchor diversity, generic anchor penalty, nofollow ratio, navigation quality, breadcrumb |
 | AAO Conversion | 6-dimension funnel scoring | CTA quality, form accessibility, flow completeness, mobile, deep link, confirmation |
 | AAO Conversion | CTA quality assessment | Specific vs generic CTA detection, schema action, urgency, ARIA roles |
 | AAO Conversion | Mobile conversion optimization | Viewport, click-to-call/map, touch targets, SNS login, sticky CTA |
 | AAO Conversion | Deep link & app integration | iOS universal links, Android intents, custom schemes, API endpoints |
 | AAO Conversion | Payment path depth analysis | Price visibility, payment methods, secure checkout, refund policy |
+| AAO Rendering | 6-dimension rendering scoring | SSR quality, JS dependency, semantic structure, content accessibility, agent crawlability, rendering resilience |
+| AAO Rendering | Hydration pattern detection | Static, SSR+hydrate, CSR, hybrid classification with framework awareness |
+| AAO Rendering | Framework SSR capability assessment | Next.js/Nuxt.js/Remix/Astro/Gatsby (SSR-capable) vs React/Vue/Angular (CSR-only) |
+| AAO Rendering | Agent crawlability scoring | Navigation schema, breadcrumb, canonical, robots, internal link structure |
+| AAO Rendering | Rendering resilience analysis | Noscript fallback, progressive enhancement, image loading strategy, resource hints |
+| AAO Feed | 6-dimension feed scoring | Data quality, field completeness, feed freshness, pricing accuracy, media quality, platform compliance |
+| AAO Feed | Google Merchant compliance | GTIN/MPN identifiers, availability/condition validation, category, shipping, custom labels |
+| AAO Feed | Naver Shopping compliance | Category depth, price_pc, shipping, manufacture/brand, origin, import_flag, event_words |
+| AAO Feed | Pricing accuracy analysis | Currency format, sale price consistency, zero price detection, effective dates, shipping |
+| AAO Feed | Media quality scoring | HTTPS validation, modern formats (WebP/AVIF), additional images, high-res indicators, alt text |
+| AAO Feed | Data quality assessment | Title length/uniqueness, description quality, link validation, ID uniqueness, HTML markup penalty |
 | AAO Selectability | Industry auto-detection + weight adjustment | Restaurant ≠ SaaS ≠ Clinic scoring |
 | AAO Selectability | Signal correlation bonuses/penalties | Schema + reviews = synergy bonus |
 | AAO Selectability | Cross-validation | Schema claims verified against page content |
