@@ -5,6 +5,21 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-05-18
+
+### Added
+- Naver OG image dimension validation (min 200x200)
+- Crawl-delay parsing for Yeti bot in robots.txt
+- X-Robots-Tag header analysis for Naver/Yeti directives
+- Korean meta description length check (Naver truncates at ~77 chars)
+- Naver ecosystem link detection (Blog, Place, Smart Store, Cafe, Map)
+- Mobile viewport check (Naver prioritizes mobile-friendly pages)
+- 25 new Naver tests (21 → 46), total 2491 → 2516
+
+### Changed
+- `analyze_naver_seo` now returns 11 result keys (was 7), covers 6 new analysis dimensions
+- Naver score calculation incorporates X-Robots-Tag, viewport, crawl-delay, and meta description checks
+
 ## [1.5.0] - 2026-05-18
 
 ### Added
