@@ -6,6 +6,7 @@ import json
 import re
 import socket
 import sys
+from typing import Any, Dict
 from urllib.parse import urlparse
 
 
@@ -24,7 +25,7 @@ ALLOWED_SCHEMES = {"http", "https"}
 MAX_URL_LENGTH = 2048
 
 
-def validate_url(url: str) -> dict:
+def validate_url(url: str) -> Dict[str, Any]:
     """Validate URL for safety and correctness. Returns dict with 'valid' bool and 'error' if invalid."""
     if not url:
         return {"valid": False, "error": "Empty URL"}
@@ -66,7 +67,7 @@ def validate_url(url: str) -> dict:
     return {"valid": True, "url": url, "hostname": hostname, "scheme": parsed.scheme}
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Validate URL for SSRF protection")
     parser.add_argument("url", help="URL to validate")
     parser.add_argument("--json", action="store_true", help="Output as JSON")

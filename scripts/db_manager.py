@@ -5,6 +5,7 @@ import json
 import sqlite3
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 DB_PATH = Path.home() / ".config" / "three-o" / "data" / "three_o.db"
 
@@ -17,7 +18,7 @@ def get_connection() -> sqlite3.Connection:
     return conn
 
 
-def init_db():
+def init_db() -> None:
     """Create tables if they don't exist."""
     conn = get_connection()
     conn.executescript("""
@@ -74,7 +75,7 @@ def init_db():
     conn.close()
 
 
-def save_snapshot(pillar: str, brand: str, url: str, score: float, data: dict):
+def save_snapshot(pillar: str, brand: str, url: str, score: float, data: Dict[str, Any]) -> None:
     """Save an audit snapshot."""
     conn = get_connection()
     timestamp = datetime.now().isoformat()
@@ -87,7 +88,7 @@ def save_snapshot(pillar: str, brand: str, url: str, score: float, data: dict):
     conn.close()
 
 
-def get_latest_baseline(brand: str, pillar: str):
+def get_latest_baseline(brand: str, pillar: str) -> Optional[Dict[str, Any]]:
     """Get most recent baseline for a brand/pillar."""
     conn = get_connection()
     row = conn.execute(
@@ -100,7 +101,7 @@ def get_latest_baseline(brand: str, pillar: str):
     return None
 
 
-def save_baseline(brand: str, pillar: str, score: float, data: dict, locked: bool = False):
+def save_baseline(brand: str, pillar: str, score: float, data: Dict[str, Any], locked: bool = False) -> None:
     """Save a new baseline."""
     conn = get_connection()
     timestamp = datetime.now().isoformat()
@@ -112,7 +113,7 @@ def save_baseline(brand: str, pillar: str, score: float, data: dict, locked: boo
     conn.close()
 
 
-def get_baseline_history(brand: str, pillar: str, limit: int = 10) -> list:
+def get_baseline_history(brand: str, pillar: str, limit: int = 10) -> List[Dict[str, Any]]:
     """Get recent baselines for a brand/pillar ordered by timestamp desc."""
     conn = get_connection()
     rows = conn.execute(
@@ -123,7 +124,7 @@ def get_baseline_history(brand: str, pillar: str, limit: int = 10) -> list:
     return [dict(r) for r in rows]
 
 
-def get_all_pillar_baselines(brand: str, limit: int = 10) -> dict:
+def get_all_pillar_baselines(brand: str, limit: int = 10) -> Dict[str, List[Dict[str, Any]]]:
     """Get recent baselines for all pillars."""
     return {
         "seo": get_baseline_history(brand, "seo", limit),
@@ -132,7 +133,7 @@ def get_all_pillar_baselines(brand: str, limit: int = 10) -> dict:
     }
 
 
-def list_brands() -> list:
+def list_brands() -> List[str]:
     """List all brands with stored data."""
     conn = get_connection()
     rows = conn.execute("SELECT DISTINCT brand FROM baselines ORDER BY brand").fetchall()
@@ -140,7 +141,7 @@ def list_brands() -> list:
     return [row["brand"] for row in rows]
 
 
-def cleanup_old_data(days: int = 365):
+def cleanup_old_data(days: int = 365) -> None:
     """Remove snapshots older than specified days."""
     conn = get_connection()
     datetime.now().isoformat()

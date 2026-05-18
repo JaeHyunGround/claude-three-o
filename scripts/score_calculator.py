@@ -56,7 +56,7 @@ def _balance_penalty(scores: list) -> float:
         return 1.0
     variance = sum((s - mean) ** 2 for s in valid) / len(valid)
     cv = math.sqrt(variance) / mean
-    penalty = max(0.85, 1.0 - cv * BALANCE_PENALTY_WEIGHT)
+    penalty: float = max(0.85, 1.0 - cv * BALANCE_PENALTY_WEIGHT)
     return penalty
 
 

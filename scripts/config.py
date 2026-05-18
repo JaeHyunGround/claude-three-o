@@ -3,6 +3,7 @@
 import argparse
 import json
 from pathlib import Path
+from typing import Dict, List, Optional
 
 CONFIG_DIR = Path.home() / ".config" / "three-o"
 KEYS = {
@@ -15,29 +16,30 @@ KEYS = {
 }
 
 
-def ensure_config_dir():
+def ensure_config_dir() -> None:
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def get_api_key(service: str):
+def get_api_key(service: str) -> Optional[str]:
     key_file = CONFIG_DIR / KEYS.get(service, f"{service}_key.txt")
     if not key_file.exists():
         return None
     content = key_file.read_text().strip()
     if service == "naver_client_id":
         data = json.loads(content)
-        return data.get("client_id")
+        return str(data.get("client_id", ""))
     return content
 
 
-def get_naver_credentials():
+def get_naver_credentials() -> Optional[Dict[str, str]]:
     key_file = CONFIG_DIR / "naver_api.json"
     if not key_file.exists():
         return None
-    return json.loads(key_file.read_text())
+    result: Dict[str, str] = json.loads(key_file.read_text())
+    return result
 
 
-def list_configured_services() -> list:
+def list_configured_services() -> List[str]:
     configured = []
     for service, filename in KEYS.items():
         if (CONFIG_DIR / filename).exists():

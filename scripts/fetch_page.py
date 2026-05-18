@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 import time
+from typing import Any, Dict
 
 import httpx
 
@@ -20,7 +21,7 @@ USER_AGENTS = {
 }
 
 
-def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIMEOUT) -> dict:
+def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIMEOUT) -> Dict[str, Any]:
     """Fetch a page and return status, headers, and content."""
     validation = validate_url(url)
     if not validation["valid"]:
@@ -52,7 +53,7 @@ def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIM
         return {"success": False, "error": str(e)}
 
 
-def fetch_with_bot_comparison(url: str) -> dict:
+def fetch_with_bot_comparison(url: str) -> Dict[str, Any]:
     """Fetch page with multiple bot user-agents to detect blocking."""
     results = {}
     for bot_name in ["default", "googlebot", "gptbot", "anthropic", "perplexity"]:

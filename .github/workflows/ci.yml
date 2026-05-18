@@ -26,10 +26,14 @@ jobs:
         run: sudo apt-get install -y --no-install-recommends fonts-nanum
 
       - name: Install dependencies
-        run: pip install -r requirements-dev.txt ruff
+        run: pip install -r requirements-dev.txt
 
       - name: Lint
         run: ruff check scripts/ tests/
+
+      - name: Type check
+        if: matrix.python-version == '3.12'
+        run: mypy
 
       - name: Run tests with coverage
         run: pytest --cov --cov-report=xml --cov-report=term-missing

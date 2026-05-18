@@ -198,7 +198,7 @@ claude-three-o/
   hooks/                     # 품질 게이트 훅 (3개)
   scripts/                   # 45개 Python 스크립트
   schema/                    # Schema.org JSON-LD 템플릿 (10개 업종)
-  tests/                     # 테스트 스위트 (2415개)
+  tests/                     # 테스트 스위트 (2431개)
   reports/                   # 생성된 리포트 (gitignore)
 ```
 

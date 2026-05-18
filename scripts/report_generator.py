@@ -5,6 +5,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict
 
 
 def get_reports_dir() -> Path:
@@ -13,7 +14,7 @@ def get_reports_dir() -> Path:
     return reports
 
 
-def generate_markdown_report(data: dict) -> str:
+def generate_markdown_report(data: Dict[str, Any]) -> str:
     """Generate Markdown report from audit data."""
     brand = data.get("brand", "Unknown")
     date = datetime.now().strftime("%Y-%m-%d")
@@ -62,7 +63,7 @@ def generate_markdown_report(data: dict) -> str:
     return "\n".join(sections)
 
 
-def generate_json_report(data: dict) -> str:
+def generate_json_report(data: Dict[str, Any]) -> str:
     """Generate JSON report from audit data."""
     report = {
         "meta": {

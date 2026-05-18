@@ -29,6 +29,21 @@ ignore = ["E501"]
 [tool.ruff.lint.per-file-ignores]
 "tests/test_geo_mentions.py" = ["E402"]
 
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+check_untyped_defs = false
+files = [
+    "scripts/validate_url.py",
+    "scripts/config.py",
+    "scripts/fetch_page.py",
+    "scripts/db_manager.py",
+    "scripts/score_calculator.py",
+    "scripts/report_generator.py",
+]
+
 [tool.coverage.run]
 source = ["scripts"]
 
