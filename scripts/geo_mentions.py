@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import re
 from typing import Optional
 
 from config import load_config, get_api_key
@@ -43,13 +44,32 @@ def generate_queries(brand: str, industry: Optional[str] = None, location: Optio
     return queries
 
 
+RECOMMEND_KEYWORDS = [
+    "recommend", "best", "top", "leading", "excellent",
+    "suitable", "good choice", "highly", "strongly", "worthy",
+    "추천", "최고", "적합", "좋은", "우수한", "권장", "최적", "강추",
+]
+
+
+def _brand_pattern(brand: str) -> re.Pattern:
+    """Build a regex pattern for brand matching with word boundaries.
+
+    For ASCII-only brands, uses \\b word boundaries to prevent partial matches
+    (e.g. 'claude' won't match 'include'). For brands containing CJK characters,
+    uses plain substring matching since \\b doesn't work with CJK."""
+    escaped = re.escape(brand)
+    has_cjk = bool(re.search(r'[　-鿿가-힯]', brand))
+    if has_cjk:
+        return re.compile(escaped, re.IGNORECASE)
+    return re.compile(rf'\b{escaped}\b', re.IGNORECASE)
+
+
 def analyze_mention(response_text: str, brand: str) -> dict:
     """Analyze a single AI response for brand mentions."""
-    brand_lower = brand.lower()
-    text_lower = response_text.lower()
+    pattern = _brand_pattern(brand)
+    match = pattern.search(response_text)
 
-    mentioned = brand_lower in text_lower
-    if not mentioned:
+    if not match:
         return {
             "mentioned": False,
             "position": None,
@@ -57,8 +77,8 @@ def analyze_mention(response_text: str, brand: str) -> dict:
             "recommended": False,
         }
 
-    position = text_lower.index(brand_lower)
-    total_length = len(text_lower)
+    position = match.start()
+    total_length = len(response_text)
     relative_position = round(position / max(total_length, 1), 2)
 
     if relative_position < 0.2:
@@ -69,11 +89,11 @@ def analyze_mention(response_text: str, brand: str) -> dict:
         position_label = "late"
 
     start = max(0, position - 100)
-    end = min(len(response_text), position + len(brand) + 100)
+    end = min(total_length, match.end() + 100)
     context = response_text[start:end].strip()
 
-    recommend_keywords = ["recommend", "best", "top", "leading", "excellent", "추천", "최고"]
-    recommended = any(kw in text_lower[max(0, position - 50):position + len(brand) + 50] for kw in recommend_keywords)
+    window = response_text[max(0, position - 50):match.end() + 50].lower()
+    recommended = any(kw in window for kw in RECOMMEND_KEYWORDS)
 
     return {
         "mentioned": True,

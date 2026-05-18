@@ -12,6 +12,31 @@ from validate_url import validate_url
 
 
 DEFAULT_TIMEOUT = 15
+_CACHE_TTL = 300
+_cache: Dict[str, Dict[str, Any]] = {}
+
+
+def _cache_key(url: str, user_agent: str) -> str:
+    return f"{user_agent}::{url}"
+
+
+def _get_cached(url: str, user_agent: str) -> Any:
+    key = _cache_key(url, user_agent)
+    entry = _cache.get(key)
+    if entry and (time.time() - entry["ts"]) < _CACHE_TTL:
+        return entry["data"]
+    if entry:
+        del _cache[key]
+    return None
+
+
+def _set_cached(url: str, user_agent: str, data: Dict[str, Any]) -> None:
+    _cache[_cache_key(url, user_agent)] = {"ts": time.time(), "data": data}
+
+
+def clear_cache() -> None:
+    """Clear the fetch cache."""
+    _cache.clear()
 USER_AGENTS = {
     "default": "Three-O/1.0 (SEO+GEO+AAO Audit Bot)",
     "googlebot": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
@@ -21,8 +46,16 @@ USER_AGENTS = {
 }
 
 
-def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIMEOUT) -> Dict[str, Any]:
-    """Fetch a page and return status, headers, and content."""
+def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIMEOUT, use_cache: bool = True) -> Dict[str, Any]:
+    """Fetch a page and return status, headers, and content.
+
+    Results are cached in memory for 5 minutes to avoid duplicate requests
+    when multiple analysis modules fetch the same URL (e.g. robots.txt)."""
+    if use_cache:
+        cached = _get_cached(url, user_agent)
+        if cached is not None:
+            return cached
+
     validation = validate_url(url)
     if not validation["valid"]:
         return {"success": False, "error": validation["error"]}
@@ -36,7 +69,7 @@ def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIM
             response = client.get(url, headers=headers)
         elapsed = time.time() - start
 
-        return {
+        result = {
             "success": True,
             "url": str(response.url),
             "status_code": response.status_code,
@@ -48,21 +81,35 @@ def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIM
             "redirects": [str(r.url) for r in response.history],
         }
     except httpx.TimeoutException:
-        return {"success": False, "error": f"Timeout after {timeout}s"}
+        result = {"success": False, "error": f"Timeout after {timeout}s"}
     except httpx.RequestError as e:
-        return {"success": False, "error": str(e)}
+        result = {"success": False, "error": str(e)}
+
+    if use_cache:
+        _set_cached(url, user_agent, result)
+    return result
 
 
 def fetch_with_bot_comparison(url: str) -> Dict[str, Any]:
-    """Fetch page with multiple bot user-agents to detect blocking."""
-    results = {}
-    for bot_name in ["default", "googlebot", "gptbot", "anthropic", "perplexity"]:
-        result = fetch_page(url, user_agent=bot_name)
-        results[bot_name] = {
+    """Fetch page with multiple bot user-agents to detect blocking.
+
+    Uses concurrent requests for ~5x speedup over sequential fetching."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    bot_names = ["default", "googlebot", "gptbot", "anthropic", "perplexity"]
+
+    def _fetch_bot(bot_name: str) -> tuple:
+        result = fetch_page(url, user_agent=bot_name, use_cache=False)
+        return bot_name, {
             "status": result.get("status_code"),
             "blocked": result.get("status_code", 0) in (403, 429, 503),
             "content_length": result.get("content_length", 0),
         }
+
+    results = {}
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        for bot_name, data in pool.map(lambda b: _fetch_bot(b), bot_names):
+            results[bot_name] = data
     return results
 
 

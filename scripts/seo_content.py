@@ -152,14 +152,25 @@ def count_headings(html: str) -> dict:
     return counts
 
 
+def _count_content_units(text: str, is_korean: bool) -> int:
+    """Count content units: characters for Korean, words for English.
+
+    Korean text often lacks spaces between meaningful units, so word-based
+    counting (text.split()) severely undercounts. Character count (excluding
+    whitespace) is the standard metric for Korean content length."""
+    if is_korean:
+        return len(re.sub(r'\s', '', text))
+    return len(text.split())
+
+
 def analyze_korean_content(text: str) -> dict:
     """Analyze Korean-specific content metrics."""
     korean_chars = len(re.findall(r"[가-힯]", text))
-    total_chars = len(text)
-    korean_ratio = korean_chars / max(total_chars, 1)
+    non_ws_chars = len(re.sub(r'\s', '', text))
+    korean_ratio = korean_chars / max(non_ws_chars, 1)
     return {
         "korean_chars": korean_chars,
-        "total_chars": total_chars,
+        "total_chars": non_ws_chars,
         "korean_ratio": round(korean_ratio, 3),
         "is_korean_content": korean_ratio > 0.3,
     }
@@ -350,7 +361,10 @@ def compute_eeat_score(experience: dict, expertise: dict,
 
 def analyze_content_depth(text: str) -> dict:
     """Analyze content depth and quality metrics."""
-    word_count = len(text.split())
+    korean_chars = len(re.findall(r"[가-힯]", text))
+    non_ws = len(re.sub(r'\s', '', text))
+    is_korean = (korean_chars / max(non_ws, 1)) > 0.3
+    word_count = _count_content_units(text, is_korean)
     sentences = re.split(r'[.!?。]', text)
     sentences = [s.strip() for s in sentences if len(s.strip()) > 5]
     sentence_count = len(sentences)
@@ -358,7 +372,7 @@ def analyze_content_depth(text: str) -> dict:
     avg_sentence_len = 0
     if sentences:
         avg_sentence_len = round(
-            sum(len(s.split()) for s in sentences) / len(sentences), 1
+            sum(_count_content_units(s, is_korean) for s in sentences) / len(sentences), 1
         )
 
     numbers = len(re.findall(r'\d+[\d,.%]*', text))
@@ -429,7 +443,10 @@ def detect_commodity_content(html: str, text: str) -> dict:
         commodity_signals += 1
 
     numbers_data = len(re.findall(r'\d+[\d,.%]*', text))
-    word_count = len(text.split())
+    korean_ch = len(re.findall(r"[가-힯]", text))
+    non_ws_ch = len(re.sub(r'\s', '', text))
+    is_ko = (korean_ch / max(non_ws_ch, 1)) > 0.3
+    word_count = _count_content_units(text, is_ko)
     data_density = numbers_data / max(word_count, 1)
     details["data_density"] = round(data_density, 4)
     if data_density < 0.005:

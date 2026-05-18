@@ -5,6 +5,20 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-05-18
+
+### Added
+- In-memory TTL cache (5min) in `fetch_page.py` — eliminates duplicate HTTP requests across analysis modules
+- Concurrent bot comparison (`fetch_with_bot_comparison`) via ThreadPoolExecutor — ~5x speedup
+- Word boundary regex for AI brand mention detection — prevents false positives (e.g. "claude" no longer matches "include")
+- Korean-aware content unit counting (`_count_content_units`) — character-based for Korean, word-based for English
+- Expanded recommendation keywords: +8 Korean ("적합", "권장", "강추", etc.) and +5 English terms
+
+### Fixed
+- `analyze_korean_content` total_chars now excludes whitespace for accurate korean_ratio
+- `analyze_content_depth` word count was inaccurate for Korean (split() undercounts spaceless Korean text)
+- `detect_commodity_content` data_density now uses Korean-aware content units
+
 ## [1.4.0] - 2026-05-18
 
 ### Added

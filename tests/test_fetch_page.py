@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-from fetch_page import fetch_page, fetch_with_bot_comparison, USER_AGENTS, DEFAULT_TIMEOUT
+from fetch_page import fetch_page, fetch_with_bot_comparison, clear_cache, USER_AGENTS, DEFAULT_TIMEOUT
 
 
 class TestUserAgents(unittest.TestCase):
@@ -32,6 +32,9 @@ class TestUserAgents(unittest.TestCase):
 
 
 class TestFetchPage(unittest.TestCase):
+
+    def setUp(self):
+        clear_cache()
 
     @patch("fetch_page.validate_url", return_value={"valid": False, "error": "bad"})
     def test_invalid_url(self, mock_val):

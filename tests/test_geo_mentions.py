@@ -148,10 +148,22 @@ class TestAnalyzeMention(unittest.TestCase):
         self.assertFalse(result["mentioned"])
 
     def test_brand_in_long_context(self):
-        text = "A" * 200 + "TestBrand" + "B" * 200
+        text = "word " * 40 + "TestBrand" + " more" * 40
         result = analyze_mention(text, "TestBrand")
         self.assertTrue(result["mentioned"])
         self.assertTrue(len(result["context"]) <= 300)
+
+    def test_false_positive_prevention(self):
+        result = analyze_mention("We include this and occlude that.", "Claude")
+        self.assertFalse(result["mentioned"])
+
+    def test_word_boundary_exact_match(self):
+        result = analyze_mention("We recommend Claude for AI tasks.", "Claude")
+        self.assertTrue(result["mentioned"])
+
+    def test_korean_brand_no_boundary(self):
+        result = analyze_mention("스카이벤처스는 좋은 회사입니다.", "스카이벤처스")
+        self.assertTrue(result["mentioned"])
 
 
 class TestCalculateMentionFrequency(unittest.TestCase):
