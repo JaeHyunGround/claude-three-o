@@ -5,6 +5,14 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-05-18
+
+### Added
+- CLI entrypoint: `python3 -m scripts [command]` unified interface for all modules
+- HTML dashboard report generator (`report_html.py`) with SVG score gauges, trend charts, findings table, action plan
+- `cli.py` routing module with command/subcommand dispatch for seo/geo/aao modules
+- 56 new tests (test_main.py + test_report_html.py), total 2432 → 2488
+
 ## [1.3.0] - 2026-05-18
 
 ### Added
