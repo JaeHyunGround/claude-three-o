@@ -199,7 +199,7 @@ def analyze_llms_txt(url: str) -> dict:
             "status": "missing",
             "score": 0,
             "llms_full_txt": llms_full,
-            "issues": [{"severity": "high", "message": "No llms.txt found — AI crawlers cannot discover content structure"}],
+            "issues": [{"severity": "low", "message": "No llms.txt found. Note: Google officially states llms.txt is NOT required for Google AI search (AI Overviews/AI Mode). May still help non-Google AI platforms (ChatGPT, Perplexity, Claude)."}],
             "proposal": proposal,
         }
 

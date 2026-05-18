@@ -225,13 +225,17 @@ class TestGEOConditions(unittest.TestCase):
         data = self._base(platforms={"gemini": {"score": 75}})
         self.assertNotIn("geo_add_eeat_signals", self._ids(data))
 
-    def test_llms_txt_always_included(self):
-        data = self._base(score=95)
+    def test_llms_txt_triggered_low_chatgpt(self):
+        data = self._base(score=95, platforms={"chatgpt": {"score": 20}})
         self.assertIn("geo_add_llms_txt", self._ids(data))
 
-    def test_llms_txt_included_even_high_score(self):
-        data = self._base(score=100, issues=[], platforms={})
-        self.assertIn("geo_add_llms_txt", self._ids(data))
+    def test_llms_txt_not_triggered_high_scores(self):
+        data = self._base(score=100, issues=[], platforms={"chatgpt": {"score": 80}, "perplexity": {"score": 70}})
+        self.assertNotIn("geo_add_llms_txt", self._ids(data))
+
+    def test_non_commodity_content_low_score(self):
+        data = self._base(score=40)
+        self.assertIn("geo_create_non_commodity_content", self._ids(data))
 
 
 class TestAAOConditions(unittest.TestCase):
@@ -581,7 +585,7 @@ class TestConstants(unittest.TestCase):
         self.assertEqual(len(RECOMMENDATION_CATALOG["seo"]), 7)
 
     def test_catalog_geo_count(self):
-        self.assertEqual(len(RECOMMENDATION_CATALOG["geo"]), 6)
+        self.assertEqual(len(RECOMMENDATION_CATALOG["geo"]), 7)
 
     def test_catalog_aao_count(self):
         self.assertEqual(len(RECOMMENDATION_CATALOG["aao"]), 6)

@@ -1,7 +1,11 @@
 """Content rewrite suggestion engine for Three-O platform.
 
-Analyzes page passages for AI citability weaknesses and generates
-specific rewrite suggestions to improve AI engine citation likelihood.
+Analyzes page passages for content quality weaknesses and generates
+specific rewrite suggestions to improve clarity, factual density,
+and overall helpfulness. Aligned with Google's 'helpful, reliable,
+people-first content' guidelines — improving content quality for
+readers naturally improves visibility in both traditional and
+AI-powered search experiences.
 """
 
 import argparse

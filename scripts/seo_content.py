@@ -390,6 +390,61 @@ def analyze_content_depth(text: str) -> dict:
     }
 
 
+COMMODITY_TITLE_PATTERNS = [
+    r'(?:\d+\s*(?:가지|개|tips|ways|things|reasons|steps))',
+    r'(?:꿀팁|필수|추천|방법|알아보기|총정리|모음)',
+    r'(?:best|top|ultimate|complete|definitive)\s+(?:guide|list|tips)',
+    r'(?:everything you need to know|beginner.s guide|101)',
+]
+
+COMMODITY_BODY_PATTERNS = [
+    r'(?:많은\s*사람들이|누구나\s*알다시피|잘\s*알려진)',
+    r'(?:as (?:we all|everyone) knows|it.s (?:well known|no secret))',
+    r'(?:이\s*글에서는?\s*.{0,20}(?:알아보|살펴보|소개))',
+    r'(?:in this (?:article|post|guide),?\s*(?:we will|we.ll|I.ll)\s*(?:explore|discuss|cover|look at))',
+]
+
+
+def detect_commodity_content(html: str, text: str) -> dict:
+    """Detect commodity (generic, non-unique) content signals per Google's AI search guide."""
+    title_match = re.search(r'<title>(.*?)</title>', html, re.IGNORECASE | re.DOTALL)
+    title = title_match.group(1).strip() if title_match else ""
+
+    commodity_signals = 0
+    details = {}
+
+    title_commodity = any(re.search(p, title, re.IGNORECASE) for p in COMMODITY_TITLE_PATTERNS)
+    details["generic_title"] = title_commodity
+    if title_commodity:
+        commodity_signals += 1
+
+    body_generic = sum(1 for p in COMMODITY_BODY_PATTERNS if re.search(p, text, re.IGNORECASE))
+    details["generic_body_phrases"] = body_generic
+    if body_generic >= 2:
+        commodity_signals += 1
+
+    first_person = len(re.findall(r'(?:제가|저는|직접|I |my |I\'ve )', text, re.IGNORECASE))
+    details["first_person_count"] = first_person
+    if first_person == 0:
+        commodity_signals += 1
+
+    numbers_data = len(re.findall(r'\d+[\d,.%]*', text))
+    word_count = len(text.split())
+    data_density = numbers_data / max(word_count, 1)
+    details["data_density"] = round(data_density, 4)
+    if data_density < 0.005:
+        commodity_signals += 1
+
+    is_commodity = commodity_signals >= 2
+    details["signal_count"] = commodity_signals
+
+    return {
+        "is_commodity": is_commodity,
+        "commodity_score": min(100, commodity_signals * 25),
+        "details": details,
+    }
+
+
 def analyze_content(url: str) -> dict:
     """Run full content quality analysis with E-E-A-T."""
     validation = validate_url(url)
@@ -417,6 +472,7 @@ def analyze_content_html(html: str, url: str = "") -> dict:
     eeat = compute_eeat_score(experience, expertise, authoritativeness, trust)
 
     depth = analyze_content_depth(text)
+    commodity = detect_commodity_content(html, text)
 
     issues = list(eeat["issues"])
     if depth["word_count"] < 300:
@@ -425,13 +481,18 @@ def analyze_content_html(html: str, url: str = "") -> dict:
         issues.append({"severity": "critical", "message": "Missing H1 tag"})
     if headings.get("h1", 0) > 1:
         issues.append({"severity": "medium", "message": f"Multiple H1 tags ({headings['h1']})"})
+    if commodity["is_commodity"]:
+        issues.append({"severity": "high", "message": "Commodity content detected: lacks unique perspective, first-hand experience, or original data. Google AI systems prioritize non-commodity content."})
 
-    content_score = round(depth["depth_score"] * 0.4 + eeat["score"] * 0.6, 1)
+    commodity_penalty = 5 if commodity["is_commodity"] else 0
+    content_score = round(depth["depth_score"] * 0.4 + eeat["score"] * 0.6 - commodity_penalty, 1)
+    content_score = max(0.0, content_score)
 
     return {
         "success": True,
         "url": url,
         "score": content_score,
+        "commodity_analysis": commodity,
         "eeat": {
             "score": eeat["score"],
             "axes": eeat["axes"],

@@ -4,6 +4,13 @@ Scores how likely page content is to be cited by AI platforms across
 seven dimensions with sentence structure analysis, weighted factual
 density, context independence scoring, and per-platform citation
 probability modeling.
+
+Google's AI search uses RAG (retrieval-augmented generation) and
+query fan-out to surface relevant content. High-quality, well-structured,
+people-first content naturally scores well for citation. Content does NOT
+need to be rewritten specifically for AI — clarity and factual depth
+benefit both human readers and AI systems (per Google's official guide,
+May 2025).
 """
 
 import argparse
