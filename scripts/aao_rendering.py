@@ -556,7 +556,7 @@ def score_rendering_resilience(html: str) -> dict:
         score += 10
         signals.append("inline CSS")
 
-    css_links = len(re.findall(r'<link[^>]*rel="stylesheet"', html, re.IGNORECASE))
+    len(re.findall(r'<link[^>]*rel="stylesheet"', html, re.IGNORECASE))
     preloaded_css = len(re.findall(r'<link[^>]*rel="preload"[^>]*as="style"', html, re.IGNORECASE))
     if preloaded_css > 0:
         score += 5
@@ -695,7 +695,7 @@ def main():
     else:
         if result["success"]:
             print(f"Rendering Score: {result['score']}/100")
-            print(f"\nDimensions:")
+            print("\nDimensions:")
             for dim, w in DIMENSION_WEIGHTS.items():
                 s = result["dimensions"][dim]
                 bar = "█" * int(s / 5) + "░" * (20 - int(s / 5))

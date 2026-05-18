@@ -7,7 +7,7 @@ import unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from schema_generator import (
-    extract_title, extract_description, extract_image, extract_phone,
+    extract_title, extract_description, extract_phone,
     extract_prices, extract_address, extract_hours, extract_rating,
     extract_social_links, extract_cuisine, extract_specialty,
     extract_services, extract_founding_year, extract_email, extract_logo,
@@ -394,15 +394,15 @@ class TestExtractSocialLinks(unittest.TestCase):
 
     def test_instagram(self):
         links = extract_social_links(RESTAURANT_HTML)
-        self.assertTrue(any("instagram.com" in l for l in links))
+        self.assertTrue(any("instagram.com" in lk for lk in links))
 
     def test_naver_blog(self):
         links = extract_social_links(RESTAURANT_HTML)
-        self.assertTrue(any("blog.naver.com" in l for l in links))
+        self.assertTrue(any("blog.naver.com" in lk for lk in links))
 
     def test_linkedin(self):
         links = extract_social_links(SAAS_HTML)
-        self.assertTrue(any("linkedin.com" in l for l in links))
+        self.assertTrue(any("linkedin.com" in lk for lk in links))
 
     def test_no_social(self):
         self.assertEqual(extract_social_links(MINIMAL_HTML), [])

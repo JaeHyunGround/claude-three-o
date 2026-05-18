@@ -12,7 +12,6 @@ Dimensions (weights):
 import argparse
 import json
 import re
-import sys
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -93,7 +92,7 @@ def score_data_quality(products: list) -> dict:
     titles = [p.get("title", "") for p in sample]
     valid_titles = sum(1 for t in titles if t and 10 <= len(t) <= 150)
     short_titles = sum(1 for t in titles if t and len(t) < 10)
-    long_titles = sum(1 for t in titles if t and len(t) > 150)
+    sum(1 for t in titles if t and len(t) > 150)
     no_titles = sum(1 for t in titles if not t)
 
     title_rate = valid_titles / n
@@ -133,8 +132,8 @@ def score_data_quality(products: list) -> dict:
         issues.append(f"{missing_descs} products missing descriptions")
 
     links = [p.get("link", "") for p in sample]
-    valid_links = sum(1 for l in links if l and l.startswith("http"))
-    https_links = sum(1 for l in links if l and l.startswith("https"))
+    valid_links = sum(1 for lk in links if lk and lk.startswith("http"))
+    https_links = sum(1 for lk in links if lk and lk.startswith("https"))
     link_rate = valid_links / n
     if link_rate >= 0.95:
         score += 15
@@ -364,7 +363,7 @@ def score_pricing_accuracy(products: list) -> dict:
                 if 0 < sale_num < reg_num:
                     sale_valid += 1
                 else:
-                    issues.append(f"sale price >= regular price in product")
+                    issues.append("sale price >= regular price in product")
             except (ValueError, ZeroDivisionError):
                 pass
 
@@ -610,7 +609,6 @@ def score_platform_compliance(products: list, platform: str = "google") -> dict:
         event = sum(1 for p in sample if p.get("event_words") or p.get("card_event"))
         if event > 0:
             score += 10
-            issues_text = "event marketing fields present"
 
         model = sum(1 for p in sample if p.get("model_no"))
         if model > 0:
@@ -761,7 +759,7 @@ def main():
         if result.get("feed_found"):
             print(f"Feed Score: {result['score']}/100 ({args.platform})")
             print(f"Products: {result['statistics']['total_products']}")
-            print(f"\nDimensions:")
+            print("\nDimensions:")
             for dim, w in DIMENSION_WEIGHTS.items():
                 s = result["dimensions"][dim]
                 bar = "█" * int(s / 5) + "░" * (20 - int(s / 5))

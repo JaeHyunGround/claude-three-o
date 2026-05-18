@@ -3,7 +3,6 @@
 import argparse
 import json
 import os
-import sys
 from datetime import datetime
 from typing import Optional
 
@@ -84,7 +83,7 @@ DIMENSION_LABELS_BIZ = {
     "cta_quality": "행동유도 버튼(CTA)",
     "form_accessibility": "양식 접근성",
     "flow_clarity": "전환 흐름",
-    "mobile_readiness": "모바일 전환",
+    "mobile_conversion": "모바일 전환",
     "deep_linking": "딥링크 지원",
     "confirmation": "확인 체계",
     "attribute_completeness": "속성 완성도",

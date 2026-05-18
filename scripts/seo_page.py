@@ -64,8 +64,8 @@ def analyze_links(html: str, url: str) -> dict:
     domain = parsed.netloc
 
     all_links = re.findall(r'href="([^"]*)"', html)
-    internal = sum(1 for l in all_links if domain in l or l.startswith("/"))
-    external = sum(1 for l in all_links if l.startswith("http") and domain not in l)
+    internal = sum(1 for lk in all_links if domain in lk or lk.startswith("/"))
+    external = sum(1 for lk in all_links if lk.startswith("http") and domain not in lk)
 
     return {
         "total": len(all_links),

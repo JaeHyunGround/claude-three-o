@@ -214,16 +214,16 @@ def main():
         if result["success"]:
             print(f"AAO Audit: {result['brand']}")
             print(f"AAO Score: {result['aao_score']}/100 ({result['grade']})")
-            print(f"\nDimension Scores:")
+            print("\nDimension Scores:")
             for dim, data in result["dimensions"].items():
                 bar = "█" * int(data["score"] / 10) + "░" * (10 - int(data["score"] / 10))
                 print(f"  {data['name']:25s} {bar} {data['score']:5.1f} (×{data['weight']})")
             if result["issues"]:
-                print(f"\nTop Issues:")
+                print("\nTop Issues:")
                 for issue in result["issues"][:8]:
                     print(f"  [{issue['severity'].upper()}] {issue['message']}")
             if result["recommendations"]:
-                print(f"\nRecommendations:")
+                print("\nRecommendations:")
                 for rec in result["recommendations"]:
                     print(f"  [{rec['priority'].upper()}] {rec['area']}: {rec['action']}")
         else:

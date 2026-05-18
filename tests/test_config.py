@@ -17,8 +17,6 @@ from config import (
     list_configured_services,
     get_db_path,
     get_reports_dir,
-    ensure_config_dir,
-    CONFIG_DIR,
 )
 
 
