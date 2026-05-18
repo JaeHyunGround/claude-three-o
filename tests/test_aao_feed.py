@@ -9,7 +9,6 @@ import sys
 import os
 from datetime import datetime
 
-import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
@@ -17,9 +16,7 @@ from aao_feed import (
     CURRENT_YEAR,
     DIMENSION_WEIGHTS,
     GOOGLE_REQUIRED,
-    GOOGLE_RECOMMENDED,
     NAVER_REQUIRED,
-    NAVER_RECOMMENDED,
     parse_product_feed,
     score_data_quality,
     score_field_completeness,

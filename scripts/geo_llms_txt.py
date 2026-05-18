@@ -3,7 +3,6 @@
 import argparse
 import json
 import re
-import sys
 from urllib.parse import urlparse
 
 from validate_url import validate_url
@@ -218,7 +217,7 @@ def main():
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         if result["status"] == "present":
-            print(f"llms.txt: Present ✓")
+            print("llms.txt: Present ✓")
             print(f"Location: {result['location']}")
             print(f"Compliance Score: {result['score']}/100")
             v = result["validation"]
@@ -226,9 +225,9 @@ def main():
                 icon = "✓" if info["present"] else "✗"
                 print(f"  {icon} {check_name}")
         else:
-            print(f"llms.txt: Missing ✗")
+            print("llms.txt: Missing ✗")
             if result.get("proposal") and args.generate:
-                print(f"\n--- Generated Proposal ---\n")
+                print("\n--- Generated Proposal ---\n")
                 print(result["proposal"])
         for issue in result.get("issues", []):
             print(f"  [{issue['severity'].upper()}] {issue['message']}")

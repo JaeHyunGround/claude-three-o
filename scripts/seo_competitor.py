@@ -94,10 +94,10 @@ def main():
         if result["success"]:
             print(f"Competitor Analysis: {args.url_a} vs {args.url_b}")
             print(f"Keywords — You: {result['keywords_a_count']} | Competitor: {result['keywords_b_count']} | Shared: {result['shared_keywords']}")
-            print(f"\nGaps (competitor has, you don't):")
+            print("\nGaps (competitor has, you don't):")
             for kw in result["gaps_for_a"][:5]:
                 print(f"  → {kw}")
-            print(f"\nAdvantages (you have, competitor doesn't):")
+            print("\nAdvantages (you have, competitor doesn't):")
             for kw in result["advantages_for_a"][:5]:
                 print(f"  ✓ {kw}")
         else:

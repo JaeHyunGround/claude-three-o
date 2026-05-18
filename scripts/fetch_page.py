@@ -4,7 +4,6 @@ import argparse
 import json
 import sys
 import time
-from urllib.parse import urlparse
 
 import httpx
 

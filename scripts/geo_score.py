@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import sys
 
 from score_calculator import compute_geo_score
 
@@ -109,13 +108,13 @@ def main():
     else:
         print(f"GEO Score: {result['score']}/100 ({result['grade']})")
         print(f"Level: {result['interpretation']['level']}")
-        print(f"\nDimension Scores:")
+        print("\nDimension Scores:")
         for key, dim in result["dimensions"].items():
             bar = "█" * int(dim["score"] / 10) + "░" * (10 - int(dim["score"] / 10))
             print(f"  {dim['name']:25s} {bar} {dim['score']:5.1f} (×{dim['weight']})")
         print(f"\nPriority: {result['interpretation']['priority']}")
         if result["weakest_dimensions"]:
-            print(f"\nFocus Areas:")
+            print("\nFocus Areas:")
             for w in result["weakest_dimensions"]:
                 print(f"  - {w['name']}: {w['score']:.0f}/100 (impact: {w['impact']:.1f})")
 

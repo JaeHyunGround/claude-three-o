@@ -18,7 +18,6 @@ from geo_entity import (
     _build_source_status,
     ENTITY_WEIGHTS,
     ENTITY_TYPES,
-    PLATFORM_TIERS,
     CORE_ATTRIBUTES,
     TYPE_ATTRIBUTES,
 )

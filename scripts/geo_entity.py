@@ -546,7 +546,6 @@ def analyze_entity_html(html: str, brand: str, url: str = "") -> dict:
 
 def estimate_entity_presence(brand: str, url: Optional[str] = None) -> dict:
     """Estimate entity presence across knowledge sources."""
-    source_results = {}
 
     if url:
         validation = validate_url(url)
@@ -615,7 +614,7 @@ def main():
             print(f"Score: {result['score']}/100")
             dims = result.get("dimensions", {})
             if dims:
-                print(f"\nDimensions:")
+                print("\nDimensions:")
                 print(f"  Schema Presence:        {dims.get('schema_presence', 0):5.1f}/100")
                 print(f"  Connection Strength:    {dims.get('connection_strength', 0):5.1f}/100")
                 print(f"  Attribute Completeness: {dims.get('attribute_completeness', 0):5.1f}/100")

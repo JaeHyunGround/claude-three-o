@@ -60,7 +60,7 @@ class TestThreeOScorePrecision(unittest.TestCase):
         self.assertLess(result["confidence"], 1.0)
 
     def test_imbalanced_lower_than_average(self):
-        balanced = compute_three_o_score(50, 50, 50)
+        compute_three_o_score(50, 50, 50)
         imbalanced = compute_three_o_score(90, 10, 50)
         avg_imbalanced = 90 * 0.35 + 10 * 0.35 + 50 * 0.30
         self.assertLess(imbalanced["three_o_score"], avg_imbalanced)

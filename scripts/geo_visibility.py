@@ -2,10 +2,7 @@
 
 import argparse
 import json
-import sys
-from typing import Optional
 
-from config import load_config, get_api_key
 
 
 AI_PLATFORMS = ["chatgpt", "perplexity", "gemini", "claude"]
@@ -32,10 +29,8 @@ def classify_position(text: str, brand: str) -> str:
     ratio = pos / max(total, 1)
 
     lines = text_lower[:pos].count("\n")
-    numbered = False
     for i, line in enumerate(text_lower.split("\n")):
         if brand_lower in line:
-            numbered = i
             break
 
     if ratio < 0.15 or lines < 2:
@@ -152,7 +147,7 @@ def main():
         print(f"Visibility Ranking: {args.brand}")
         print(f"VR Score: {result['score']}/100")
         if result["platform_scores"]:
-            print(f"\nPlatform Scores:")
+            print("\nPlatform Scores:")
             for p, s in result["platform_scores"].items():
                 bar = "█" * int(s / 10) + "░" * (10 - int(s / 10))
                 print(f"  {p:15s} {bar} {s:.1f}")

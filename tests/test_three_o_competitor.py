@@ -8,8 +8,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from three_o_competitor import (
     score_seo_dimensions, score_geo_dimensions, score_aao_dimensions,
-    analyze_competitor, compute_dimension_gaps, compute_positioning,
-    generate_action_plan, compare_competitors, format_benchmark_report,
+    compute_dimension_gaps, compute_positioning,
+    generate_action_plan, format_benchmark_report,
     SEO_WEIGHTS, GEO_WEIGHTS, AAO_WEIGHTS, GAP_RECOMMENDATIONS,
 )
 

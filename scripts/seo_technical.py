@@ -15,7 +15,6 @@ import argparse
 import json
 import re
 import sys
-from typing import Optional
 
 from validate_url import validate_url
 from fetch_page import fetch_page
@@ -959,7 +958,7 @@ def main():
     else:
         if result["success"]:
             print(f"Technical SEO Score: {result['score']}/100")
-            print(f"\nDimensions:")
+            print("\nDimensions:")
             for dim, w in DIMENSION_WEIGHTS.items():
                 s = result["dimensions"][dim]
                 bar = "█" * int(s / 5) + "░" * (20 - int(s / 5))

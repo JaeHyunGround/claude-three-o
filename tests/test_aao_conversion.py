@@ -17,7 +17,6 @@ from aao_conversion import (
     score_confirmation_error,
     analyze_conversion_html,
     CONVERSION_WEIGHTS,
-    FRICTION_POINTS,
 )
 
 

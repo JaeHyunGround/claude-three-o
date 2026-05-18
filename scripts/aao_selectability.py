@@ -413,7 +413,7 @@ def score_info_completeness(html: str) -> dict:
     else:
         checks["category"] = False
 
-    filled = sum(1 for v in checks.values() if v)
+    sum(1 for v in checks.values() if v)
     missing = [k for k, v in checks.items() if not v]
     if missing:
         signals.append(f"Missing: {', '.join(missing)}")
@@ -562,7 +562,7 @@ def score_freshness(html: str, elapsed: float) -> dict:
         signals.append(f"Previous year dates ({len(dates_2025)} instances)")
     elif dates_2024:
         score += 10
-        signals.append(f"2024 dates found (aging content)")
+        signals.append("2024 dates found (aging content)")
 
     modified_meta = re.search(r'(last-modified|modified|dateModified)\s*[:="]\s*(202[4-6])', html, re.IGNORECASE)
     if modified_meta:
@@ -702,18 +702,18 @@ def main():
         if result["success"]:
             print(f"Selectability Score: {result['score']}/100")
             print(f"Industry Detected: {result['industry_detected']}")
-            print(f"\nDimension Scores:")
+            print("\nDimension Scores:")
             for dim, data in result["dimensions"].items():
                 weight = result["weights_applied"].get(dim, 0)
                 bar = "█" * int(data["score"] / 10) + "░" * (10 - int(data["score"] / 10))
                 print(f"  {dim.replace('_', ' ').title():25s} {bar} {data['score']:3.0f} (w:{weight:.0%})")
             if result["correlation"]["applied"]:
-                print(f"\nSignal Correlations:")
+                print("\nSignal Correlations:")
                 for c in result["correlation"]["applied"]:
                     prefix = "+" if c["value"] > 0 else ""
                     print(f"  {prefix}{c['value']:.0f} {c['reason']}")
             if result["issues"]:
-                print(f"\nIssues:")
+                print("\nIssues:")
                 for issue in result["issues"]:
                     print(f"  [{issue['severity'].upper()}] {issue['message']}")
         else:

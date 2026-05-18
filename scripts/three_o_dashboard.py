@@ -3,7 +3,6 @@
 import argparse
 import json
 import os
-import sys
 from datetime import datetime
 
 from db_manager import init_db, get_latest_baseline
@@ -133,7 +132,7 @@ def main():
             print(f"Three-O Score: {d['three_o_score']}/100")
         else:
             print(f"Three-O Score: Incomplete data ({d['data_completeness']}%)")
-        print(f"\nPillar Scores:")
+        print("\nPillar Scores:")
         for pillar, data in d["pillars"].items():
             score = f"{data['score']}/100" if data["score"] is not None else "N/A"
             updated = data["last_updated"] or "never"

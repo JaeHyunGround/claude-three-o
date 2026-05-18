@@ -205,7 +205,7 @@ def main():
             print(f"Structured Data Score: {result['score']}/100")
             print(f"JSON-LD: {result['json_ld']['count']} blocks | Microdata: {result['microdata']['count']} | RDFa: {result['rdfa']['count']}")
             if result["json_ld"]["schemas"]:
-                print(f"\nSchema Types:")
+                print("\nSchema Types:")
                 for s in result["json_ld"]["schemas"]:
                     print(f"  {s['type']}: {s['completeness']}% complete ({s['total_properties']} properties)")
             if result["actions"]["has_actions"]:

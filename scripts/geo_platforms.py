@@ -679,7 +679,7 @@ def analyze_for_gemini(html: str, url: str) -> dict:
 def analyze_for_claude(html: str, url: str) -> dict:
     """Claude optimization: depth, evidence, nuance, technical quality, access."""
     text = _extract_text(html)
-    paragraphs = _extract_paragraphs(html)
+    _extract_paragraphs(html)
     dimensions = {}
 
     # 1. Content depth (0.25)
@@ -981,7 +981,7 @@ def main():
         if result["success"]:
             print(f"Platform Optimization Score: {result['avg_score']}/100")
             print(f"Best: {result['best_platform']} | Worst: {result['worst_platform']} | Spread: {result['score_spread']}")
-            print(f"\nPlatform Breakdown:")
+            print("\nPlatform Breakdown:")
             for platform, pr in result["platforms"].items():
                 bar = "█" * int(pr["score"] / 5) + "░" * (20 - int(pr["score"] / 5))
                 print(f"  {pr['name']:15s} {bar} {pr['score']:.1f}")
@@ -989,7 +989,7 @@ def main():
                     for dim_name, dim_data in pr["dimensions"].items():
                         print(f"    {dim_name:25s} {dim_data['score']:5.1f}")
             if result["gaps"]:
-                print(f"\nOptimization Gaps:")
+                print("\nOptimization Gaps:")
                 for gap in result["gaps"]:
                     print(f"  [{gap['severity'].upper()}] {gap['message']}")
             for issue in result["issues"]:

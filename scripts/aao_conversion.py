@@ -603,7 +603,7 @@ def main():
             print(f"Conversion Score: {result['score']}/100")
             print(f"Flow: {result['flow_type']} | Industry: {result['industry']} | Est. Completion: {result['estimated_completion_rate']}")
             print(f"Weakest: {result['weakest_dimension']} | Strongest: {result['strongest_dimension']}")
-            print(f"\nDimensions:")
+            print("\nDimensions:")
             for dim, score in result["dimensions"].items():
                 bar = "#" * int(score / 10) + "." * (10 - int(score / 10))
                 print(f"  {dim.replace('_', ' ').title():25s} [{bar}] {score:.0f}")

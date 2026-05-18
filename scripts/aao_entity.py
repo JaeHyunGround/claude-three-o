@@ -4,7 +4,6 @@ import argparse
 import json
 import re
 import sys
-from typing import Optional
 
 from validate_url import validate_url
 from fetch_page import fetch_page

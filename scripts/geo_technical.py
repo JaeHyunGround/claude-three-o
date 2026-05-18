@@ -212,7 +212,7 @@ def main():
     else:
         if result["success"]:
             print(f"Technical Accessibility Score: {result['score']}/100")
-            print(f"\nAI Crawler Access:")
+            print("\nAI Crawler Access:")
             for crawler, info in result["robots"].get("crawler_status", {}).items():
                 icon = "✓" if info.get("status") == "allowed" else "✗"
                 print(f"  {icon} {crawler} ({info.get('provider', '')}): {info.get('status', '')}")

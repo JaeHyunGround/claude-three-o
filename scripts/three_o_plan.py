@@ -222,10 +222,10 @@ def main():
         print(f"\nCurrent: SEO={result['current_scores']['seo']:.0f} GEO={result['current_scores']['geo']:.0f} AAO={result['current_scores']['aao']:.0f}")
         print(f"Weakest: {result['weakest_pillar']} | Critical Issues: {result['critical_issues']}")
         if result["goals"]:
-            print(f"\nGoals:")
+            print("\nGoals:")
             for g in result["goals"]:
                 print(f"  {g['pillar']}: {g['current']:.0f} → {g['target']:.0f} ({g['timeline']})")
-        print(f"\nTimeline:")
+        print("\nTimeline:")
         for phase_key, phase in result["timeline"].items():
             if phase["tasks"]:
                 print(f"\n  {phase_key.replace('_', ' ').title()} — {phase['phase']}")

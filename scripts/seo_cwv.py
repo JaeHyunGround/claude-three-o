@@ -120,7 +120,7 @@ def main():
             print(f"CWV Score: {result['score']}/100")
             print(f"TTFB: {result['performance']['ttfb_ms']}ms")
             print(f"LCP (est.): {result['cwv_estimates']['LCP']['value_ms']}ms [{result['cwv_estimates']['LCP']['status']}]")
-            print(f"INP: Requires field data (CrUX API)")
+            print("INP: Requires field data (CrUX API)")
             print(f"CLS risk: {result['cwv_estimates']['CLS']['risk']}")
             for issue in result["issues"]:
                 print(f"  [{issue['severity'].upper()}] {issue['message']}")

@@ -3,7 +3,6 @@
 import argparse
 import json
 import sys
-from typing import Optional
 
 
 def check_keyword_in_content(html: str, keyword: str) -> dict:

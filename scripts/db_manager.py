@@ -3,7 +3,6 @@
 import argparse
 import json
 import sqlite3
-import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -144,7 +143,7 @@ def list_brands() -> list:
 def cleanup_old_data(days: int = 365):
     """Remove snapshots older than specified days."""
     conn = get_connection()
-    cutoff = datetime.now().isoformat()
+    datetime.now().isoformat()
     for table in ["seo_snapshots", "geo_snapshots", "aao_snapshots"]:
         conn.execute(
             f"DELETE FROM {table} WHERE julianday('now') - julianday(timestamp) > ?",

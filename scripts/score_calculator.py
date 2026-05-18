@@ -10,8 +10,7 @@ Scoring precision features:
 import argparse
 import json
 import math
-import sys
-from typing import Dict, Optional
+from typing import Optional
 
 PILLAR_WEIGHTS = {"seo": 0.35, "geo": 0.35, "aao": 0.30}
 

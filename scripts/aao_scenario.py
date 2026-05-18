@@ -206,7 +206,7 @@ def main():
             print(f"Scenario Test: {args.brand} ({result['industry']})")
             print(f"Score: {result['score']}/100")
             print(f"Results: {result['fulfillable']} fulfillable / {result['partial']} partial / {result['not_fulfillable']} failed")
-            print(f"\nScenario Results:")
+            print("\nScenario Results:")
             for r in result["results"]:
                 icon = "✓" if r["status"] == "fulfillable" else "~" if r["status"] == "partial" else "✗"
                 print(f"  {icon} [{r['score']:3d}] {r['query']}")

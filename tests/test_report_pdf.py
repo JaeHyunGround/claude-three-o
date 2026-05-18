@@ -1,6 +1,5 @@
 """Tests for report_pdf.py — developer and business audience modes."""
 
-import json
 import os
 import sys
 import tempfile
@@ -9,7 +8,6 @@ import unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from report_pdf import (
-    ThreeOPDF,
     generate_pdf_report,
     _score_to_grade,
     _translate_issue,
@@ -283,7 +281,7 @@ class TestGeneratePDFDeveloper(unittest.TestCase):
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
             path = f.name
         try:
-            result = generate_pdf_report(SAMPLE_AUDIT_DATA, path)
+            generate_pdf_report(SAMPLE_AUDIT_DATA, path)
             self.assertTrue(os.path.exists(path))
         finally:
             os.unlink(path)

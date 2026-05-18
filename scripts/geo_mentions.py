@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import sys
 from typing import Optional
 
 from config import load_config, get_api_key
@@ -88,7 +87,6 @@ def analyze_mention(response_text: str, brand: str) -> dict:
 def probe_platform(platform: str, queries: list, brand: str, config: dict) -> dict:
     """Probe a single AI platform with queries (requires API keys)."""
     results = []
-    mentioned_count = 0
 
     api_key = get_api_key(config, platform)
     if not api_key:
@@ -203,7 +201,7 @@ def main():
             icon = "✓" if pr["status"] == "configured" else "✗"
             print(f"  {icon} {pr['platform_name']}: {pr['status']}")
         if result["platforms"]["unconfigured"] > 0:
-            print(f"\n  Configure API keys via: three-o setup")
+            print("\n  Configure API keys via: three-o setup")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,6 @@
 
 import sys
 import os
-import json
 import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
@@ -19,7 +18,6 @@ from three_o_drift import (
     compute_velocity, compute_trend, build_time_series,
     detect_cross_pillar_correlation, generate_velocity_alerts,
     format_drift_report,
-    ALERT_THRESHOLDS,
 )
 
 

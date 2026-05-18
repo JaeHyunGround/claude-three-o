@@ -8,7 +8,6 @@ probability modeling.
 
 import argparse
 import json
-import math
 import re
 import sys
 
@@ -651,15 +650,15 @@ def main():
         if result["success"]:
             print(f"Citability Score: {result['score']}/100")
             print(f"Passages: {result['total_passages']} | Weakest: {result['weakest_dimension']}")
-            print(f"\nDimensions:")
+            print("\nDimensions:")
             for dim, s in result["dimensions"].items():
                 print(f"  {dim.replace('_', ' ').title():25s} {s:5.1f}/100")
-            print(f"\nPlatform Citability:")
+            print("\nPlatform Citability:")
             for plat, s in result["platform_citability"].items():
                 name = PLATFORM_CRITERIA[plat]["name"]
                 print(f"  {name:15s} {s:5.1f}/100")
             if result["top_passages"]:
-                print(f"\nTop Passages:")
+                print("\nTop Passages:")
                 for i, p in enumerate(result["top_passages"][:3], 1):
                     print(f"  {i}. [{p['score']:.0f}] {p['text'][:80]}...")
             for issue in result.get("issues", []):

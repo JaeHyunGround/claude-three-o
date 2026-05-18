@@ -6,8 +6,6 @@ effort, expected impact, and specific implementation steps.
 """
 
 import json
-import sys
-from typing import Optional
 
 
 EFFORT_LEVELS = {"low": "< 1 hour", "medium": "1-4 hours", "high": "1-2 days", "major": "1+ week"}

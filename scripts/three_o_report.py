@@ -3,11 +3,8 @@
 import argparse
 import json
 import os
-import sys
 from datetime import datetime
-from typing import Optional
 
-from score_calculator import compute_three_o_score
 from recommendations import generate_recommendations, format_recommendations_md
 
 
@@ -85,7 +82,7 @@ def _generate_insights(data: dict) -> list:
         if gap > 20:
             insights.append(f"**Imbalanced profile**: {strongest} ({scores[strongest]:.0f}) significantly outperforms {weakest} ({scores[weakest]:.0f}). Focus on {weakest} for balanced visibility.")
         elif gap < 10 and scores[weakest] >= 60:
-            insights.append(f"**Well-balanced** across all pillars. Fine-tune individual dimensions.")
+            insights.append("**Well-balanced** across all pillars. Fine-tune individual dimensions.")
 
     industry = data.get("aao", {}).get("industry_detected", "general")
     if industry != "general":

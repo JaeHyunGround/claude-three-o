@@ -4,7 +4,7 @@ import argparse
 import json
 import re
 import sys
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 from validate_url import validate_url
 from fetch_page import fetch_page

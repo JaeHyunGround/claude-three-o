@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -24,13 +23,13 @@ def generate_markdown_report(data: dict) -> str:
     sections = [
         f"# Three-O Audit Report: {brand}",
         f"Date: {date}",
-        f"",
-        f"## Executive Summary",
-        f"",
+        "",
+        "## Executive Summary",
+        "",
         f"**Three-O Score: {score}/100** ({grade})",
-        f"",
-        f"| Pillar | Score | Weight |",
-        f"|--------|-------|--------|",
+        "",
+        "| Pillar | Score | Weight |",
+        "|--------|-------|--------|",
     ]
 
     pillars = data.get("pillars", {})

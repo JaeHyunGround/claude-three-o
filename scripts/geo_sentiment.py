@@ -5,7 +5,6 @@ import json
 import math
 import re
 import sys
-from typing import Optional
 
 
 SENTIMENT_WEIGHTS = {
@@ -284,7 +283,7 @@ def main():
             print(f"Sentiment Analysis: {args.brand}")
             print(f"Overall: {result['overall_sentiment']} ({result['score']}/100)")
             print(f"Mentions: {result['total_mentions']} (confidence: {result['confidence']})")
-            print(f"\nDimensions:")
+            print("\nDimensions:")
             for dim, val in result["dimensions"].items():
                 weight = SENTIMENT_WEIGHTS[dim]
                 print(f"  {dim}: {val}/100 (x{weight})")

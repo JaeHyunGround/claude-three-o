@@ -6,7 +6,6 @@ schema, and performance across snapshots.
 
 import argparse
 import json
-import re
 import sys
 from db_manager import init_db, get_latest_baseline, save_baseline
 

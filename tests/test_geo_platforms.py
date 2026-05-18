@@ -367,7 +367,7 @@ class TestPlatformDifferentiation(unittest.TestCase):
     def test_data_heavy_favors_perplexity(self):
         html = '<html><body>' + '<p>The rate is 45.7% according to the 2024 survey of 1,500 participants. Source: Research Institute.</p>' * 10 + '</body></html>'
         pplx = analyze_for_perplexity(html, "https://example.com")
-        claude = analyze_for_claude(html, "https://example.com")
+        analyze_for_claude(html, "https://example.com")
         self.assertGreater(pplx["dimensions"]["factual_density"]["score"], 30)
 
     def test_nuanced_content_favors_claude(self):

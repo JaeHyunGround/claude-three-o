@@ -3,9 +3,8 @@
 import argparse
 import json
 import sys
-from datetime import datetime
 
-from db_manager import get_connection, init_db, get_latest_baseline, save_baseline
+from db_manager import init_db, get_latest_baseline, save_baseline
 
 
 def compare_geo_snapshots(current: dict, baseline: dict) -> list:

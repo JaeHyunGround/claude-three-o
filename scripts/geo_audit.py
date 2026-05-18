@@ -212,14 +212,14 @@ def main():
         if result["success"]:
             print(f"GEO Audit: {args.brand}")
             print(f"GEO Score: {result['geo_score']}/100 ({result['geo_grade']})")
-            print(f"\nDimension Scores:")
+            print("\nDimension Scores:")
             for key, dim in result["dimensions"].items():
                 status = f" [{dim['status']}]" if dim.get("status") else ""
                 bar = "█" * int(dim["score"] / 10) + "░" * (10 - int(dim["score"] / 10))
                 print(f"  {dim['name']:25s} {bar} {dim['score']:5.1f}{status}")
             pb = result.get("platform_breakdown", {})
             if pb:
-                print(f"\nPlatform GEO Breakdown:")
+                print("\nPlatform GEO Breakdown:")
                 for p, pdata in pb.items():
                     s = pdata["geo_score"]
                     bar = "█" * int(s / 10) + "░" * (10 - int(s / 10))
@@ -231,7 +231,7 @@ def main():
                 for issue in result["issues"][:10]:
                     print(f"  [{issue['severity'].upper()}] {issue['message']}")
             if result["recommendations"]:
-                print(f"\nRecommendations:")
+                print("\nRecommendations:")
                 for rec in result["recommendations"]:
                     print(f"  [{rec['priority'].upper()}] {rec['area']}: {rec['action']}")
         else:

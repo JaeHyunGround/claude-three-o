@@ -8,7 +8,6 @@ and actionable recommendations.
 import argparse
 import json
 import re
-import sys
 
 from validate_url import validate_url
 from fetch_page import fetch_page
@@ -18,8 +17,7 @@ from seo_technical import (
 )
 from geo_citability import (
     extract_passages, score_passage_clarity, score_factual_density,
-    score_citation_pattern, score_self_containment,
-    score_structural_format, score_authority_signals,
+    score_citation_pattern, score_structural_format, score_authority_signals,
 )
 from aao_selectability import (
     detect_industry, score_structured_data, score_reviews_ratings,

@@ -240,7 +240,7 @@ class TestIssuesSorting(unittest.TestCase):
         mock_plat.return_value = {"platforms": {}, "best_platform": None, "worst_platform": None}
         result = run_geo_audit("Brand")
         severity_order = {"info": 5, "low": 4, "warning": 3, "medium": 2, "high": 1, "critical": 0}
-        severities = [severity_order.get(i.get("severity", "low"), 5) for i in result["issues"]]
+        [severity_order.get(i.get("severity", "low"), 5) for i in result["issues"]]
         # info issues are inserted at the front, so the list should be valid
         self.assertIsInstance(result["issues"], list)
 

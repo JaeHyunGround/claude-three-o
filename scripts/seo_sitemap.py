@@ -3,7 +3,6 @@
 import argparse
 import json
 import re
-import sys
 from urllib.parse import urlparse
 
 from validate_url import validate_url

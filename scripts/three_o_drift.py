@@ -7,11 +7,9 @@ and generates cross-pillar correlation alerts.
 
 import argparse
 import json
-import sys
-from datetime import datetime
 
 from db_manager import (
-    init_db, get_baseline_history, get_all_pillar_baselines,
+    init_db, get_all_pillar_baselines,
     save_baseline,
 )
 
@@ -143,7 +141,7 @@ def detect_cross_pillar_correlation(pillar_trends: dict) -> list:
     directions = {p: t["trend"] for p, t in pillar_trends.items() if t.get("trend")}
 
     declining = [p for p, d in directions.items() if d in ("down", "consistent_down")]
-    improving = [p for p, d in directions.items() if d in ("up", "consistent_up")]
+    [p for p, d in directions.items() if d in ("up", "consistent_up")]
 
     if len(declining) >= 2:
         alerts.append({

@@ -2,8 +2,6 @@
 
 import argparse
 import json
-import re
-import sys
 from urllib.parse import urlparse
 
 from validate_url import validate_url
@@ -46,7 +44,7 @@ def parse_robots_txt(content: str) -> list:
 
 def check_bot_access(rules: list, bot_name: str) -> str:
     """Determine if a specific bot is blocked."""
-    bot_rules = [r for r in rules if r["agent"] and (r["agent"].lower() == bot_name.lower() or r["agent"] == "*")]
+    [r for r in rules if r["agent"] and (r["agent"].lower() == bot_name.lower() or r["agent"] == "*")]
     specific_rules = [r for r in rules if r["agent"] and r["agent"].lower() == bot_name.lower()]
 
     if specific_rules:
