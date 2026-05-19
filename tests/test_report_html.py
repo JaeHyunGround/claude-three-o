@@ -12,6 +12,7 @@ from report_html import (
     _finding_rows,
     _action_rows,
     _trend_chart_svg,
+    _drift_alerts_html,
 )
 
 
@@ -218,6 +219,56 @@ class TestGenerateHtmlReport:
     def test_print_styles(self):
         html = generate_html_report(SAMPLE_DATA)
         assert "@media print" in html
+
+
+class TestDriftAlertsHtml:
+    def test_empty_returns_empty(self):
+        assert _drift_alerts_html([], {}, "stable") == ""
+
+    def test_with_alerts_renders_table(self):
+        alerts = [{"severity": "critical", "message": "Score dropped"}]
+        html = _drift_alerts_html(alerts, {}, "critical")
+        assert "Drift Monitor" in html
+        assert "Score dropped" in html
+        assert "CRITICAL" in html
+
+    def test_velocity_arrows(self):
+        velocities = {
+            "seo": {"velocity": 2.5, "direction": "improving"},
+            "geo": {"velocity": -1.5, "direction": "declining"},
+            "aao": {"velocity": 0.0, "direction": "stable"},
+        }
+        html = _drift_alerts_html([], velocities, "stable")
+        assert "SEO" in html
+        assert "GEO" in html
+        assert "AAO" in html
+
+    def test_status_badge(self):
+        html = _drift_alerts_html([{"severity": "warning", "message": "test"}], {}, "warning")
+        assert "WARNING" in html
+
+    def test_xss_prevention(self):
+        alerts = [{"severity": "info", "message": '<script>alert("xss")</script>'}]
+        html = _drift_alerts_html(alerts, {}, "stable")
+        assert "<script>" not in html
+        assert "&lt;script&gt;" in html
+
+    def test_no_alerts_shows_empty_message(self):
+        html = _drift_alerts_html([], {"seo": {"velocity": 0, "direction": "stable"}}, "stable")
+        assert "No drift alerts" in html
+
+
+class TestGenerateHtmlWithDrift:
+    def test_drift_section_rendered(self):
+        alerts = [{"severity": "warning", "message": "GEO declining"}]
+        velocities = {"seo": {"velocity": 1.0, "direction": "improving"}}
+        html = generate_html_report(SAMPLE_DATA, drift_alerts=alerts, drift_velocities=velocities, drift_status="warning")
+        assert "Drift Monitor" in html
+        assert "GEO declining" in html
+
+    def test_no_drift_no_section(self):
+        html = generate_html_report(SAMPLE_DATA)
+        assert "Drift Monitor" not in html
 
 
 class TestSaveHtmlReport:

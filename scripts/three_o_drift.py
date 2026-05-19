@@ -281,6 +281,21 @@ def analyze_unified_drift(brand: str, current_scores: dict = None, history_limit
     }
 
 
+def get_dashboard_trends(brand: str, history_limit: int = 10) -> dict:
+    """Get trend data formatted for the HTML dashboard chart.
+
+    Returns:
+        dict with 'trends' (for _trend_chart_svg) and 'alerts' (for alert section).
+    """
+    result = analyze_unified_drift(brand, history_limit=history_limit)
+    return {
+        "trends": result.get("time_series", {}),
+        "alerts": result.get("alerts", []),
+        "velocities": result.get("velocities", {}),
+        "overall_status": result.get("overall_status", "stable"),
+    }
+
+
 def format_drift_report(result: dict) -> str:
     """Format unified drift report."""
     if not result.get("success"):

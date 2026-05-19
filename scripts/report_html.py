@@ -117,7 +117,38 @@ def _trend_chart_svg(trends: Dict[str, List[Dict]], width: int = 600, height: in
 </div>"""
 
 
-def generate_html_report(data: Dict[str, Any], trends: Optional[Dict] = None) -> str:
+def _drift_alerts_html(alerts: list, velocities: dict, overall_status: str) -> str:
+    """Render drift alerts section."""
+    if not alerts and not velocities:
+        return ""
+    status_colors = {"critical": "#ef4444", "warning": "#f59e0b", "watch": "#3b82f6", "stable": "#10b981"}
+    status_color = status_colors.get(overall_status, "#64748b")
+    rows = []
+    for a in alerts:
+        sev = a.get("severity", "info")
+        color = SEVERITY_COLORS.get(sev, "#64748b")
+        msg = escape(a.get("message", ""))
+        rows.append(f'<tr><td><span class="badge" style="background:{color}">{sev.upper()}</span></td><td>{msg}</td></tr>')
+    vel_items = []
+    for p in ["seo", "geo", "aao"]:
+        v = velocities.get(p, {})
+        vel = v.get("velocity", 0)
+        direction = v.get("direction", "stable")
+        arrow = {"improving": "&#9650;", "declining": "&#9660;"}.get(direction, "&#9644;")
+        color = {"improving": "#10b981", "declining": "#ef4444"}.get(direction, "#64748b")
+        vel_items.append(f'<span style="color:{color};font-weight:600">{arrow} {p.upper()} {vel:+.1f}/snap</span>')
+    return f"""\
+<div class="card">
+  <h3>Drift Monitor <span class="badge" style="background:{status_color}">{overall_status.upper()}</span></h3>
+  <div style="display:flex;gap:24px;margin-bottom:16px;flex-wrap:wrap">{" ".join(vel_items)}</div>
+  {f'<table><thead><tr><th>Severity</th><th>Alert</th></tr></thead><tbody>{"".join(rows)}</tbody></table>' if rows else '<div class="empty">No drift alerts</div>'}
+</div>"""
+
+
+def generate_html_report(data: Dict[str, Any], trends: Optional[Dict] = None,
+                         drift_alerts: Optional[list] = None,
+                         drift_velocities: Optional[dict] = None,
+                         drift_status: str = "stable") -> str:
     """Generate a self-contained HTML dashboard from audit data."""
     brand = escape(str(data.get("brand", "Unknown")))
     date = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -153,6 +184,7 @@ def generate_html_report(data: Dict[str, Any], trends: Optional[Dict] = None) ->
             stats_html += f'<div class="stat"><span class="stat-num" style="color:{color}">{cnt}</span><span class="stat-label">{sev.title()}</span></div>'
 
     trend_html = _trend_chart_svg(trends or {})
+    drift_html = _drift_alerts_html(drift_alerts or [], drift_velocities or {}, drift_status)
 
     return f"""\
 <!DOCTYPE html>
@@ -225,6 +257,8 @@ def generate_html_report(data: Dict[str, Any], trends: Optional[Dict] = None) ->
 
   {trend_html}
 
+  {drift_html}
+
   <div class="card">
     <h3>Findings ({len(findings)})</h3>
     <table>
@@ -257,9 +291,12 @@ def generate_html_report(data: Dict[str, Any], trends: Optional[Dict] = None) ->
 </html>"""
 
 
-def save_html_report(data: Dict[str, Any], brand: str, trends: Optional[Dict] = None) -> Path:
+def save_html_report(data: Dict[str, Any], brand: str, trends: Optional[Dict] = None,
+                     drift_alerts: Optional[list] = None,
+                     drift_velocities: Optional[dict] = None,
+                     drift_status: str = "stable") -> Path:
     """Generate and save HTML report. Returns filepath."""
-    html = generate_html_report(data, trends)
+    html = generate_html_report(data, trends, drift_alerts, drift_velocities, drift_status)
     reports_dir = Path.cwd() / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
     date_str = datetime.now().strftime("%Y%m%d")

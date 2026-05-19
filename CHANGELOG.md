@@ -5,6 +5,15 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-05-19
+
+### Added
+- `get_dashboard_trends(brand)` in three_o_drift — bridges DB history to HTML dashboard chart
+- Drift Monitor section in HTML dashboard — renders velocity per pillar, severity-tagged alerts, overall status badge
+- `_drift_alerts_html()` renderer with XSS-safe alert table and velocity arrows
+- `generate_html_report` and `save_html_report` now accept `drift_alerts`, `drift_velocities`, `drift_status` params
+- 12 new tests: 4 get_dashboard_trends, 8 drift alerts HTML — total 2536 → 2548
+
 ## [1.9.0] - 2026-05-19
 
 ### Added

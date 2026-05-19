@@ -16,6 +16,7 @@ from three_o_drift import (
     generate_velocity_alerts,
     analyze_unified_drift,
     format_drift_report,
+    get_dashboard_trends,
 )
 
 
@@ -446,6 +447,43 @@ class TestFormatDriftReport(unittest.TestCase):
         output = format_drift_report(result)
         self.assertIn("SEO=10", output)
         self.assertIn("GEO=5", output)
+
+
+class TestGetDashboardTrends(unittest.TestCase):
+
+    @patch("three_o_drift.get_all_pillar_baselines", return_value={"seo": [], "geo": [], "aao": []})
+    @patch("three_o_drift.init_db")
+    def test_result_keys(self, mock_init, mock_history):
+        result = get_dashboard_trends("brand")
+        self.assertIn("trends", result)
+        self.assertIn("alerts", result)
+        self.assertIn("velocities", result)
+        self.assertIn("overall_status", result)
+
+    @patch("three_o_drift.get_all_pillar_baselines", return_value={"seo": [], "geo": [], "aao": []})
+    @patch("three_o_drift.init_db")
+    def test_empty_history_stable(self, mock_init, mock_history):
+        result = get_dashboard_trends("brand")
+        self.assertEqual(result["overall_status"], "stable")
+        self.assertEqual(result["alerts"], [])
+
+    @patch("three_o_drift.get_all_pillar_baselines")
+    @patch("three_o_drift.init_db")
+    def test_declining_triggers_alerts(self, mock_init, mock_history):
+        mock_history.return_value = {
+            "seo": [{"score": 30, "timestamp": "t2", "data_json": "{}"}, {"score": 80, "timestamp": "t1", "data_json": "{}"}],
+            "geo": [{"score": 25, "timestamp": "t2", "data_json": "{}"}, {"score": 70, "timestamp": "t1", "data_json": "{}"}],
+            "aao": [],
+        }
+        result = get_dashboard_trends("brand")
+        self.assertGreater(len(result["alerts"]), 0)
+
+    @patch("three_o_drift.get_all_pillar_baselines", return_value={"seo": [], "geo": [], "aao": []})
+    @patch("three_o_drift.init_db")
+    def test_trends_has_pillar_keys(self, mock_init, mock_history):
+        result = get_dashboard_trends("brand")
+        for pillar in ["seo", "geo", "aao"]:
+            self.assertIn(pillar, result["trends"])
 
 
 if __name__ == "__main__":
