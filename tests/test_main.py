@@ -149,3 +149,135 @@ class TestModuleDispatch:
         assert exc.value.code == 0
         out = capsys.readouterr().out
         assert "technical" in out
+
+
+class TestShortFlags:
+    def test_short_help_flag(self):
+        with pytest.raises(SystemExit) as exc:
+            main(argv=["-h"])
+        assert exc.value.code == 0
+
+    def test_short_version_flag(self, capsys):
+        with pytest.raises(SystemExit) as exc:
+            main(argv=["-V"])
+        assert exc.value.code == 0
+        from config import VERSION
+        assert VERSION in capsys.readouterr().out
+
+
+class TestErrorMessages:
+    def test_unknown_command_stderr(self, capsys):
+        with pytest.raises(SystemExit):
+            main(argv=["bogus"])
+        err = capsys.readouterr().err
+        assert "Unknown command: bogus" in err
+        assert "Available:" in err
+
+    def test_unknown_subcommand_stderr(self, capsys):
+        with pytest.raises(SystemExit):
+            main(argv=["geo", "bogus"])
+        err = capsys.readouterr().err
+        assert "Unknown geo sub-command: bogus" in err
+        assert "Available:" in err
+
+    def test_unknown_aao_subcommand(self, capsys):
+        with pytest.raises(SystemExit):
+            main(argv=["aao", "nonexistent"])
+        err = capsys.readouterr().err
+        assert "Unknown aao sub-command: nonexistent" in err
+
+
+class TestPillarHelp:
+    def test_geo_help_lists_subcommands(self, capsys):
+        with pytest.raises(SystemExit) as exc:
+            main(argv=["geo", "--help"])
+        assert exc.value.code == 0
+        out = capsys.readouterr().out
+        assert "mentions" in out
+        assert "citability" in out
+
+    def test_geo_no_subcmd_lists_subcommands(self, capsys):
+        with pytest.raises(SystemExit) as exc:
+            main(argv=["geo"])
+        assert exc.value.code == 0
+        assert "mentions" in capsys.readouterr().out
+
+    def test_aao_help_lists_subcommands(self, capsys):
+        with pytest.raises(SystemExit) as exc:
+            main(argv=["aao", "-h"])
+        assert exc.value.code == 0
+        out = capsys.readouterr().out
+        assert "selectability" in out
+        assert "feed" in out
+
+    def test_aao_no_subcmd_lists_subcommands(self, capsys):
+        with pytest.raises(SystemExit) as exc:
+            main(argv=["aao"])
+        assert exc.value.code == 0
+        assert "selectability" in capsys.readouterr().out
+
+
+class TestAdditionalDispatch:
+    def test_hyphenated_subcommand_llms_txt(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["geo", "llms-txt", "https://example.com"])
+            mock_import.assert_called_once_with("geo_llms_txt")
+
+    def test_dispatches_drift(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["drift", "mybrand", "--json"])
+            mock_import.assert_called_once_with("three_o_drift")
+
+    def test_dispatches_plan(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["plan", "restaurant"])
+            mock_import.assert_called_once_with("three_o_plan")
+
+    def test_dispatches_rewrite(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["rewrite", "--url", "https://example.com"])
+            mock_import.assert_called_once_with("content_rewrite")
+
+    def test_dispatches_recommend(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["recommend", "--input", "data.json"])
+            mock_import.assert_called_once_with("recommendations")
+
+    def test_dispatches_report_pdf(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["report-pdf", "--input", "data.json"])
+            mock_import.assert_called_once_with("report_pdf")
+
+    def test_dispatches_competitor(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["competitor", "https://a.com", "https://b.com"])
+            mock_import.assert_called_once_with("three_o_competitor")
+
+    def test_dispatches_aao_subcommand(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["aao", "scenario", "mybrand"])
+            mock_import.assert_called_once_with("aao_scenario")
+            assert sys.argv == ["three-o aao scenario", "mybrand"]
+
+    def test_dispatches_seo_naver(self):
+        with mock.patch("cli.importlib.import_module") as mock_import:
+            mock_module = mock.MagicMock()
+            mock_import.return_value = mock_module
+            main(argv=["seo", "naver", "https://example.kr"])
+            mock_import.assert_called_once_with("seo_naver")

@@ -7,6 +7,9 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.11.0] - 2026-05-19
 
+### Added
+- 18 new cli.py tests: short flags, stderr error messages, pillar help listing, hyphenated subcommands, all top-level dispatch — total 2548 → 2566
+
 ### Changed
 - Centralize version string: `config.VERSION` single source of truth, referenced by cli.py, report_pdf.py, report_html.py, report_generator.py, three_o_report.py
 - Remove 6 hardcoded `"1.0.0"` version strings across 5 scripts and 4 test files
