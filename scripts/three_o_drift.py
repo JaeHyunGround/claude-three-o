@@ -7,6 +7,7 @@ and generates cross-pillar correlation alerts.
 
 import argparse
 import json
+from typing import Optional
 
 from db_manager import (
     init_db, get_all_pillar_baselines,
@@ -178,8 +179,8 @@ def detect_cross_pillar_correlation(pillar_trends: dict) -> list:
         score_vals = list(scores.values())
         divergence = max(score_vals) - min(score_vals)
         if divergence > ALERT_THRESHOLDS["pillar_divergence"]:
-            high_p = max(scores, key=scores.get)
-            low_p = min(scores, key=scores.get)
+            high_p = max(scores, key=lambda k: scores[k])
+            low_p = min(scores, key=lambda k: scores[k])
             alerts.append({
                 "type": "pillar_divergence",
                 "severity": "warning",
@@ -221,7 +222,7 @@ def generate_velocity_alerts(velocities: dict) -> list:
     return alerts
 
 
-def analyze_unified_drift(brand: str, current_scores: dict = None, history_limit: int = 10) -> dict:
+def analyze_unified_drift(brand: str, current_scores: Optional[dict] = None, history_limit: int = 10) -> dict:
     """Run unified cross-pillar drift analysis.
 
     Args:

@@ -98,7 +98,7 @@ def detect_industry(html: str) -> str:
         if industries_detected >= 3:
             scores["agency"] = scores.get("agency", 0) + industries_detected * 5
 
-    return max(scores, key=scores.get)
+    return max(scores, key=lambda k: scores[k])
 
 
 def get_industry_weights(industry: str) -> dict:

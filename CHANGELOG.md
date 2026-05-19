@@ -5,6 +5,14 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.1] - 2026-05-19
+
+### Fixed
+- `report_pdf.py`: Migrate fpdf2 deprecated API — remove `uni=True`, replace `ln=0/1` with `new_x`/`new_y` enums (77 calls), eliminates 1324 test warnings → 0
+- `seo_technical.py`: Fix 33 mypy errors — `_pre: dict = None` → `Optional[dict[str, Any]] = None` (11 functions), typed `evaluate_meta_quality` locals
+- `three_o_drift.py`: Fix 2 mypy errors — `Optional[dict]` annotation, `lambda` key for `max`/`min`
+- `aao_selectability.py`: Fix 1 mypy error — `lambda` key for `max`
+
 ## [1.10.0] - 2026-05-19
 
 ### Added

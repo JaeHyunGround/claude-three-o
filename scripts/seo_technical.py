@@ -15,6 +15,7 @@ import argparse
 import json
 import re
 import sys
+from typing import Any, Optional
 
 from validate_url import validate_url
 from fetch_page import fetch_page
@@ -32,7 +33,7 @@ DIMENSION_WEIGHTS = {
 }
 
 
-def _preparse_html(html: str) -> dict:
+def _preparse_html(html: str) -> dict[str, Any]:
     """Pre-extract commonly used HTML elements once for all scoring functions."""
     return {
         "img_tags": re.findall(r'<img[^>]*>', html, re.IGNORECASE),
@@ -87,9 +88,11 @@ def analyze_meta_tags(html: str) -> dict:
 
 def evaluate_meta_quality(meta: dict, url: str) -> dict:
     """Evaluate the quality of meta tags, not just their existence."""
-    quality = {"score": 0, "checks": [], "issues": []}
+    checks: list[dict[str, Any]] = []
+    issues: list[dict[str, Any]] = []
+    quality: dict[str, Any] = {"score": 0, "checks": checks, "issues": issues}
     total_weight = 0
-    weighted_score = 0
+    weighted_score = 0.0
 
     title = meta.get("title", "")
     title_weight = 20
@@ -163,7 +166,7 @@ def evaluate_meta_quality(meta: dict, url: str) -> dict:
     return quality
 
 
-def analyze_heading_structure(html: str, _pre: dict = None) -> dict:
+def analyze_heading_structure(html: str, _pre: Optional[dict[str, Any]] = None) -> dict:
     """Analyze heading hierarchy and H1 usage."""
     h1s = _pre["h1s"] if _pre else re.findall(r'<h1[^>]*>(.*?)</h1>', html, re.DOTALL | re.IGNORECASE)
     h2s = _pre["h2s"] if _pre else re.findall(r'<h2[^>]*>(.*?)</h2>', html, re.DOTALL | re.IGNORECASE)
@@ -190,7 +193,7 @@ def analyze_heading_structure(html: str, _pre: dict = None) -> dict:
     }
 
 
-def analyze_images(html: str, _pre: dict = None) -> dict:
+def analyze_images(html: str, _pre: Optional[dict[str, Any]] = None) -> dict:
     """Analyze image alt text coverage."""
     images = _pre["img_tags"] if _pre else re.findall(r'<img[^>]*>', html, re.IGNORECASE)
     total = len(images)
@@ -206,7 +209,7 @@ def analyze_images(html: str, _pre: dict = None) -> dict:
     return {"total": total, "with_alt": with_alt, "missing_alt": missing_alt, "coverage": coverage, "issues": issues}
 
 
-def analyze_links(html: str, url: str, _pre: dict = None) -> dict:
+def analyze_links(html: str, url: str, _pre: Optional[dict[str, Any]] = None) -> dict:
     """Analyze internal vs external link distribution."""
     domain = url.split('/')[2] if len(url.split('/')) > 2 else ""
     if _pre:
@@ -231,7 +234,7 @@ def analyze_links(html: str, url: str, _pre: dict = None) -> dict:
 # 8-dimension quality scoring
 # ---------------------------------------------------------------------------
 
-def score_meta_quality(html: str, url: str = "https://example.com", _pre: dict = None) -> dict:
+def score_meta_quality(html: str, url: str = "https://example.com", _pre: Optional[dict[str, Any]] = None) -> dict:
     """Score meta tag quality (0-100)."""
     meta = analyze_meta_tags(html)
     quality = evaluate_meta_quality(meta, url)
@@ -252,7 +255,7 @@ def score_meta_quality(html: str, url: str = "https://example.com", _pre: dict =
     return {"score": round(min(100, score), 1), "details": details}
 
 
-def score_heading_structure(html: str, _pre: dict = None) -> dict:
+def score_heading_structure(html: str, _pre: Optional[dict[str, Any]] = None) -> dict:
     """Score heading hierarchy quality (0-100)."""
     headings = analyze_heading_structure(html, _pre)
 
@@ -324,7 +327,7 @@ def score_heading_structure(html: str, _pre: dict = None) -> dict:
     return {"score": score, "details": details}
 
 
-def score_image_optimization(html: str, _pre: dict = None) -> dict:
+def score_image_optimization(html: str, _pre: Optional[dict[str, Any]] = None) -> dict:
     """Score image optimization quality (0-100)."""
     images_data = analyze_images(html, _pre)
     total = images_data["total"]
@@ -402,7 +405,7 @@ def score_image_optimization(html: str, _pre: dict = None) -> dict:
     return {"score": score, "details": details}
 
 
-def score_link_health(html: str, url: str = "https://example.com", _pre: dict = None) -> dict:
+def score_link_health(html: str, url: str = "https://example.com", _pre: Optional[dict[str, Any]] = None) -> dict:
     """Score link quality and distribution (0-100)."""
     links_data = analyze_links(html, url, _pre)
     internal = links_data["internal"]
@@ -479,7 +482,7 @@ def score_link_health(html: str, url: str = "https://example.com", _pre: dict = 
     return {"score": score, "details": details}
 
 
-def score_mobile_readiness(html: str, _pre: dict = None) -> dict:
+def score_mobile_readiness(html: str, _pre: Optional[dict[str, Any]] = None) -> dict:
     """Score mobile optimization signals (0-100)."""
     score = 0.0
     signals = []
@@ -569,7 +572,7 @@ def score_mobile_readiness(html: str, _pre: dict = None) -> dict:
     return {"score": score, "signals": signals}
 
 
-def score_indexability(html: str, _pre: dict = None) -> dict:
+def score_indexability(html: str, _pre: Optional[dict[str, Any]] = None) -> dict:
     """Score indexability signals (0-100)."""
     score = 0.0
     signals = []
@@ -665,7 +668,7 @@ def score_indexability(html: str, _pre: dict = None) -> dict:
     return {"score": score, "signals": signals}
 
 
-def score_security_signals(html: str, url: str = "https://example.com", _pre: dict = None) -> dict:
+def score_security_signals(html: str, url: str = "https://example.com", _pre: Optional[dict[str, Any]] = None) -> dict:
     """Score security signals detectable from HTML (0-100)."""
     score = 0.0
     signals = []
@@ -737,7 +740,7 @@ def score_security_signals(html: str, url: str = "https://example.com", _pre: di
     return {"score": score, "signals": signals}
 
 
-def score_performance_signals(html: str, _pre: dict = None) -> dict:
+def score_performance_signals(html: str, _pre: Optional[dict[str, Any]] = None) -> dict:
     """Score performance optimization signals detectable from HTML (0-100)."""
     score = 0.0
     signals = []
