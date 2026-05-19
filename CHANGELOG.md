@@ -5,6 +5,14 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-05-19
+
+### Added
+- Auto industry detection in `score_calculator.py` — `compute_three_o_score(html=...)` auto-detects industry from page content
+- `detect_industry(html)` wrapper in score_calculator delegates to `aao_selectability.detect_industry`
+- Explicit `industry` parameter still overrides auto-detection
+- 10 new tests: 5 detect_industry, 5 auto-detect integration — total 2526 → 2536
+
 ## [1.8.0] - 2026-05-19
 
 ### Changed

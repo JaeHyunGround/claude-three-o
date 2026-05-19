@@ -12,6 +12,8 @@ import json
 import math
 from typing import Optional
 
+from aao_selectability import detect_industry as _detect_industry_from_html
+
 PILLAR_WEIGHTS = {"seo": 0.35, "geo": 0.35, "aao": 0.30}
 
 INDUSTRY_ADJUSTMENTS = {
@@ -37,6 +39,14 @@ GRADES = [
 BALANCE_PENALTY_WEIGHT = 0.15
 
 
+def detect_industry(html: str) -> str:
+    """Detect industry from HTML content. Returns key matching INDUSTRY_ADJUSTMENTS or 'general'."""
+    detected = _detect_industry_from_html(html)
+    if detected in INDUSTRY_ADJUSTMENTS:
+        return detected
+    return "general"
+
+
 def get_grade(score: float) -> str:
     for threshold, grade in GRADES:
         if score >= threshold:
@@ -60,8 +70,15 @@ def _balance_penalty(scores: list) -> float:
     return penalty
 
 
-def compute_three_o_score(seo: float, geo: float, aao: float, industry: Optional[str] = None) -> dict:
-    """Compute unified Three-O score with balance penalty and industry adjustment."""
+def compute_three_o_score(seo: float, geo: float, aao: float, industry: Optional[str] = None, html: Optional[str] = None) -> dict:
+    """Compute unified Three-O score with balance penalty and industry adjustment.
+
+    If `industry` is not provided but `html` is, auto-detects from page content."""
+    if not industry and html:
+        industry = detect_industry(html)
+        if industry == "general":
+            industry = None
+
     weights = dict(PILLAR_WEIGHTS)
 
     if industry and industry in INDUSTRY_ADJUSTMENTS:

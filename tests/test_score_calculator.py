@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from score_calculator import (
     compute_three_o_score, compute_geo_score, compute_platform_geo_scores,
-    get_grade, _balance_penalty,
+    get_grade, _balance_penalty, detect_industry,
     PILLAR_WEIGHTS, INDUSTRY_ADJUSTMENTS, GEO_DIMENSION_WEIGHTS,
 )
 
@@ -363,6 +363,57 @@ class TestThreeOScoreEdgeCases(unittest.TestCase):
         result = compute_three_o_score(70, 60, 50)
         self.assertIn("weights_applied", result)
         self.assertAlmostEqual(sum(result["weights_applied"].values()), 1.0, places=2)
+
+
+class TestDetectIndustry(unittest.TestCase):
+
+    def test_restaurant_detected(self):
+        html = '<html><body><h1>맛집 메뉴</h1><p>예약 가능한 레스토랑</p></body></html>'
+        self.assertEqual(detect_industry(html), "restaurant")
+
+    def test_ecommerce_detected(self):
+        html = '<html><body><div class="cart">장바구니</div><span class="price">가격: 29,000원</span><p>구매하기 배송</p></body></html>'
+        self.assertEqual(detect_industry(html), "ecommerce")
+
+    def test_clinic_detected(self):
+        html = '<html><body><h1>진료 안내</h1><p>의원 치료 예약 건강 상담</p></body></html>'
+        self.assertEqual(detect_industry(html), "clinic")
+
+    def test_general_for_empty_html(self):
+        self.assertEqual(detect_industry("<html><body>hello</body></html>"), "general")
+
+    def test_saas_detected(self):
+        html = '<html><body><a href="/pricing">Pricing</a><p>Free trial subscription API dashboard</p></body></html>'
+        self.assertEqual(detect_industry(html), "saas")
+
+
+class TestAutoDetectInScore(unittest.TestCase):
+
+    def test_html_auto_detects_industry(self):
+        html = '<html><body><h1>맛집 메뉴</h1><p>예약 restaurant 음식점</p></body></html>'
+        result = compute_three_o_score(70, 70, 70, html=html)
+        self.assertEqual(result["industry"], "restaurant")
+
+    def test_html_adjusts_weights(self):
+        html = '<html><body><div class="cart">장바구니</div><span>구매 가격 배송 상품 결제</span></body></html>'
+        base = compute_three_o_score(70, 70, 70)
+        auto = compute_three_o_score(70, 70, 70, html=html)
+        self.assertGreater(auto["weights_applied"]["aao"], base["weights_applied"]["aao"])
+
+    def test_explicit_industry_overrides_html(self):
+        html = '<html><body><h1>맛집 메뉴</h1><p>예약 음식점</p></body></html>'
+        result = compute_three_o_score(70, 70, 70, industry="clinic", html=html)
+        self.assertEqual(result["industry"], "clinic")
+
+    def test_no_html_no_detection(self):
+        result = compute_three_o_score(70, 70, 70)
+        self.assertIsNone(result["industry"])
+
+    def test_general_html_no_adjustment(self):
+        html = '<html><body><p>Just a random page with nothing special</p></body></html>'
+        base = compute_three_o_score(70, 70, 70)
+        auto = compute_three_o_score(70, 70, 70, html=html)
+        self.assertEqual(base["three_o_score"], auto["three_o_score"])
 
 
 if __name__ == "__main__":
