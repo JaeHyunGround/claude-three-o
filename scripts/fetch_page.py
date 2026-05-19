@@ -4,7 +4,7 @@ import argparse
 import json
 import sys
 import time
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import httpx
 
@@ -20,11 +20,12 @@ def _cache_key(url: str, user_agent: str) -> str:
     return f"{user_agent}::{url}"
 
 
-def _get_cached(url: str, user_agent: str) -> Any:
+def _get_cached(url: str, user_agent: str) -> Optional[Dict[str, Any]]:
     key = _cache_key(url, user_agent)
     entry = _cache.get(key)
     if entry and (time.time() - entry["ts"]) < _CACHE_TTL:
-        return entry["data"]
+        result: Dict[str, Any] = entry["data"]
+        return result
     if entry:
         del _cache[key]
     return None
