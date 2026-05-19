@@ -12,7 +12,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from config import (
     KEYS,
+    SETUP_GUIDES,
     get_api_key,
+    get_setup_guide,
     get_naver_credentials,
     list_configured_services,
     get_db_path,
@@ -43,6 +45,25 @@ class TestKeys(unittest.TestCase):
     def test_all_values_are_strings(self):
         for k, v in KEYS.items():
             self.assertIsInstance(v, str, f"{k} value is not string")
+
+
+class TestSetupGuides(unittest.TestCase):
+
+    def test_all_keys_have_guides(self):
+        for service in KEYS:
+            self.assertIn(service, SETUP_GUIDES)
+
+    def test_guides_are_strings(self):
+        for service, guide in SETUP_GUIDES.items():
+            self.assertIsInstance(guide, str)
+
+    def test_get_setup_guide_known(self):
+        guide = get_setup_guide("openai")
+        self.assertIn("openai", guide.lower())
+
+    def test_get_setup_guide_unknown(self):
+        guide = get_setup_guide("nonexistent")
+        self.assertIn("three-o", guide)
 
 
 class TestGetApiKey(unittest.TestCase):

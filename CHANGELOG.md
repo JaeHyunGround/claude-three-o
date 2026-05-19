@@ -5,6 +5,18 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-05-18
+
+### Added
+- Retry logic in `fetch_page` — retries transient failures (timeout, connection error, 5xx) up to 2 times with 1s delay
+- `SETUP_GUIDES` dict and `get_setup_guide()` in config.py — per-service setup instructions with URLs
+- Setup guide field in GEO mention tracking when API key is missing
+- 10 new tests: 6 retry logic, 4 setup guides — total 2516 → 2526
+
+### Fixed
+- `geo_mentions.py` called nonexistent `load_config()` and passed wrong args to `get_api_key()` — fixed function signatures to match config.py API
+- Removed compatibility shim from test_geo_mentions.py that masked the signature mismatch
+
 ## [1.6.0] - 2026-05-18
 
 ### Added

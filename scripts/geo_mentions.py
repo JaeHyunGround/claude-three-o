@@ -5,7 +5,7 @@ import json
 import re
 from typing import Optional
 
-from config import load_config, get_api_key
+from config import get_api_key, get_setup_guide
 
 
 AI_PLATFORMS = {
@@ -104,16 +104,17 @@ def analyze_mention(response_text: str, brand: str) -> dict:
     }
 
 
-def probe_platform(platform: str, queries: list, brand: str, config: dict) -> dict:
+def probe_platform(platform: str, queries: list, brand: str) -> dict:
     """Probe a single AI platform with queries (requires API keys)."""
     results = []
 
-    api_key = get_api_key(config, platform)
+    api_key = get_api_key(platform)
     if not api_key:
         return {
             "platform": platform,
             "status": "no_api_key",
             "message": f"No API key configured for {AI_PLATFORMS[platform]['name']}",
+            "setup_guide": get_setup_guide(platform),
             "results": [],
         }
 
@@ -163,8 +164,6 @@ def run_mention_tracking(brand: str, industry: Optional[str] = None,
                          location: Optional[str] = None,
                          queries_file: Optional[str] = None) -> dict:
     """Run brand mention tracking across AI platforms."""
-    config = load_config()
-
     if queries_file:
         from pathlib import Path
         queries = [q.strip() for q in Path(queries_file).read_text().splitlines() if q.strip()]
@@ -173,7 +172,7 @@ def run_mention_tracking(brand: str, industry: Optional[str] = None,
 
     platform_results = []
     for platform in AI_PLATFORMS:
-        result = probe_platform(platform, queries, brand, config)
+        result = probe_platform(platform, queries, brand)
         platform_results.append(result)
 
     configured_platforms = [p for p in platform_results if p["status"] == "configured"]

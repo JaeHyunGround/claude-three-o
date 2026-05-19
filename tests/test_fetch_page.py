@@ -134,6 +134,142 @@ class TestFetchPage(unittest.TestCase):
         self.assertEqual(len(result["redirects"]), 1)
 
 
+class TestRetryLogic(unittest.TestCase):
+
+    def setUp(self):
+        clear_cache()
+
+    @patch("fetch_page._RETRY_DELAY", 0)
+    @patch("fetch_page.validate_url", return_value={"valid": True})
+    @patch("fetch_page.httpx.Client")
+    def test_retry_on_timeout_then_succeed(self, mock_client_cls, mock_val):
+        import httpx
+        mock_response = MagicMock()
+        mock_response.url = "https://x.com"
+        mock_response.status_code = 200
+        mock_response.headers = {}
+        mock_response.text = "<html></html>"
+        mock_response.history = []
+
+        mock_client = MagicMock()
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        mock_client.get.side_effect = [httpx.TimeoutException("timeout"), mock_response]
+        mock_client_cls.return_value = mock_client
+
+        result = fetch_page("https://x.com", retries=1)
+        self.assertTrue(result["success"])
+        self.assertEqual(result["retries_used"], 1)
+
+    @patch("fetch_page._RETRY_DELAY", 0)
+    @patch("fetch_page.validate_url", return_value={"valid": True})
+    @patch("fetch_page.httpx.Client")
+    def test_retry_exhausted(self, mock_client_cls, mock_val):
+        import httpx
+        mock_client = MagicMock()
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        mock_client.get.side_effect = httpx.TimeoutException("timeout")
+        mock_client_cls.return_value = mock_client
+
+        result = fetch_page("https://x.com", retries=2)
+        self.assertFalse(result["success"])
+        self.assertEqual(result["retries_used"], 2)
+        self.assertIn("Timeout", result["error"])
+
+    @patch("fetch_page._RETRY_DELAY", 0)
+    @patch("fetch_page.validate_url", return_value={"valid": True})
+    @patch("fetch_page.httpx.Client")
+    def test_retry_on_500_then_succeed(self, mock_client_cls, mock_val):
+        error_response = MagicMock()
+        error_response.url = "https://x.com"
+        error_response.status_code = 500
+        error_response.headers = {}
+        error_response.text = "error"
+        error_response.history = []
+
+        ok_response = MagicMock()
+        ok_response.url = "https://x.com"
+        ok_response.status_code = 200
+        ok_response.headers = {}
+        ok_response.text = "<html></html>"
+        ok_response.history = []
+
+        mock_client = MagicMock()
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        mock_client.get.side_effect = [error_response, ok_response]
+        mock_client_cls.return_value = mock_client
+
+        result = fetch_page("https://x.com", retries=1)
+        self.assertTrue(result["success"])
+        self.assertEqual(result["status_code"], 200)
+
+    @patch("fetch_page._RETRY_DELAY", 0)
+    @patch("fetch_page.validate_url", return_value={"valid": True})
+    @patch("fetch_page.httpx.Client")
+    def test_no_retry_on_success(self, mock_client_cls, mock_val):
+        mock_response = MagicMock()
+        mock_response.url = "https://x.com"
+        mock_response.status_code = 200
+        mock_response.headers = {}
+        mock_response.text = "<html></html>"
+        mock_response.history = []
+
+        mock_client = MagicMock()
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        mock_client.get.return_value = mock_response
+        mock_client_cls.return_value = mock_client
+
+        result = fetch_page("https://x.com", retries=2)
+        self.assertTrue(result["success"])
+        self.assertNotIn("retries_used", result)
+
+    @patch("fetch_page._RETRY_DELAY", 0)
+    @patch("fetch_page.validate_url", return_value={"valid": True})
+    @patch("fetch_page.httpx.Client")
+    def test_no_retry_on_404(self, mock_client_cls, mock_val):
+        mock_response = MagicMock()
+        mock_response.url = "https://x.com"
+        mock_response.status_code = 404
+        mock_response.headers = {}
+        mock_response.text = "not found"
+        mock_response.history = []
+
+        mock_client = MagicMock()
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        mock_client.get.return_value = mock_response
+        mock_client_cls.return_value = mock_client
+
+        result = fetch_page("https://x.com", retries=2)
+        self.assertTrue(result["success"])
+        self.assertEqual(result["status_code"], 404)
+        self.assertEqual(mock_client.get.call_count, 1)
+
+    @patch("fetch_page._RETRY_DELAY", 0)
+    @patch("fetch_page.validate_url", return_value={"valid": True})
+    @patch("fetch_page.httpx.Client")
+    def test_retry_on_connection_error(self, mock_client_cls, mock_val):
+        import httpx
+        mock_response = MagicMock()
+        mock_response.url = "https://x.com"
+        mock_response.status_code = 200
+        mock_response.headers = {}
+        mock_response.text = "<html></html>"
+        mock_response.history = []
+
+        mock_client = MagicMock()
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        mock_client.get.side_effect = [httpx.RequestError("conn reset"), mock_response]
+        mock_client_cls.return_value = mock_client
+
+        result = fetch_page("https://x.com", retries=1)
+        self.assertTrue(result["success"])
+
+
 class TestFetchWithBotComparison(unittest.TestCase):
 
     @patch("fetch_page.fetch_page")

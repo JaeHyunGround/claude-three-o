@@ -12,6 +12,8 @@ from validate_url import validate_url
 
 
 DEFAULT_TIMEOUT = 15
+DEFAULT_RETRIES = 2
+_RETRY_DELAY = 1.0
 _CACHE_TTL = 300
 _cache: Dict[str, Dict[str, Any]] = {}
 
@@ -47,9 +49,10 @@ USER_AGENTS = {
 }
 
 
-def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIMEOUT, use_cache: bool = True) -> Dict[str, Any]:
+def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIMEOUT, use_cache: bool = True, retries: int = DEFAULT_RETRIES) -> Dict[str, Any]:
     """Fetch a page and return status, headers, and content.
 
+    Retries transient failures (timeouts, connection errors) up to `retries` times.
     Results are cached in memory for 5 minutes to avoid duplicate requests
     when multiple analysis modules fetch the same URL (e.g. robots.txt)."""
     if use_cache:
@@ -64,28 +67,43 @@ def fetch_page(url: str, user_agent: str = "default", timeout: int = DEFAULT_TIM
     ua = USER_AGENTS.get(user_agent, user_agent)
     headers = {"User-Agent": ua, "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"}
 
-    try:
-        start = time.time()
-        with httpx.Client(follow_redirects=True, timeout=timeout) as client:
-            response = client.get(url, headers=headers)
-        elapsed = time.time() - start
+    last_error = ""
+    for attempt in range(1 + retries):
+        try:
+            start = time.time()
+            with httpx.Client(follow_redirects=True, timeout=timeout) as client:
+                response = client.get(url, headers=headers)
+            elapsed = time.time() - start
 
-        result = {
-            "success": True,
-            "url": str(response.url),
-            "status_code": response.status_code,
-            "content_type": response.headers.get("content-type", ""),
-            "content_length": len(response.text),
-            "elapsed_seconds": round(elapsed, 3),
-            "headers": dict(response.headers),
-            "html": response.text,
-            "redirects": [str(r.url) for r in response.history],
-        }
-    except httpx.TimeoutException:
-        result = {"success": False, "error": f"Timeout after {timeout}s"}
-    except httpx.RequestError as e:
-        result = {"success": False, "error": str(e)}
+            result: Dict[str, Any] = {
+                "success": True,
+                "url": str(response.url),
+                "status_code": response.status_code,
+                "content_type": response.headers.get("content-type", ""),
+                "content_length": len(response.text),
+                "elapsed_seconds": round(elapsed, 3),
+                "headers": dict(response.headers),
+                "html": response.text,
+                "redirects": [str(r.url) for r in response.history],
+            }
+            if response.status_code >= 500 and attempt < retries:
+                last_error = f"Server error {response.status_code}"
+                time.sleep(_RETRY_DELAY)
+                continue
+            if use_cache:
+                _set_cached(url, user_agent, result)
+            if attempt > 0:
+                result["retries_used"] = attempt
+            return result
+        except httpx.TimeoutException:
+            last_error = f"Timeout after {timeout}s"
+        except httpx.RequestError as e:
+            last_error = str(e)
 
+        if attempt < retries:
+            time.sleep(_RETRY_DELAY)
+
+    result = {"success": False, "error": last_error, "retries_used": retries}
     if use_cache:
         _set_cached(url, user_agent, result)
     return result

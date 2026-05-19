@@ -15,6 +15,20 @@ KEYS = {
     "dataforseo": "dataforseo_key.txt",
 }
 
+SETUP_GUIDES = {
+    "openai": "Get key at https://platform.openai.com/api-keys → save to ~/.config/three-o/openai_key.txt",
+    "perplexity": "Get key at https://www.perplexity.ai/settings/api → save to ~/.config/three-o/perplexity_key.txt",
+    "google": "Get key at https://console.cloud.google.com/apis/credentials → save to ~/.config/three-o/google_api_key.txt",
+    "anthropic": "Get key at https://console.anthropic.com/settings/keys → save to ~/.config/three-o/anthropic_key.txt",
+    "naver_client_id": 'Get credentials at https://developers.naver.com/apps → save as JSON {"client_id":"...","client_secret":"..."} to ~/.config/three-o/naver_api.json',
+    "dataforseo": "Get credentials at https://app.dataforseo.com/api-access → save to ~/.config/three-o/dataforseo_key.txt",
+}
+
+
+def get_setup_guide(service: str) -> str:
+    """Return setup instructions for a specific API service."""
+    return SETUP_GUIDES.get(service, f"Save API key to ~/.config/three-o/{KEYS.get(service, service + '_key.txt')}")
+
 
 def ensure_config_dir() -> None:
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)

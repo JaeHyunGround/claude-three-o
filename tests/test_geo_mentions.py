@@ -7,16 +7,6 @@ from unittest.mock import patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-# geo_mentions.py imports `load_config` and `get_api_key` from config,
-# but config.py's get_api_key has a different signature (1 arg vs 2).
-# Pre-patch config module so geo_mentions can import cleanly.
-import config as _real_config
-_real_config.load_config = lambda: {}
-_original_get = _real_config.get_api_key
-_real_config.get_api_key = lambda config_or_service, platform=None: (
-    _original_get(platform) if platform else _original_get(config_or_service)
-)
-
 from geo_mentions import (
     generate_queries, analyze_mention, calculate_mention_frequency,
     probe_platform, run_mention_tracking,
@@ -226,78 +216,70 @@ class TestProbePlatform(unittest.TestCase):
 
     @patch("geo_mentions.get_api_key", return_value=None)
     def test_no_api_key(self, mock_key):
-        result = probe_platform("chatgpt", ["q1"], "Brand", {})
+        result = probe_platform("chatgpt", ["q1"], "Brand")
         self.assertEqual(result["status"], "no_api_key")
 
     @patch("geo_mentions.get_api_key", return_value="sk-test-key")
     def test_with_api_key(self, mock_key):
-        result = probe_platform("chatgpt", ["q1", "q2"], "Brand", {})
+        result = probe_platform("chatgpt", ["q1", "q2"], "Brand")
         self.assertEqual(result["status"], "configured")
         self.assertEqual(result["queries_count"], 2)
 
     @patch("geo_mentions.get_api_key", return_value="key")
     def test_result_has_platform_name(self, mock_key):
-        result = probe_platform("gemini", ["q1"], "Brand", {})
+        result = probe_platform("gemini", ["q1"], "Brand")
         self.assertEqual(result["platform_name"], "Gemini")
 
     @patch("geo_mentions.get_api_key", return_value=None)
     def test_no_key_message(self, mock_key):
-        result = probe_platform("perplexity", ["q1"], "Brand", {})
+        result = probe_platform("perplexity", ["q1"], "Brand")
         self.assertIn("Perplexity", result["message"])
 
 
 class TestRunMentionTracking(unittest.TestCase):
 
-    @patch("geo_mentions.load_config", return_value={})
     @patch("geo_mentions.get_api_key", return_value=None)
-    def test_basic_run(self, mock_key, mock_config):
+    def test_basic_run(self, mock_key):
         result = run_mention_tracking("TestBrand")
         self.assertTrue(result["success"])
         self.assertEqual(result["brand"], "TestBrand")
 
-    @patch("geo_mentions.load_config", return_value={})
     @patch("geo_mentions.get_api_key", return_value=None)
-    def test_result_keys(self, mock_key, mock_config):
+    def test_result_keys(self, mock_key):
         result = run_mention_tracking("Brand")
         for key in ["success", "brand", "queries_used", "platforms",
                      "mention_frequency_score", "platform_results", "queries"]:
             self.assertIn(key, result, f"Missing: {key}")
 
-    @patch("geo_mentions.load_config", return_value={})
     @patch("geo_mentions.get_api_key", return_value=None)
-    def test_all_platforms_probed(self, mock_key, mock_config):
+    def test_all_platforms_probed(self, mock_key):
         result = run_mention_tracking("Brand")
         self.assertEqual(len(result["platform_results"]), 4)
 
-    @patch("geo_mentions.load_config", return_value={})
     @patch("geo_mentions.get_api_key", return_value=None)
-    def test_no_keys_all_unconfigured(self, mock_key, mock_config):
+    def test_no_keys_all_unconfigured(self, mock_key):
         result = run_mention_tracking("Brand")
         self.assertEqual(result["platforms"]["unconfigured"], 4)
         self.assertEqual(result["platforms"]["configured"], 0)
 
-    @patch("geo_mentions.load_config", return_value={})
     @patch("geo_mentions.get_api_key", return_value="key")
-    def test_all_keys_all_configured(self, mock_key, mock_config):
+    def test_all_keys_all_configured(self, mock_key):
         result = run_mention_tracking("Brand")
         self.assertEqual(result["platforms"]["configured"], 4)
         self.assertEqual(result["platforms"]["unconfigured"], 0)
 
-    @patch("geo_mentions.load_config", return_value={})
     @patch("geo_mentions.get_api_key", return_value=None)
-    def test_industry_passed(self, mock_key, mock_config):
+    def test_industry_passed(self, mock_key):
         result = run_mention_tracking("Brand", industry="restaurant")
         self.assertEqual(result["industry"], "restaurant")
 
-    @patch("geo_mentions.load_config", return_value={})
     @patch("geo_mentions.get_api_key", return_value=None)
-    def test_location_passed(self, mock_key, mock_config):
+    def test_location_passed(self, mock_key):
         result = run_mention_tracking("Brand", location="Seoul")
         self.assertEqual(result["location"], "Seoul")
 
-    @patch("geo_mentions.load_config", return_value={})
     @patch("geo_mentions.get_api_key", return_value=None)
-    def test_queries_count(self, mock_key, mock_config):
+    def test_queries_count(self, mock_key):
         result = run_mention_tracking("Brand")
         self.assertEqual(result["queries_used"], 10)
 
