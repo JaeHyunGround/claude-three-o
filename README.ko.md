@@ -3,7 +3,6 @@
 검색엔진, AI 엔진, AI 에이전트를 아우르는 통합 가시성 최적화 플러그인. 세 가지 축(SEO, GEO, AAO)을 병렬 분석하여 단일 점수(0-100)와 우선순위별 액션 플랜을 제공합니다.
 
 [![CI](https://github.com/JaeHyunGround/claude-three-o/actions/workflows/ci.yml/badge.svg)](https://github.com/JaeHyunGround/claude-three-o/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/JaeHyunGround/claude-three-o/branch/main/graph/badge.svg)](https://codecov.io/gh/JaeHyunGround/claude-three-o)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://claude.ai/claude-code)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-green)](https://python.org)

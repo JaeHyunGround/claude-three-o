@@ -3,7 +3,6 @@
 Unified search and AI visibility optimization plugin for Claude Code. Three pillars — SEO, GEO, and AAO — analyzed in parallel with a single score (0-100) and prioritized action plan.
 
 [![CI](https://github.com/JaeHyunGround/claude-three-o/actions/workflows/ci.yml/badge.svg)](https://github.com/JaeHyunGround/claude-three-o/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/JaeHyunGround/claude-three-o/branch/main/graph/badge.svg)](https://codecov.io/gh/JaeHyunGround/claude-three-o)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://claude.ai/claude-code)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-green)](https://python.org)
