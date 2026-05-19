@@ -45,6 +45,9 @@ files = [
     "scripts/db_manager.py",
     "scripts/score_calculator.py",
     "scripts/report_generator.py",
+    "scripts/seo_technical.py",
+    "scripts/three_o_drift.py",
+    "scripts/aao_selectability.py",
 ]
 
 [tool.coverage.run]

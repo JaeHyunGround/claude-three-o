@@ -15,6 +15,8 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Remove 6 hardcoded `"1.0.0"` version strings across 5 scripts and 4 test files
 - `pyproject.toml` version synced to 1.11.0
 - Suppress fpdf2 internal ResourceWarning (unclosed font file handle) via pytest filterwarnings — 11 remaining warnings → 0
+- CI: Upgrade `actions/checkout` v4→v6, `actions/setup-python` v5→v6 — Node.js 24 ready (June 2 deadline)
+- mypy coverage expanded: 6 → 9 modules (+seo_technical, three_o_drift, aao_selectability)
 
 ### Fixed
 - `report_pdf.py`: Migrate fpdf2 deprecated API — remove `uni=True`, replace `ln=0/1` with `new_x`/`new_y` enums (77 calls), eliminates 1324 test warnings → 0
