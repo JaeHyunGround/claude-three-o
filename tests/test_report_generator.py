@@ -75,7 +75,8 @@ class TestGenerateMarkdownReport(unittest.TestCase):
 
     def test_footer(self):
         md = generate_markdown_report(self._data())
-        self.assertIn("Three-O Platform v1.0", md)
+        from config import VERSION
+        self.assertIn(f"Three-O Platform v{VERSION}", md)
 
     def test_empty_data(self):
         md = generate_markdown_report({})
@@ -99,7 +100,8 @@ class TestGenerateJsonReport(unittest.TestCase):
     def test_meta_fields(self):
         output = generate_json_report({})
         parsed = json.loads(output)
-        self.assertEqual(parsed["meta"]["version"], "1.0.0")
+        from config import VERSION
+        self.assertEqual(parsed["meta"]["version"], VERSION)
         self.assertEqual(parsed["meta"]["platform"], "Three-O")
         self.assertIn("generated_at", parsed["meta"])
 

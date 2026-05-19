@@ -280,7 +280,8 @@ class TestGenerateReport(unittest.TestCase):
     def test_report_footer(self, mock_fmt, mock_rec):
         data = {"brand": "X", "three_o_score": {"score": 50, "grade": "C", "pillars": {}}}
         result = generate_report(data, "full", "md")
-        self.assertIn("Three-O v1.0.0", result["content"])
+        from config import VERSION
+        self.assertIn(f"Three-O v{VERSION}", result["content"])
 
 
 class TestSaveReport(unittest.TestCase):

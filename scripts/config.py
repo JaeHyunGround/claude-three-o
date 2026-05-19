@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 from typing import Dict, List, Optional
 
+VERSION = "1.11.0"
+
 CONFIG_DIR = Path.home() / ".config" / "three-o"
 KEYS = {
     "openai": "openai_key.txt",

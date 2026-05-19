@@ -3,6 +3,8 @@
 import importlib
 import sys
 
+from config import VERSION
+
 COMMANDS = {
     "seo": {
         "technical": "seo_technical",
@@ -92,7 +94,7 @@ def main(argv=None):
         sys.exit(0)
 
     if args[0] in ("--version", "-V"):
-        print("Three-O 1.0.0")
+        print(f"Three-O {VERSION}")
         sys.exit(0)
 
     command = args[0]

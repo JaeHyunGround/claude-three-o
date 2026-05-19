@@ -5,7 +5,11 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.10.1] - 2026-05-19
+## [1.11.0] - 2026-05-19
+
+### Changed
+- Centralize version string: `config.VERSION` single source of truth, referenced by cli.py, report_pdf.py, report_html.py, report_generator.py, three_o_report.py
+- Remove 6 hardcoded `"1.0.0"` version strings across 5 scripts and 4 test files
 
 ### Fixed
 - `report_pdf.py`: Migrate fpdf2 deprecated API — remove `uni=True`, replace `ln=0/1` with `new_x`/`new_y` enums (77 calls), eliminates 1324 test warnings → 0

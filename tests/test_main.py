@@ -65,7 +65,8 @@ class TestMainHelp:
         with pytest.raises(SystemExit) as exc:
             main(argv=["--version"])
         assert exc.value.code == 0
-        assert "1.0.0" in capsys.readouterr().out
+        from config import VERSION
+        assert VERSION in capsys.readouterr().out
 
 
 class TestUnknownCommand:
