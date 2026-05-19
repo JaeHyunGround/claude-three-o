@@ -32,6 +32,24 @@ DIMENSION_WEIGHTS = {
 }
 
 
+def _preparse_html(html: str) -> dict:
+    """Pre-extract commonly used HTML elements once for all scoring functions."""
+    return {
+        "img_tags": re.findall(r'<img[^>]*>', html, re.IGNORECASE),
+        "a_tags": re.findall(r'<a[^>]*>', html, re.IGNORECASE),
+        "a_tags_with_text": re.findall(r'<a[^>]*>(.*?)</a>', html, re.DOTALL | re.IGNORECASE),
+        "h1s": re.findall(r'<h1[^>]*>(.*?)</h1>', html, re.DOTALL | re.IGNORECASE),
+        "h2s": re.findall(r'<h2[^>]*>(.*?)</h2>', html, re.DOTALL | re.IGNORECASE),
+        "h3s": re.findall(r'<h3[^>]*>(.*?)</h3>', html, re.DOTALL | re.IGNORECASE),
+        "h4_count": len(re.findall(r'<h4[^>]*>', html, re.IGNORECASE)),
+        "h5_count": len(re.findall(r'<h5[^>]*>', html, re.IGNORECASE)),
+        "h6_count": len(re.findall(r'<h6[^>]*>', html, re.IGNORECASE)),
+        "scripts": re.findall(r'<script\b[^>]*>', html, re.IGNORECASE),
+        "nav_blocks": re.findall(r'<nav\b[^>]*>(.*?)</nav>', html, re.DOTALL | re.IGNORECASE),
+        "html_lower": html.lower(),
+    }
+
+
 # ---------------------------------------------------------------------------
 # Backward-compatible functions (used by three_o_competitor.py)
 # ---------------------------------------------------------------------------
@@ -145,11 +163,11 @@ def evaluate_meta_quality(meta: dict, url: str) -> dict:
     return quality
 
 
-def analyze_heading_structure(html: str) -> dict:
+def analyze_heading_structure(html: str, _pre: dict = None) -> dict:
     """Analyze heading hierarchy and H1 usage."""
-    h1s = re.findall(r'<h1[^>]*>(.*?)</h1>', html, re.DOTALL | re.IGNORECASE)
-    h2s = re.findall(r'<h2[^>]*>(.*?)</h2>', html, re.DOTALL | re.IGNORECASE)
-    h3s = re.findall(r'<h3[^>]*>(.*?)</h3>', html, re.DOTALL | re.IGNORECASE)
+    h1s = _pre["h1s"] if _pre else re.findall(r'<h1[^>]*>(.*?)</h1>', html, re.DOTALL | re.IGNORECASE)
+    h2s = _pre["h2s"] if _pre else re.findall(r'<h2[^>]*>(.*?)</h2>', html, re.DOTALL | re.IGNORECASE)
+    h3s = _pre["h3s"] if _pre else re.findall(r'<h3[^>]*>(.*?)</h3>', html, re.DOTALL | re.IGNORECASE)
 
     h1_clean = [re.sub(r'<[^>]+>', '', h).strip() for h in h1s]
     issues = []
@@ -172,9 +190,9 @@ def analyze_heading_structure(html: str) -> dict:
     }
 
 
-def analyze_images(html: str) -> dict:
+def analyze_images(html: str, _pre: dict = None) -> dict:
     """Analyze image alt text coverage."""
-    images = re.findall(r'<img[^>]*>', html, re.IGNORECASE)
+    images = _pre["img_tags"] if _pre else re.findall(r'<img[^>]*>', html, re.IGNORECASE)
     total = len(images)
     with_alt = sum(1 for img in images if re.search(r'alt="[^"]+"|alt=\'[^\']+\'', img, re.IGNORECASE))
     empty_alt = sum(1 for img in images if re.search(r'alt=""|alt=\'\'', img, re.IGNORECASE))
@@ -188,10 +206,13 @@ def analyze_images(html: str) -> dict:
     return {"total": total, "with_alt": with_alt, "missing_alt": missing_alt, "coverage": coverage, "issues": issues}
 
 
-def analyze_links(html: str, url: str) -> dict:
+def analyze_links(html: str, url: str, _pre: dict = None) -> dict:
     """Analyze internal vs external link distribution."""
     domain = url.split('/')[2] if len(url.split('/')) > 2 else ""
-    all_links = re.findall(r'<a[^>]+href="([^"]*)"', html, re.IGNORECASE)
+    if _pre:
+        all_links = [m.group(1) for a in _pre["a_tags"] for m in [re.search(r'href="([^"]*)"', a)] if m]
+    else:
+        all_links = re.findall(r'<a[^>]+href="([^"]*)"', html, re.IGNORECASE)
 
     internal = 0
     external = 0
@@ -210,7 +231,7 @@ def analyze_links(html: str, url: str) -> dict:
 # 8-dimension quality scoring
 # ---------------------------------------------------------------------------
 
-def score_meta_quality(html: str, url: str = "https://example.com") -> dict:
+def score_meta_quality(html: str, url: str = "https://example.com", _pre: dict = None) -> dict:
     """Score meta tag quality (0-100)."""
     meta = analyze_meta_tags(html)
     quality = evaluate_meta_quality(meta, url)
@@ -231,9 +252,9 @@ def score_meta_quality(html: str, url: str = "https://example.com") -> dict:
     return {"score": round(min(100, score), 1), "details": details}
 
 
-def score_heading_structure(html: str) -> dict:
+def score_heading_structure(html: str, _pre: dict = None) -> dict:
     """Score heading hierarchy quality (0-100)."""
-    headings = analyze_heading_structure(html)
+    headings = analyze_heading_structure(html, _pre)
 
     score = 0.0
     details = dict(headings)
@@ -241,9 +262,9 @@ def score_heading_structure(html: str) -> dict:
     h1_count = headings["h1_count"]
     h2_count = headings["h2_count"]
     h3_count = headings["h3_count"]
-    h4s = len(re.findall(r'<h4[^>]*>', html, re.IGNORECASE))
-    h5s = len(re.findall(r'<h5[^>]*>', html, re.IGNORECASE))
-    h6s = len(re.findall(r'<h6[^>]*>', html, re.IGNORECASE))
+    h4s = _pre["h4_count"] if _pre else len(re.findall(r'<h4[^>]*>', html, re.IGNORECASE))
+    h5s = _pre["h5_count"] if _pre else len(re.findall(r'<h5[^>]*>', html, re.IGNORECASE))
+    h6s = _pre["h6_count"] if _pre else len(re.findall(r'<h6[^>]*>', html, re.IGNORECASE))
     details["h4_count"] = h4s
     details["h5_count"] = h5s
     details["h6_count"] = h6s
@@ -303,9 +324,9 @@ def score_heading_structure(html: str) -> dict:
     return {"score": score, "details": details}
 
 
-def score_image_optimization(html: str) -> dict:
+def score_image_optimization(html: str, _pre: dict = None) -> dict:
     """Score image optimization quality (0-100)."""
-    images_data = analyze_images(html)
+    images_data = analyze_images(html, _pre)
     total = images_data["total"]
 
     if total == 0:
@@ -324,7 +345,7 @@ def score_image_optimization(html: str) -> dict:
     elif coverage > 0:
         score += 5
 
-    all_imgs = re.findall(r'<img[^>]*>', html, re.IGNORECASE)
+    all_imgs = _pre["img_tags"] if _pre else re.findall(r'<img[^>]*>', html, re.IGNORECASE)
 
     lazy_count = sum(1 for img in all_imgs if 'loading="lazy"' in img.lower())
     eager_count = sum(1 for img in all_imgs if 'loading="eager"' in img.lower())
@@ -381,9 +402,9 @@ def score_image_optimization(html: str) -> dict:
     return {"score": score, "details": details}
 
 
-def score_link_health(html: str, url: str = "https://example.com") -> dict:
+def score_link_health(html: str, url: str = "https://example.com", _pre: dict = None) -> dict:
     """Score link quality and distribution (0-100)."""
-    links_data = analyze_links(html, url)
+    links_data = analyze_links(html, url, _pre)
     internal = links_data["internal"]
     external = links_data["external"]
     total = links_data["total"]
@@ -411,7 +432,7 @@ def score_link_health(html: str, url: str = "https://example.com") -> dict:
             score += 5
     details["internal_ratio"] = round(internal / max(total, 1), 2)
 
-    all_anchors = re.findall(r'<a[^>]*>(.*?)</a>', html, re.DOTALL | re.IGNORECASE)
+    all_anchors = _pre["a_tags_with_text"] if _pre else re.findall(r'<a[^>]*>(.*?)</a>', html, re.DOTALL | re.IGNORECASE)
     non_empty = [re.sub(r'<[^>]+>', '', a).strip() for a in all_anchors]
     non_empty = [a for a in non_empty if a]
     unique_anchors = set(non_empty)
@@ -436,7 +457,7 @@ def score_link_health(html: str, url: str = "https://example.com") -> dict:
             score -= 5
     details["nofollow_ratio"] = round(nofollow_links / max(total, 1), 2)
 
-    nav_links = re.findall(r'<nav\b[^>]*>(.*?)</nav>', html, re.DOTALL | re.IGNORECASE)
+    nav_links = _pre["nav_blocks"] if _pre else re.findall(r'<nav\b[^>]*>(.*?)</nav>', html, re.DOTALL | re.IGNORECASE)
     nav_link_count = sum(len(re.findall(r'<a\b', nav, re.IGNORECASE)) for nav in nav_links)
     if nav_link_count >= 5:
         score += 15
@@ -458,7 +479,7 @@ def score_link_health(html: str, url: str = "https://example.com") -> dict:
     return {"score": score, "details": details}
 
 
-def score_mobile_readiness(html: str) -> dict:
+def score_mobile_readiness(html: str, _pre: dict = None) -> dict:
     """Score mobile optimization signals (0-100)."""
     score = 0.0
     signals = []
@@ -548,7 +569,7 @@ def score_mobile_readiness(html: str) -> dict:
     return {"score": score, "signals": signals}
 
 
-def score_indexability(html: str) -> dict:
+def score_indexability(html: str, _pre: dict = None) -> dict:
     """Score indexability signals (0-100)."""
     score = 0.0
     signals = []
@@ -644,7 +665,7 @@ def score_indexability(html: str) -> dict:
     return {"score": score, "signals": signals}
 
 
-def score_security_signals(html: str, url: str = "https://example.com") -> dict:
+def score_security_signals(html: str, url: str = "https://example.com", _pre: dict = None) -> dict:
     """Score security signals detectable from HTML (0-100)."""
     score = 0.0
     signals = []
@@ -716,15 +737,16 @@ def score_security_signals(html: str, url: str = "https://example.com") -> dict:
     return {"score": score, "signals": signals}
 
 
-def score_performance_signals(html: str) -> dict:
+def score_performance_signals(html: str, _pre: dict = None) -> dict:
     """Score performance optimization signals detectable from HTML (0-100)."""
     score = 0.0
     signals = []
+    hl = _pre["html_lower"] if _pre else html.lower()
 
-    preconnect = len(re.findall(r'rel="preconnect"', html, re.IGNORECASE))
-    dns_prefetch = len(re.findall(r'rel="dns-prefetch"', html, re.IGNORECASE))
-    preload = len(re.findall(r'rel="preload"', html, re.IGNORECASE))
-    prefetch = len(re.findall(r'rel="prefetch"', html, re.IGNORECASE))
+    preconnect = hl.count('rel="preconnect"')
+    dns_prefetch = hl.count('rel="dns-prefetch"')
+    preload = hl.count('rel="preload"')
+    prefetch = hl.count('rel="prefetch"')
 
     hints_total = preconnect + dns_prefetch + preload + prefetch
     if hints_total >= 4:
@@ -742,9 +764,10 @@ def score_performance_signals(html: str) -> dict:
         score += 12
         signals.append("inline critical CSS")
 
-    async_scripts = len(re.findall(r'<script[^>]*\basync\b', html, re.IGNORECASE))
-    defer_scripts = len(re.findall(r'<script[^>]*\bdefer\b', html, re.IGNORECASE))
-    total_scripts = len(re.findall(r'<script\b', html, re.IGNORECASE))
+    script_tags = _pre["scripts"] if _pre else re.findall(r'<script\b[^>]*>', html, re.IGNORECASE)
+    async_scripts = sum(1 for s in script_tags if 'async' in s.lower())
+    defer_scripts = sum(1 for s in script_tags if 'defer' in s.lower())
+    total_scripts = len(script_tags)
     if total_scripts > 0:
         optimized_ratio = (async_scripts + defer_scripts) / total_scripts
         if optimized_ratio >= 0.7:
@@ -801,14 +824,15 @@ def score_performance_signals(html: str) -> dict:
 
 def analyze_technical_html(html: str, url: str = "https://example.com") -> dict:
     """Full 8-dimension technical SEO analysis on raw HTML."""
-    meta_q = score_meta_quality(html, url)
-    heading_s = score_heading_structure(html)
-    image_o = score_image_optimization(html)
-    link_h = score_link_health(html, url)
-    mobile_r = score_mobile_readiness(html)
-    index_s = score_indexability(html)
-    security_s = score_security_signals(html, url)
-    perf_s = score_performance_signals(html)
+    _pre = _preparse_html(html)
+    meta_q = score_meta_quality(html, url, _pre)
+    heading_s = score_heading_structure(html, _pre)
+    image_o = score_image_optimization(html, _pre)
+    link_h = score_link_health(html, url, _pre)
+    mobile_r = score_mobile_readiness(html, _pre)
+    index_s = score_indexability(html, _pre)
+    security_s = score_security_signals(html, url, _pre)
+    perf_s = score_performance_signals(html, _pre)
 
     dimensions = {
         "meta_quality": meta_q["score"],
@@ -904,23 +928,34 @@ def analyze_technical(url: str) -> dict:
         return {"success": False, "error": result["error"]}
 
     html = result["html"]
+    headers = result.get("headers", {})
     analysis = analyze_technical_html(html, url)
 
-    security = check_https(url)
-    mobile = check_mobile(html)
-    meta = analyze_meta_tags(html)
-    headings = analyze_heading_structure(html)
-    images = analyze_images(html)
-    links = analyze_links(html, url)
+    is_https = url.startswith("https")
+    security = {
+        "https": is_https,
+        "hsts": "strict-transport-security" in headers,
+        "x_content_type": "x-content-type-options" in headers,
+        "x_frame": "x-frame-options" in headers,
+        "csp": "content-security-policy" in headers,
+    }
+
+    meta_detail = analysis["details"]["meta_quality"]
+    heading_detail = analysis["details"]["heading_structure"]
+    image_detail = analysis["details"]["image_optimization"]
+    link_detail = analysis["details"]["link_health"]
+    mobile_detail = analysis["details"]["mobile_readiness"]
+
+    has_viewport = "viewport: optimal" in mobile_detail.get("signals", []) or any("viewport:" in s and "missing" not in s for s in mobile_detail.get("signals", []))
 
     elapsed = result.get("elapsed_seconds", 0)
     issues = list(analysis["issues"])
 
-    if not security.get("https"):
+    if not security["https"]:
         issues.append({"severity": "critical", "category": "security", "message": "Not using HTTPS"})
     if not security.get("hsts"):
         issues.append({"severity": "medium", "category": "security", "message": "Missing HSTS header"})
-    if not mobile.get("viewport_meta"):
+    if not has_viewport:
         issues.append({"severity": "critical", "category": "mobile", "message": "Missing viewport meta tag"})
     if elapsed and elapsed > 3.0:
         issues.append({"severity": "high", "category": "performance", "message": f"Slow response time: {elapsed:.1f}s (target: <1s)"})
@@ -933,13 +968,13 @@ def analyze_technical(url: str) -> dict:
         "score": analysis["score"],
         "dimensions": analysis["dimensions"],
         "section_scores": analysis["section_scores"],
-        "meta_tags": meta,
-        "meta_quality": analysis["details"]["meta_quality"]["details"].get("checks", []),
+        "meta_tags": meta_detail["details"].get("meta_tags", {}),
+        "meta_quality": meta_detail["details"].get("checks", []),
         "security": security,
-        "mobile": mobile,
-        "headings": headings,
-        "images": {"total": images["total"], "with_alt": images["with_alt"], "coverage": images["coverage"]},
-        "links": links,
+        "mobile": {"viewport_meta": has_viewport, "responsive_signals": any("responsive" in s for s in mobile_detail.get("signals", []))},
+        "headings": heading_detail["details"],
+        "images": {"total": image_detail["details"].get("total", 0), "with_alt": image_detail["details"].get("with_alt", 0), "coverage": image_detail["details"].get("coverage", 0)},
+        "links": {"internal": link_detail["details"].get("internal", 0), "external": link_detail["details"].get("external", 0), "total": link_detail["details"].get("total", 0)},
         "issues": issues,
         "response_time": elapsed,
     }

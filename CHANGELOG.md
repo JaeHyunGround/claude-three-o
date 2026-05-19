@@ -5,6 +5,15 @@ All notable changes to Claude Three-O are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-05-19
+
+### Changed
+- `seo_technical.py`: HTML pre-parsing (`_preparse_html`) extracts all elements once, shared across 8 scoring functions
+- `analyze_technical()` reuses data from `analyze_technical_html()` instead of re-calling backward-compat functions
+- Eliminated redundant HTTP fetch — `check_https()` was making a second request for headers already available
+- `score_performance_signals` reuses pre-extracted `<script>` tags instead of re-scanning HTML
+- All `score_*` functions accept optional `_pre` parameter while keeping backward-compatible standalone usage
+
 ## [1.7.0] - 2026-05-18
 
 ### Added
